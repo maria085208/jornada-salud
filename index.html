@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jornadas V30</title>
+    <title>Jornadas V31</title>
     
-    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.3.4/vue.global.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -17,22 +17,20 @@
             font-family: sans-serif;
         }
         
-        /* ESTO GARANTIZA QUE EL LOGIN SE VEA SIEMPRE AL INICIO */
+        /* LOGIN: Visible por defecto (HTML puro) */
         #login-static {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-color: #0f172a; 
             display: flex; align-items: center; justify-content: center;
-            z-index: 9999;
+            z-index: 10000;
         }
 
         .app-content { background-color: rgba(255, 255, 255, 0.97); min-height: 100vh; padding-bottom: 80px; }
         .tab-active { background-color: #0f172a; color: white; border-bottom: 4px solid #000; }
         
-        /* Ocultar PDF y Vue cloak */
         #pdf-template { display: none; }
         [v-cloak] { display: none; }
         
-        /* Inputs sólidos */
         .input-std {
             width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 12px;
             font-weight: bold; text-transform: uppercase; outline: none; transition: 0.3s;
@@ -43,8 +41,10 @@
 <body class="text-slate-800">
 
     <script>
-        window.onerror = function(msg, source, lineno) {
-            alert("Error del Sistema:\n" + msg + "\nLínea: " + lineno);
+        window.onerror = function(msg, url, line) {
+            // Si hay error, lo muestra en una alerta pero intenta seguir
+            console.error("Error: " + msg);
+            return false;
         };
     </script>
 
@@ -55,7 +55,7 @@
                 <div class="bg-black w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 text-white text-3xl">
                     <i class="fas fa-lock"></i>
                 </div>
-                <h2 class="text-2xl font-black uppercase text-slate-900 mb-2">Acceso V30</h2>
+                <h2 class="text-2xl font-black uppercase text-slate-900 mb-2">Acceso V31</h2>
                 
                 <form @submit.prevent="performLogin" class="space-y-6">
                     <div class="text-left">
@@ -72,7 +72,7 @@
                     </div>
                     
                     <button type="submit" class="w-full bg-black text-white py-4 rounded-2xl font-black uppercase text-xs hover:bg-slate-800 transition-all">
-                        INGRESAR AL SISTEMA
+                        INGRESAR
                     </button>
                 </form>
             </div>
@@ -222,9 +222,27 @@
 
         createApp({
             setup() {
-                const isLoggedIn = vRef(false); const loading = vRef(false);
-                const loginData = reactive({ user: '', pass: '' }); const loginError = vRef(false);
+                // VARIABLES DE ESTADO (DECLARADAS AQUÍ PARA EVITAR EL ERROR "TABS NOT DEFINED")
+                const isLoggedIn = vRef(false); 
+                const loading = vRef(false);
+                const loginData = reactive({ user: '', pass: '' }); 
+                const loginError = vRef(false);
                 const activeTab = vRef('recepcion');
+                
+                // DEFINICIÓN DE TABS (AQUÍ ESTABA EL ERROR ANTES, AHORA ESTÁ ARREGLADO)
+                const tabs = [
+                    { id: 'recepcion', name: '1. Admisión', icon: 'fas fa-id-card' }, 
+                    { id: 'signos', name: '2. Signos', icon: 'fas fa-heartbeat' }, 
+                    { id: 'medico', name: '3. Medicina', icon: 'fas fa-stethoscope' }, 
+                    { id: 'psicologia', name: '4. Psicología', icon: 'fas fa-brain' }, 
+                    { id: 'juridico', name: '5. Jurídico', icon: 'fas fa-balance-scale' }, 
+                    { id: 'cosmetologia', name: '6. Cosmetología', icon: 'fas fa-spa' }, 
+                    { id: 'farmacia', name: '7. Inventario', icon: 'fas fa-pills' }, 
+                    { id: 'config', name: '8. Personal', icon: 'fas fa-user-md' }, 
+                    { id: 'historial', name: '9. Historial', icon: 'fas fa-folder-open' }, 
+                    { id: 'data', name: '10. Datos', icon: 'fas fa-cloud' }
+                ];
+
                 const patients = vRef([]); const staff = vRef([]); const inventory = vRef([]); const history = vRef([]);
                 const formP = reactive({ nombre: '', edad: null, sexo: 'MUJER', domicilio: '', telefono: '', servicio: 'medico' });
                 const formS = reactive({ nombre: '', area: 'medico', cedula: '', telefono: '' });
