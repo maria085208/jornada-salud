@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JORNADAS DE SALUD -FUERZA GENERACIONAL-MMCF </title>
+    <title>JORNADA DE SALUD FUERZA GENERACIÓNAL - CFMM</title>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.3.4/vue.global.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -34,189 +34,59 @@
             print-color-adjust: exact;
         }
 
-        /* --- CLASES DE UTILIDAD PARA INPUTS --- */
-        .input-std { 
-            width: 100%; 
-            padding: 15px; 
-            border: 2px solid #cbd5e1; 
-            border-radius: 12px; 
-            font-weight: 700; 
-            text-transform: uppercase; 
-            outline: none; 
-            background: #fff; 
-            font-size: 14px; 
-            transition: all 0.3s ease; 
-        }
-        .input-std:focus { 
-            border-color: #334155; 
-            box-shadow: 0 0 0 4px rgba(51, 65, 85, 0.15); 
-        }
+        /* CLASES DE UTILIDAD */
+        .input-std { width: 100%; padding: 15px; border: 2px solid #cbd5e1; border-radius: 12px; font-weight: 700; text-transform: uppercase; outline: none; background: #fff; font-size: 14px; transition: all 0.3s ease; }
+        .input-std:focus { border-color: #334155; box-shadow: 0 0 0 4px rgba(51, 65, 85, 0.15); }
+        .tab-active { background-color: #334155 !important; color: white !important; font-weight: 900; box-shadow: inset 0 -3px 0 #000; }
+        .tab-inactive { color: #64748b; background-color: white; font-weight: 600; }
 
-        /* --- NAVEGACIÓN --- */
-        .tab-active { 
-            background-color: #334155 !important; 
-            color: white !important; 
-            font-weight: 900; 
-            box-shadow: inset 0 -3px 0 #000; 
-        }
-        .tab-inactive { 
-            color: #64748b; 
-            background-color: white; 
-            font-weight: 600; 
-        }
-
-        /* --- LOGIN --- */
-        #login-overlay { 
-            position: fixed; 
-            inset: 0; 
-            background-color: #0f172a; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            z-index: 50; 
-        }
-        .login-box { 
-            background: white; 
-            padding: 4rem; 
-            border-radius: 2.5rem; 
-            width: 90%; 
-            max-width: 450px; 
-            text-align: center; 
-            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.8); 
-        }
+        /* LOGIN */
+        #login-overlay { position: fixed; inset: 0; background-color: #0f172a; display: flex; align-items: center; justify-content: center; z-index: 50; }
+        .login-box { background: white; padding: 4rem; border-radius: 2.5rem; width: 90%; max-width: 450px; text-align: center; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.8); }
 
         /* ========================================== */
-        /* ESTILOS DE RECETA (VISTA PREVIA Y PDF) */
+        /* ESTILOS DE RECETA (VISTA PREVIA) */
         /* ========================================== */
         .receta-maestra { 
-            background: white; 
-            border: 2px solid #000; 
-            padding: 45px; 
-            color: black; 
-            width: 100%; 
-            max-width: 800px; 
-            margin: 0 auto; 
-            position: relative;
+            background: white; border: 2px solid #000; padding: 40px; color: black; 
+            width: 100%; max-width: 800px; margin: 0 auto; position: relative;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
-        
-        .receta-header { 
-            text-align: center; 
-            border-bottom: 4px solid var(--medical-green); 
-            padding-bottom: 20px; 
-            margin-bottom: 20px; 
-        }
-        
-        .vitals-grid-table { 
-            width: 100%; 
-            border-collapse: collapse; 
-            margin-bottom: 20px; 
-            border: 1.5px solid #000; 
-            table-layout: fixed;
-        }
-        .vitals-grid-table th { 
-            background: #f1f5f9; 
-            border: 1px solid #000; 
-            padding: 6px; 
-            font-size: 10px; 
-            font-weight: 900; 
-            text-transform: uppercase; 
-            color: #000; 
-            text-align: center; 
-        }
-        .vitals-grid-table td { 
-            border: 1px solid #000; 
-            padding: 10px; 
-            font-size: 14px; 
-            font-weight: 800; 
-            text-align: center; 
-            color: #000; 
-        }
-        
-        .tabla-meds { 
-            width: 100%; 
-            border-collapse: collapse; 
-            margin: 20px 0; 
-            border: 2px solid #000; 
-        }
-        .tabla-meds th { 
-            background: #f8fafc; 
-            border: 1.5px solid #000; 
-            padding: 10px; 
-            font-size: 11px; 
-            font-weight: 900; 
-            text-align: center; 
-            color: #000; 
-        }
-        .tabla-meds td { 
-            border: 1px solid #000; 
-            padding: 12px; 
-            font-size: 13px; 
-            font-weight: 700; 
-            text-transform: uppercase; 
-            color: #000; 
-        }
-        
-        .receta-footer { 
-            margin-top: 40px; 
-            border-top: 1px solid #ccc; 
-            padding-top: 15px; 
-            display: flex; 
-            justify-content: space-between; 
-            font-size: 9px; 
-            font-weight: 800; 
-            color: #000; 
-            text-align: center; 
-        }
-        
-        .firma-box { 
-            margin-top: 80px; 
-            text-align: center; 
-            width: 300px; 
-            margin-left: auto; 
-            margin-right: auto; 
-            border-top: 2px solid #000; 
-            padding-top: 10px; 
-        }
+        .receta-header { text-align: center; border-bottom: 4px solid var(--medical-green); padding-bottom: 15px; margin-bottom: 15px; }
+        .vitals-grid-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; border: 1.5px solid #000; table-layout: fixed; }
+        .vitals-grid-table th { background: #f1f5f9; border: 1px solid #000; padding: 4px; font-size: 9px; font-weight: 900; text-transform: uppercase; color: #000; text-align: center; }
+        .vitals-grid-table td { border: 1px solid #000; padding: 8px; font-size: 12px; font-weight: 800; text-align: center; color: #000; }
+        .tabla-meds { width: 100%; border-collapse: collapse; margin: 15px 0; border: 2px solid #000; }
+        .tabla-meds th { background: #f8fafc; border: 1.5px solid #000; padding: 8px; font-size: 10px; font-weight: 900; text-align: center; color: #000; }
+        .tabla-meds td { border: 1px solid #000; padding: 10px; font-size: 12px; font-weight: 700; text-transform: uppercase; color: #000; }
+        .receta-footer { margin-top: 30px; border-top: 1px solid #ccc; padding-top: 10px; display: flex; justify-content: space-between; font-size: 8px; font-weight: 800; color: #000; text-align: center; }
+        .firma-box { margin-top: 60px; text-align: center; width: 300px; margin-left: auto; margin-right: auto; border-top: 2px solid #000; padding-top: 10px; }
 
-        /* ========================================== */
-        /* ZONA DE IMPRESIÓN (OCULTA HASTA IMPRIMIR) */
-        /* ========================================== */
+        /* ZONA DE IMPRESIÓN */
         #print-zone { display: none; }
 
         /* --- REGLAS DE ORO PARA IMPRESIÓN (AJUSTE CARTA) --- */
         @media print {
-            /* 1. Ocultar la app interactiva */
             #app-container, #login-overlay, header, nav, .no-print { display: none !important; }
-            body { background: white; height: 100vh; overflow: hidden; }
+            body { background: white; margin: 0; padding: 0; }
             
-            /* 2. Mostrar SOLO la zona de impresión */
             #print-zone { 
                 display: block !important; 
-                position: absolute; 
-                top: 0; left: 0; 
-                width: 100%; 
-                margin: 0; padding: 0;
+                position: absolute; top: 0; left: 0; width: 100%; 
             }
             
-            /* 3. Ajuste perfecto a la hoja */
+            /* Ajuste de escala para que quepa en una sola hoja */
             .receta-maestra {
-                width: 100% !important;
-                max-width: 100% !important;
-                margin: 0 !important;
-                padding: 20px 40px !important; /* Ajuste de márgenes internos para que quepa */
+                width: 100% !important; max-width: 100% !important;
+                margin: 0 !important; padding: 15px 30px !important; /* Menos padding */
+                border: none !important;
                 box-shadow: none !important;
-                border: 2px solid #000 !important;
-                page-break-inside: avoid; /* Evita que se corte en dos hojas */
+                transform: scale(0.95); /* Truco para reducir tamaño general */
+                transform-origin: top center;
             }
 
-            /* 4. Configuración de página CARTA */
-            @page { 
-                size: letter portrait; /* Tamaño Carta Vertical */
-                margin: 0.5cm; /* Margen pequeño para aprovechar la hoja */
-            }
-
-            /* 5. Forzar colores */
+            /* Configuración de página estricta */
+            @page { size: letter; margin: 0.5cm; }
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
         }
 
@@ -245,7 +115,10 @@
                 <div class="container mx-auto px-4 py-3 flex justify-between items-center">
                     <div class="flex items-center gap-3">
                         <div class="bg-slate-900 text-white p-2 rounded-lg"><i class="fas fa-hospital-symbol text-xl"></i></div>
-                        <div><h1 class="text-lg font-black uppercase leading-none">Jornadas Salud</h1><p class="text-[10px] font-bold text-slate-500 uppercase">Fuerza Generacional</p></div>
+                        <div>
+                            <h1 class="text-lg font-black uppercase leading-none">Jornadas de Salud Fuerza Generacional</h1>
+                            <p class="text-[10px] font-bold text-slate-500 uppercase">CFMM</p>
+                        </div>
                     </div>
                     <button @click="logout" class="bg-red-50 text-red-600 border px-4 py-2 rounded-lg font-black text-[10px]">SALIR</button>
                 </div>
@@ -329,17 +202,14 @@
                             
                             <div v-if="['medico', 'cosmetologia'].includes(activeTab)" class="bg-slate-900 p-8 rounded-[2rem] text-center">
                                 <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-4 text-left">
-                                    <div class="md:col-span-2"><select v-model="tempMed" class="input-std"><option :value="null">Medicamento</option><option v-for="m in inventory" :key="m.id" :value="m">{{ m.nombre }} ({{m.stock}})</option></select></div>
+                                    <div class="md:col-span-2"><select v-model="tempMed" class="input-std"><option :value="null">Medicamento</option><option v-for="m in inventory" :key="m.id" :value="m">{{ m.nombre }} ({{m.presentacion}}) - Stock: {{m.stock}}</option></select></div>
                                     <div class="md:col-span-2"><input v-model="tempDosis" placeholder="Dosis" class="input-std"></div>
                                     <button @click="addToRecipe" class="bg-white text-slate-900 rounded-xl font-black text-xs">AGREGAR</button>
                                 </div>
-                                <div class="space-y-2"><div v-for="(m, i) in recipe" :key="i" class="bg-white/10 p-3 rounded-lg text-white text-xs flex justify-between"><span>{{ m.nombre }} - {{ m.indicacion }}</span><i @click="recipe.splice(i,1)" class="fas fa-times cursor-pointer"></i></div></div>
+                                <div class="space-y-2"><div v-for="(m, i) in recipe" :key="i" class="bg-white/10 p-3 rounded-lg text-white text-xs flex justify-between"><span>{{ m.nombre }} ({{m.presentacion}}) - {{ m.indicacion }}</span><i @click="recipe.splice(i,1)" class="fas fa-times cursor-pointer"></i></div></div>
                             </div>
                         </div>
-                        
-                        <button @click="printRecipe(activeTab)" class="w-full bg-slate-900 text-white py-6 rounded-[2rem] font-black uppercase text-sm mt-8 shadow-xl border-b-8 border-slate-950 active:scale-95 transition-all">
-                            GUARDAR E IMPRIMIR RECETA
-                        </button>
+                        <button @click="printRecipe(activeTab)" class="w-full bg-slate-900 text-white py-6 rounded-[2rem] font-black uppercase text-sm mt-8 shadow-xl border-b-8 border-slate-950 active:scale-95 transition-all">GUARDAR E IMPRIMIR RECETA</button>
                     </div>
                 </section>
 
@@ -347,7 +217,35 @@
 
                 <section v-if="activeTab === 'historial'" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"><div v-for="h in history" :key="h.id" class="bg-white p-8 rounded-[2.5rem] border shadow-lg flex justify-between items-center"><div><p class="font-black text-lg">{{h.pacienteNombre}}</p><span class="text-[10px] bg-slate-100 px-2 py-1 rounded">{{h.fecha}}</span></div><div class="flex gap-2"><button @click="reprintHistory(h)" class="bg-slate-900 text-white w-10 h-10 rounded-full flex items-center justify-center shadow-lg"><i class="fas fa-print"></i></button><button @click="deleteHistory(h.id)" class="text-red-400 w-10 h-10 flex items-center justify-center"><i class="fas fa-trash"></i></button></div></div></section>
 
-                <section v-if="activeTab === 'farmacia'" class="grid grid-cols-1 lg:grid-cols-3 gap-8"><div class="bg-white p-10 rounded-[3rem] border shadow-lg h-fit"><h3 class="font-black text-sm uppercase mb-6">Stock</h3><div class="space-y-4"><input v-model="formI.nombre" placeholder="Nombre" class="input-std"><input v-model.number="formI.stock" placeholder="Cantidad" class="input-std"><button @click="addInventory" class="w-full bg-slate-900 text-white py-4 rounded-xl font-black text-xs">Guardar</button></div></div><div class="lg:col-span-2 bg-white rounded-[3rem] border h-[600px] overflow-hidden flex flex-col"><div class="bg-slate-900 p-6 text-white font-black text-xs">Inventario</div><div class="overflow-y-auto flex-1 p-6 space-y-2"><div v-for="m in inventory" :key="m.id" class="flex justify-between items-center p-4 border rounded-xl"><div><p class="font-bold text-sm">{{m.nombre}}</p><p class="text-[10px] text-blue-600">{{m.stock}} pzas</p></div><button @click="deleteInventory(m.id)" class="text-red-300"><i class="fas fa-trash"></i></button></div></div></div></section>
+                <section v-if="activeTab === 'farmacia'" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div class="bg-white p-10 rounded-[3rem] border shadow-lg h-fit">
+                        <h3 class="font-black text-sm uppercase mb-6">Nuevo Insumo</h3>
+                        <div class="space-y-4">
+                            <input v-model="formI.nombre" placeholder="Nombre Comercial" class="input-std">
+                            <input v-model="formI.presentacion" placeholder="Presentación (Ej. Tabletas)" class="input-std">
+                            <input v-model.number="formI.stock" type="number" placeholder="Cantidad" class="input-std">
+                            <label class="text-[10px] font-black uppercase ml-2">Fecha Caducidad</label>
+                            <input v-model="formI.caducidad" type="date" class="input-std">
+                            <button @click="addInventory" class="w-full bg-slate-900 text-white py-4 rounded-xl font-black text-xs shadow-md">Guardar</button>
+                        </div>
+                    </div>
+                    <div class="lg:col-span-2 bg-white rounded-[3rem] border h-[600px] overflow-hidden flex flex-col">
+                        <div class="bg-slate-900 p-6 text-white font-black text-xs">Inventario General</div>
+                        <div class="overflow-y-auto flex-1 p-6 space-y-3 no-scrollbar">
+                            <div v-for="m in inventory" :key="m.id" 
+                                :class="['flex justify-between items-center p-4 border rounded-xl', m.stock === 0 ? 'bg-red-50 border-red-200' : m.stock < 10 ? 'bg-orange-50 border-orange-200' : 'bg-green-50 border-green-200']">
+                                <div>
+                                    <p class="font-black text-sm uppercase">{{m.nombre}} <span class="text-[10px] text-slate-500">({{m.presentacion}})</span></p>
+                                    <p :class="['text-[10px] font-bold mt-1', m.stock === 0 ? 'text-red-600' : m.stock < 10 ? 'text-orange-600' : 'text-green-600']">
+                                        STOCK: {{m.stock}} | CAD: {{m.caducidad}}
+                                    </p>
+                                </div>
+                                <button @click="deleteInventory(m.id)" class="text-red-300 hover:text-red-500"><i class="fas fa-trash-alt"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
                 <section v-if="activeTab === 'data'" class="max-w-2xl mx-auto text-center"><div class="bg-white p-16 rounded-[4rem] border shadow-xl"><h3 class="font-black text-2xl mb-8">Base de Datos</h3><div class="space-y-6"><button @click="exportData" class="w-full bg-blue-600 text-white py-6 rounded-2xl font-black uppercase text-xs shadow-lg">DESCARGAR BACKUP JSON</button><button @click="nukeDatabase" class="w-full bg-white text-red-600 border border-red-200 py-6 rounded-2xl font-black uppercase text-xs">BORRAR TODO</button><input type="file" @change="importData" class="block w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-slate-50 file:text-slate-700 hover:file:bg-slate-100"/></div></div></section>
 
             </main>
@@ -356,16 +254,23 @@
         <div id="print-zone" v-if="printData">
             <div class="receta-maestra">
                 <div class="receta-header">
-                    <h1 style="font-size: 32px; font-weight: 900; color: #2d5a27; text-transform: uppercase; margin: 0;">{{ printData.medicoNombre }}</h1>
-                    <p style="font-size: 18px; font-weight: bold; margin: 5px 0;">{{ printData.tipoServicio }}</p>
-                    <p style="font-size: 12px; font-weight: bold;">CÉDULA: {{ printData.medicoCedula }}</p>
-                    <p style="font-size: 10px; margin-top: 5px;">{{ printData.institution || 'PUEBLA' }}</p>
+                    <h1 style="font-size: 28px; font-weight: 900; color: #2d5a27; text-transform: uppercase; margin: 0;">JORNADAS DE SALUD FUERZA GENERACIONAL</h1>
+                    <p style="font-size: 14px; font-weight: 900; margin-top: 5px; letter-spacing: 2px;">CFMM</p>
                 </div>
-                <div style="text-align: right; font-size: 13px; margin-bottom: 25px;"><b>FECHA:</b> {{ printData.fecha }}</div>
-                <div style="border: 2px solid #2d5a27; padding: 20px; border-radius: 12px; margin-bottom: 30px;">
-                    <p style="font-size: 14px; margin-bottom: 10px; font-weight: 900;">BENEFICIARIO: {{ printData.pacienteNombre }}</p>
-                    <p style="font-size: 13px;">EDAD: {{ printData.edad }} AÑOS</p>
-                    <p v-if="printData.tipoServicio !== 'JURIDICO'" style="font-size: 13px; margin-top: 10px;">ALERGIAS: <span style="color: #d32f2f;">{{ printData.alergias || 'NEGADAS' }}</span></p>
+                
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <h2 style="font-size: 24px; font-weight: 800;">{{ printData.medicoNombre }}</h2>
+                    <p style="font-size: 14px; font-weight: bold; margin: 5px 0;">{{ printData.tipoServicio }}</p>
+                    <p style="font-size: 11px;">CÉDULA: {{ printData.medicoCedula }}</p>
+                    <p style="font-size: 10px;">{{ printData.institution || 'PUEBLA' }}</p>
+                </div>
+
+                <div style="text-align: right; font-size: 12px; margin-bottom: 20px;"><b>FECHA:</b> {{ printData.fecha }}</div>
+                
+                <div style="border: 2px solid #2d5a27; padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+                    <p style="font-size: 12px; margin-bottom: 5px; font-weight: 900;">PACIENTE: {{ printData.pacienteNombre }}</p>
+                    <p style="font-size: 11px;">EDAD: {{ printData.edad }} AÑOS</p>
+                    <p v-if="printData.tipoServicio !== 'JURIDICO'" style="font-size: 11px; margin-top: 5px;">ALERGIAS: <span style="color: #d32f2f;">{{ printData.alergias || 'NEGADAS' }}</span></p>
                 </div>
 
                 <table v-if="printData.tipoServicio !== 'JURIDICO'" class="vitals-grid-table">
@@ -373,17 +278,17 @@
                     <tbody><tr><td>{{ printData.talla }}</td><td>{{ printData.peso }}</td><td>{{ printData.imc }}</td><td>{{ printData.ta }}</td><td>{{ printData.fc }}</td><td>{{ printData.temp }}°</td></tr></tbody>
                 </table>
 
-                <div style="min-height: 500px; text-transform: uppercase;">
-                    <h3 style="font-size: 15px; font-weight: 900; background: #2d5a27; color: white; padding: 5px 15px; display: inline-block; margin-bottom: 15px;">DIAGNÓSTICO:</h3>
-                    <p style="font-size: 15px; margin-bottom: 45px; white-space: pre-line; border-bottom: 1px dashed #ccc; padding-bottom: 20px;">{{ printData.diagnostico }}</p>
-                    <h3 style="font-size: 15px; font-weight: 900; background: #2d5a27; color: white; padding: 5px 15px; display: inline-block; margin-bottom: 15px;">TRATAMIENTO:</h3>
-                    <table v-if="printData.medicamentos && printData.medicamentos.length" class="tabla-meds"><thead><tr><th>MEDICAMENTO</th><th>DOSIS</th></tr></thead><tbody><tr v-for="m in printData.medicamentos"><td>{{ m.nombre }}</td><td>{{ m.indicacion }}</td></tr></tbody></table>
-                    <p style="font-size: 15px; white-space: pre-line;">{{ printData.tratamiento }}</p>
+                <div style="min-height: 400px; text-transform: uppercase;">
+                    <h3 style="font-size: 12px; font-weight: 900; background: #2d5a27; color: white; padding: 4px 10px; display: inline-block; margin-bottom: 10px;">DIAGNÓSTICO:</h3>
+                    <p style="font-size: 12px; margin-bottom: 30px; white-space: pre-line; border-bottom: 1px dashed #ccc; padding-bottom: 10px;">{{ printData.diagnostico }}</p>
+                    <h3 style="font-size: 12px; font-weight: 900; background: #2d5a27; color: white; padding: 4px 10px; display: inline-block; margin-bottom: 10px;">TRATAMIENTO:</h3>
+                    <table v-if="printData.medicamentos && printData.medicamentos.length" class="tabla-meds"><thead><tr><th>MEDICAMENTO</th><th>DOSIS</th></tr></thead><tbody><tr v-for="m in printData.medicamentos"><td>{{ m.nombre }} ({{m.presentacion}})</td><td>{{ m.indicacion }}</td></tr></tbody></table>
+                    <p style="font-size: 12px; white-space: pre-line;">{{ printData.tratamiento }}</p>
                 </div>
 
                 <div class="firma-box">
-                    <p style="font-size: 20px; font-weight: 900;">{{ printData.medicoNombre }}</p>
-                    <p style="font-size: 12px; font-weight: bold; color: #475569;">Firma y Sello</p>
+                    <p style="font-size: 16px; font-weight: 900;">{{ printData.medicoNombre }}</p>
+                    <p style="font-size: 10px; font-weight: bold; color: #475569;">Firma y Sello</p>
                 </div>
                 <div class="receta-footer">
                     <div style="width: 30%"><b>TEL:</b> 2212683055</div>
@@ -426,7 +331,7 @@
                 const printData = vRef(null);
                 const formP = reactive({ nombre: '', edad: null, sexo: 'MUJER', domicilio: '', telefono: '', servicio: 'medico' });
                 const formS = reactive({ nombre: '', area: 'medico', cedula: '', specialty: '', institution: '' });
-                const formI = reactive({ nombre: '', stock: null });
+                const formI = reactive({ nombre: '', stock: null, caducidad: '', presentacion: '' });
                 const selectedPatientId = vRef(null);
                 const currP = reactive({ enfermeria: null, medico: null, juridico: null, psicologia: null, cosmetologia: null });
                 const vitalsForm = reactive({ peso: null, talla: null, ta: '', temp: '', fc: '', glucosa: '' });
@@ -448,9 +353,8 @@
                 const loadPatientForVitals = () => { const p = patients.value.find(x => x.id === selectedPatientId.value); if(p) { currP.enfermeria=p; Object.keys(vitalsForm).forEach(k=>vitalsForm[k]=p.vitals?p.vitals[k]:''); } };
                 const saveVitals = () => { if(currP.enfermeria) { update(ref(db,`patients/${currP.enfermeria.id}`), {vitals:{...vitalsForm}}).then(()=>{ alert('GUARDADO'); currP.enfermeria=null; selectedPatientId.value=null; }); } };
                 const loadSelectedPatient = (area) => { const p = patients.value.find(x=>x.id===selectedPatientId.value); if(p) { currP[area]=p; if(p.vitals) Object.assign(consGen, p.vitals); else Object.assign(consGen, {peso:null, talla:null, ta:'', temp:'', fc:'', glucosa:''}); } };
-                const addToRecipe = () => { if(tempMed.value) { recipe.value.push({id:tempMed.value.id, nombre:tempMed.value.nombre, indicacion:tempDosis.value}); tempMed.value=null; tempDosis.value=''; } };
+                const addToRecipe = () => { if(tempMed.value) { recipe.value.push({id:tempMed.value.id, nombre:tempMed.value.nombre, presentacion:tempMed.value.presentacion, indicacion:tempDosis.value}); tempMed.value=null; tempDosis.value=''; } };
 
-                // --- FUNCIÓN DE IMPRESIÓN ROBUSTA Y ASÍNCRONA ---
                 const printRecipe = async (area) => {
                     if(!selStaffId[area]) return alert('Seleccione Especialista');
                     
@@ -463,16 +367,13 @@
                         fecha: new Date().toLocaleDateString(), pacienteNombre: p.nombre, medicamentos: [...recipe.value]
                     };
                     
-                    // 1. ESPERAR A QUE FIREBASE CONFIRME GUARDADO
                     await push(ref(db,'history'), d);
                     
-                    // 2. ACTUALIZAR INVENTARIO Y BORRAR PACIENTE
                     if(area!=='juridico') recipe.value.forEach(r => { const it = inventory.value.find(x=>x.id===r.id); if(it) set(ref(db,`inventory/${it.id}/stock`), it.stock-1); });
                     remove(ref(db, `patients/${p.id}`)); 
                     
-                    // 3. PREPARAR VISTA DE IMPRESIÓN Y EJECUTAR
                     printData.value = d;
-                    alert("GUARDADO EN HISTORIAL. IMPRIMIENDO...");
+                    alert("GUARDADO. IMPRIMIENDO...");
                     
                     nextTick(() => { 
                         setTimeout(() => { window.print(); }, 500); 
@@ -490,7 +391,7 @@
 
                 const addStaff = () => { push(ref(db,'staff'), {...formS}); Object.assign(formS, {nombre:'', specialty:'', institution:'', cedula:''}); alert('REGISTRADO'); };
                 const deleteStaff = (id) => remove(ref(db, `staff/${id}`));
-                const addInventory = () => { push(ref(db,'inventory'), {...formI}); Object.assign(formI, {nombre:'', stock:null}); alert('GUARDADO'); };
+                const addInventory = () => { push(ref(db,'inventory'), {...formI}); Object.assign(formI, {nombre:'', stock:null, caducidad:'', presentacion:''}); alert('GUARDADO'); };
                 const deleteInventory = (id) => remove(ref(db, `inventory/${id}`));
                 const deleteHistory = (id) => remove(ref(db, `history/${id}`));
                 const nukeDatabase = () => { if(confirm('¿BORRAR TODO?')) { ['patients','staff','inventory','history'].forEach(k=>remove(ref(db,k))); } };
