@@ -20,17 +20,14 @@
         .app-content { background-color: rgba(255, 255, 255, 0.95); min-height: 100vh; }
         .login-overlay {
             background-color: rgba(15, 23, 42, 0.95);
-            backdrop-filter: blur(5px);
             height: 100vh;
             display: flex; align-items: center; justify-content: center;
+            position: fixed; top: 0; left: 0; width: 100%; z-index: 50;
         }
         [v-cloak] { display: none; }
         .tab-active { border-bottom: 4px solid #0f172a; color: #0f172a; background: rgba(241, 245, 249, 0.9); font-weight: 900; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .card-shadow { box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.2); }
-        /* Animaciones */
-        .fade-enter-active, .fade-leave-active { transition: opacity 0.3s ease; }
-        .fade-enter-from, .fade-leave-to { opacity: 0; }
     </style>
 </head>
 <body class="font-sans text-slate-800">
@@ -76,7 +73,7 @@
 
             <main class="container mx-auto px-4 py-6 pb-24">
                 
-                <section v-if="activeTab === 'recepcion'" class="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-fade-in">
+                <section v-if="activeTab === 'recepcion'" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <div class="bg-white p-6 rounded-[2rem] card-shadow border border-slate-100">
                         <h2 class="font-black uppercase text-xs mb-4 text-slate-400 tracking-widest">1. Nuevo Paciente</h2>
                         <form @submit.prevent="registerPatient" class="space-y-3">
@@ -111,7 +108,7 @@
                     </div>
                 </section>
 
-                <section v-if="activeTab === 'signos'" class="max-w-3xl mx-auto animate-fade-in">
+                <section v-if="activeTab === 'signos'" class="max-w-3xl mx-auto">
                     <div class="bg-white p-8 rounded-[2.5rem] card-shadow border border-slate-100">
                         <h2 class="text-xl font-black uppercase text-slate-800 mb-6">2. Signos Vitales</h2>
                         <div class="mb-6">
@@ -136,7 +133,7 @@
                     </div>
                 </section>
 
-                <section v-if="activeTab === 'juridico'" class="max-w-4xl mx-auto space-y-6 animate-fade-in">
+                <section v-if="activeTab === 'juridico'" class="max-w-4xl mx-auto space-y-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div class="bg-white p-5 rounded-2xl card-shadow border border-slate-100">
                             <label class="text-[10px] font-black uppercase text-slate-400 block mb-2 tracking-widest">1. Beneficiario</label>
@@ -160,24 +157,34 @@
                             <span class="bg-slate-100 px-3 py-1 rounded text-xs font-bold uppercase">{{ currP[activeTab].folio }}</span>
                         </div>
 
-                        <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 mb-6 text-xs uppercase font-bold text-slate-700 grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div class="col-span-full border-b pb-2 mb-2 text-slate-400 text-[10px] tracking-widest">Datos del Beneficiario</div>
-                            <div><span class="text-slate-400 block text-[9px]">Nombre:</span> {{ currP[activeTab].nombre }}</div>
-                            <div><span class="text-slate-400 block text-[9px]">Edad/Sexo:</span> {{ currP[activeTab].edad }} Años / {{ currP[activeTab].sexo }}</div>
-                            <div><span class="text-slate-400 block text-[9px]">Teléfono:</span> {{ currP[activeTab].telefono }}</div>
-                            <div><span class="text-slate-400 block text-[9px]">Domicilio:</span> {{ currP[activeTab].domicilio }}</div>
+                        <div class="bg-slate-50 p-6 rounded-3xl border border-slate-200 mb-8">
+                            <h3 class="font-black text-slate-400 text-[10px] uppercase tracking-widest mb-3 border-b border-slate-200 pb-2">Datos Generales</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-bold text-slate-800 uppercase">
+                                <div><span class="text-slate-400 block text-[9px] mb-1">Nombre Completo:</span> {{ currP[activeTab].nombre }}</div>
+                                <div><span class="text-slate-400 block text-[9px] mb-1">Edad/Sexo:</span> {{ currP[activeTab].edad }} Años / {{ currP[activeTab].sexo }}</div>
+                                <div><span class="text-slate-400 block text-[9px] mb-1">Teléfono:</span> {{ currP[activeTab].telefono }}</div>
+                                <div class="col-span-full"><span class="text-slate-400 block text-[9px] mb-1">Domicilio:</span> {{ currP[activeTab].domicilio }}</div>
+                            </div>
                         </div>
 
-                        <div class="space-y-4">
-                            <div><label class="text-[10px] font-black uppercase text-slate-400 block mb-1">Descripción del Caso</label><textarea v-model="consGen.diagnostico" class="w-full p-4 bg-white border rounded-2xl h-32 text-xs font-bold uppercase" placeholder="Describa el problema legal..."></textarea></div>
-                            <div><label class="text-[10px] font-black uppercase text-slate-400 block mb-1">Asesoría / Pasos a Seguir</label><textarea v-model="consGen.tratamiento" class="w-full p-4 bg-white border rounded-2xl h-32 text-xs font-bold uppercase" placeholder="Recomendaciones..."></textarea></div>
+                        <div class="space-y-6">
+                            <div>
+                                <label class="text-[11px] font-black text-slate-800 uppercase tracking-widest mb-2 block">Descripción del Caso</label>
+                                <textarea v-model="consGen.diagnostico" class="w-full p-4 bg-white border-2 border-slate-100 rounded-2xl h-40 text-xs font-bold uppercase outline-none focus:border-slate-900 transition-colors" placeholder="Describa la situación..."></textarea>
+                            </div>
+                            <div>
+                                <label class="text-[11px] font-black text-slate-800 uppercase tracking-widest mb-2 block">Observaciones y Pasos a Seguir</label>
+                                <textarea v-model="consGen.tratamiento" class="w-full p-4 bg-white border-2 border-slate-100 rounded-2xl h-40 text-xs font-bold uppercase outline-none focus:border-slate-900 transition-colors" placeholder="Asesoría..."></textarea>
+                            </div>
                         </div>
 
-                        <button @click="generatePDF(activeTab)" class="w-full bg-slate-900 text-white py-5 rounded-2xl font-black uppercase mt-8 hover:bg-black transition-all"><i class="fas fa-file-pdf mr-2"></i> Generar Expediente PDF</button>
+                        <button @click="generatePDF(activeTab)" class="w-full bg-slate-900 text-white py-6 rounded-2xl font-black uppercase mt-8 shadow-xl hover:bg-black transition-all">
+                            <i class="fas fa-file-pdf mr-3"></i> Guardar y Generar PDF
+                        </button>
                     </div>
                 </section>
 
-                <section v-if="['medico', 'psicologia', 'cosmetologia'].includes(activeTab)" class="max-w-5xl mx-auto space-y-6 animate-fade-in">
+                <section v-if="['medico', 'psicologia', 'cosmetologia'].includes(activeTab)" class="max-w-5xl mx-auto space-y-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div class="bg-white p-5 rounded-2xl card-shadow border border-slate-100"><label class="text-[10px] font-black uppercase text-slate-400 block mb-2 tracking-widest">Paciente</label><select v-model="selectedPatientId" @change="loadSelectedPatient(activeTab)" class="w-full p-4 bg-slate-50 border rounded-xl font-black text-xs uppercase outline-none"><option :value="null">-- SELECCIONAR --</option><option v-for="p in waitingFor(activeTab)" :key="p.id" :value="p.id">{{ p.nombre }}</option></select></div>
                         <div class="bg-white p-5 rounded-2xl card-shadow border border-slate-100"><label class="text-[10px] font-black uppercase text-slate-400 block mb-2 tracking-widest">Especialista</label><select v-model="selStaffId[activeTab]" class="w-full p-4 bg-slate-50 border rounded-xl font-black text-xs uppercase outline-none"><option :value="null">-- SELECCIONAR --</option><option v-for="s in staffByArea(activeTab)" :key="s.id" :value="s.id">{{ s.nombre }}</option></select></div>
@@ -187,4 +194,4 @@
                         <div class="grid grid-cols-3 md:grid-cols-7 gap-3 mb-8 bg-slate-50 p-4 rounded-3xl border border-slate-200"><div><label class="text-[8px] font-black text-slate-400 uppercase block">Peso</label><input v-model.number="consGen.peso" class="w-full bg-transparent font-black text-sm outline-none"></div><div><label class="text-[8px] font-black text-slate-400 uppercase block">Talla</label><input v-model.number="consGen.talla" class="w-full bg-transparent font-black text-sm outline-none"></div><div><label class="text-[8px] font-black text-slate-400 uppercase block">T/A</label><input v-model="consGen.ta" class="w-full bg-transparent font-black text-sm outline-none"></div><div><label class="text-[8px] font-black text-slate-400 uppercase block">Temp</label><input v-model="consGen.temp" class="w-full bg-transparent font-black text-sm outline-none"></div><div><label class="text-[8px] font-black text-slate-400 uppercase block">F.C.</label><input v-model="consGen.fc" class="w-full bg-transparent font-black text-sm outline-none"></div><div><label class="text-[8px] font-black text-slate-400 uppercase block">Glucosa</label><input v-model="consGen.glucosa" class="w-full bg-transparent font-black text-sm outline-none"></div><div class="bg-white p-1 rounded text-center border"><span class="text-[8px] font-bold text-slate-400 block">IMC</span><span class="text-sm font-black">{{ calculateIMC }}</span></div></div>
                         <div class="space-y-6">
                             <div><label class="text-[11px] font-black text-slate-800 uppercase tracking-widest mb-2 block">Alergias</label><input v-model="consGen.alergias" class="w-full p-3 bg-slate-50 border rounded-xl text-xs font-bold uppercase outline-none"></div>
-                            <div v-if="activeTab === 'medico'" class="bg-red-50 p-6 rounded-3xl border border-red-100"><label class="text-[11px] font-black text-red-800 uppercase tracking-widest mb-3 block flex items-center gap-2"><i class="fas fa-procedures"></i> Antecedentes Quirúrgicos</label><div class="flex items-center gap-4 mb-4"><p class="text-xs font-bold text-slate-600">¿Ha tenido operaciones?</p><select v-model="consGen.cirugiasFlag" class="p-2 border rounded-xl font-black text-xs uppercase outline-none bg-white"><option value="NO">NO</option><option value="SI">SÍ</option></select></div><div v-if="consGen.cirugiasFlag === 'SI'"><textarea v-model="consGen.cirugiasDetalles" class="w-full p-4 bg-white border rounded-xl t
+                            <div v-if="activeTab === 'medico'" class="bg-red-50 p-6 rounded-3xl border border-red-100"><label class="text-[11px] font-black text-red-800 uppercase tracking-widest mb-3 block flex items-center gap-2"><i class="fas fa-procedures"></i> Antecedentes Quirúrgicos</label><div class="flex items-center gap-4 mb-4"><p class="tex
