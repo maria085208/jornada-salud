@@ -3,49 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema Médico Integral V28</title>
+    <title>Sistema V29 - Arranque Rápido</title>
     
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     
     <style>
-        /* ESTILOS GLOBALES */
         body {
             background-image: url('./logo-fuerza.png'); 
-            background-size: cover; background-position: center; background-attachment: fixed;
-            margin: 0; font-family: 'Inter', sans-serif;
+            background-size: cover; background-position: center; background-attachment: fixed; margin: 0;
+            font-family: system-ui, -apple-system, sans-serif;
         }
-
-        /* PANTALLA DE LOGIN (SUPERPOSICIÓN TOTAL) */
+        
+        /* LOGIN: Siempre visible por defecto para evitar pantallas blancas */
         .login-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: #0f172a; /* Azul oscuro profesional */
+            background-color: #0f172a; 
             display: flex; align-items: center; justify-content: center;
             z-index: 10000;
         }
 
-        /* CONTENEDOR APP */
-        .app-content { 
-            background-color: rgba(255, 255, 255, 0.97); 
-            min-height: 100vh; 
-            padding-bottom: 80px; 
-        }
-
-        /* TABS DE NAVEGACIÓN */
-        .tab-active { 
-            background-color: #0f172a; 
-            color: white; 
-            border-bottom: 4px solid #000;
-        }
-
-        /* UTILIDADES */
-        [v-cloak] { display: none; }
-        #pdf-template { display: none; } /* Oculto visualmente, se usa para generar el PDF */
+        .app-content { background-color: rgba(255, 255, 255, 0.97); min-height: 100vh; padding-bottom: 80px; }
+        .tab-active { background-color: #0f172a; color: white; border-bottom: 4px solid #000; }
         
-        /* INPUTS ROBUSTOS */
+        /* Ocultar solo el PDF, no la app entera */
+        #pdf-template { display: none; }
+        
+        /* Inputs sólidos */
         .input-std {
             width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 12px;
             font-weight: bold; text-transform: uppercase; outline: none; transition: 0.3s;
@@ -55,15 +41,15 @@
 </head>
 <body class="text-slate-800">
 
-    <div id="app" v-cloak>
+    <div id="app">
 
         <div v-if="!isLoggedIn" class="login-overlay">
             <div class="bg-white p-10 rounded-[2rem] shadow-2xl w-96 text-center">
-                <div class="bg-black w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg text-white text-3xl">
-                    <i class="fas fa-user-lock"></i>
+                <div class="bg-black w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 text-white text-3xl">
+                    <i class="fas fa-lock"></i>
                 </div>
-                <h2 class="text-2xl font-black uppercase text-slate-900 mb-2">Acceso V28</h2>
-                <p class="text-[10px] text-slate-400 uppercase tracking-widest mb-8 font-bold">Sistema Seguro</p>
+                <h2 class="text-2xl font-black uppercase text-slate-900 mb-2">Acceso V29</h2>
+                <p class="text-[10px] text-slate-400 uppercase tracking-widest mb-8 font-bold">Arranque Directo</p>
                 
                 <form @submit.prevent="performLogin" class="space-y-6">
                     <div class="text-left">
@@ -75,161 +61,78 @@
                         <input v-model="loginData.pass" type="password" class="input-std text-center" placeholder="CONTRASEÑA">
                     </div>
                     
-                    <div v-if="loginError" class="bg-red-50 text-red-600 p-3 rounded-xl flex items-center justify-center gap-2 border border-red-100">
-                        <i class="fas fa-times-circle"></i> <span class="text-[10px] font-black">DATOS INCORRECTOS</span>
+                    <div v-if="loginError" class="bg-red-50 text-red-600 p-3 rounded-xl text-center border border-red-100">
+                        <span class="text-[10px] font-black">DATOS INCORRECTOS</span>
                     </div>
                     
-                    <button type="submit" class="w-full bg-black text-white py-4 rounded-2xl font-black uppercase text-xs hover:bg-slate-800 transition-all shadow-xl">
-                        Ingresar
+                    <button type="submit" class="w-full bg-black text-white py-4 rounded-2xl font-black uppercase text-xs hover:bg-slate-800 transition-all">
+                        INGRESAR
                     </button>
                 </form>
             </div>
         </div>
 
         <div v-else class="app-content">
-            
             <header class="bg-white border-b sticky top-0 z-50 shadow-sm">
                 <div class="px-5 py-4 flex justify-between items-center bg-white">
                     <div class="flex items-center gap-3">
                         <div class="bg-black p-2 rounded-xl shadow text-white"><i class="fas fa-hospital-symbol text-lg"></i></div>
-                        <div>
-                            <h1 class="text-lg font-black uppercase tracking-tighter leading-none text-slate-900">Jornadas de Salud</h1>
-                            <p class="text-[9px] text-slate-500 font-bold uppercase tracking-[0.2em]">Fuerza Generacional</p>
-                        </div>
+                        <div><h1 class="text-lg font-black uppercase leading-none text-slate-900">Jornadas de Salud</h1><p class="text-[9px] text-slate-500 font-bold tracking-[0.2em]">Fuerza Generacional</p></div>
                     </div>
-                    <button @click="logout" class="text-[10px] font-black text-red-600 border border-red-200 px-4 py-2 rounded-xl hover:bg-red-50 uppercase flex items-center gap-2">
-                        Salir <i class="fas fa-sign-out-alt"></i>
-                    </button>
+                    <button @click="logout" class="text-[10px] font-black text-red-600 border border-red-200 px-4 py-2 rounded-xl hover:bg-red-50 uppercase">SALIR</button>
                 </div>
-                
                 <nav class="flex overflow-x-auto bg-white border-t no-scrollbar">
-                    <button v-for="t in tabs" :key="t.id" @click="changeTab(t.id)" 
-                        :class="['px-6 py-4 text-[10px] font-black uppercase whitespace-nowrap transition-all border-r border-slate-50', activeTab === t.id ? 'tab-active' : 'text-slate-400 hover:text-slate-600']">
-                        <i :class="[t.icon, 'mr-2 text-sm']"></i> {{ t.name }}
-                    </button>
+                    <button v-for="t in tabs" :key="t.id" @click="changeTab(t.id)" :class="['px-6 py-4 text-[10px] font-black uppercase whitespace-nowrap border-r border-slate-50', activeTab === t.id ? 'tab-active' : 'text-slate-400']">{{ t.name }}</button>
                 </nav>
             </header>
 
             <main class="container mx-auto px-4 py-8">
-                
-                <section v-if="activeTab === 'recepcion'" class="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-fade-in">
+                <section v-if="activeTab === 'recepcion'" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     <div class="bg-white p-8 rounded-[2rem] shadow-lg border border-slate-100">
-                        <h2 class="font-black uppercase text-xs mb-6 text-slate-400 tracking-widest border-b pb-2">Nuevo Ingreso</h2>
+                        <h2 class="font-black uppercase text-xs mb-6 text-slate-400 tracking-widest border-b pb-2">Registro</h2>
                         <form @submit.prevent="registerPatient" class="space-y-4">
-                            <input v-model="formP.nombre" placeholder="Nombre Completo" required class="input-std">
-                            <div class="grid grid-cols-2 gap-4">
-                                <input v-model.number="formP.edad" type="number" placeholder="Edad" required class="input-std">
-                                <select v-model="formP.sexo" class="input-std"><option value="HOMBRE">HOMBRE</option><option value="MUJER">MUJER</option></select>
-                            </div>
-                            <input v-model="formP.domicilio" placeholder="Domicilio" required class="input-std">
-                            <div>
-                                <input v-model="formP.telefono" type="tel" maxlength="10" placeholder="Teléfono (10 dígitos)" required class="input-std">
-                                <p v-if="formP.telefono.length > 0 && formP.telefono.length !== 10" class="text-[9px] text-red-500 font-bold mt-1 ml-2">⚠️ Faltan dígitos</p>
-                            </div>
-                            <select v-model="formP.servicio" class="input-std bg-black text-white border-black">
-                                <option value="medico">MÉDICO GENERAL</option>
-                                <option value="psicologia">PSICOLOGÍA</option>
-                                <option value="juridico">JURÍDICO</option>
-                                <option value="cosmetologia">COSMETOLOGÍA</option>
-                            </select>
-                            <button type="submit" :disabled="formP.telefono.length !== 10" :class="['w-full py-4 rounded-xl font-black uppercase text-xs shadow-lg transition-all', formP.telefono.length === 10 ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-slate-200 text-slate-400 cursor-not-allowed']">Registrar</button>
+                            <input v-model="formP.nombre" placeholder="Nombre Completo" class="input-std">
+                            <div class="grid grid-cols-2 gap-4"><input v-model.number="formP.edad" type="number" placeholder="Edad" class="input-std"><select v-model="formP.sexo" class="input-std"><option>HOMBRE</option><option>MUJER</option></select></div>
+                            <input v-model="formP.domicilio" placeholder="Domicilio" class="input-std">
+                            <div><input v-model="formP.telefono" type="tel" maxlength="10" placeholder="Teléfono" class="input-std"><p v-if="formP.telefono.length > 0 && formP.telefono.length !== 10" class="text-[9px] text-red-500 font-bold mt-1 ml-2">⚠️ Faltan dígitos</p></div>
+                            <select v-model="formP.servicio" class="input-std bg-black text-white border-black"><option value="medico">MÉDICO GENERAL</option><option value="psicologia">PSICOLOGÍA</option><option value="juridico">JURÍDICO</option><option value="cosmetologia">COSMETOLOGÍA</option></select>
+                            <button type="submit" :disabled="formP.telefono.length !== 10" :class="['w-full py-4 rounded-xl font-black uppercase text-xs shadow-lg', formP.telefono.length === 10 ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-400']">Registrar</button>
                         </form>
                     </div>
-                    
                     <div class="lg:col-span-2 bg-white rounded-[2rem] shadow-lg border border-slate-100 overflow-hidden flex flex-col h-[500px]">
-                        <div class="bg-slate-50 p-6 border-b flex justify-between items-center">
-                            <h3 class="font-black uppercase text-xs text-slate-500 tracking-widest">Sala de Espera</h3>
-                            <span class="bg-slate-200 text-slate-700 px-3 py-1 rounded-full text-[10px] font-bold">{{patients.length}} Pacientes</span>
-                        </div>
-                        <div class="overflow-y-auto flex-1 p-4">
-                            <div v-for="p in patients" :key="p.id" class="flex justify-between items-center p-4 mb-2 bg-white border border-slate-100 rounded-xl hover:shadow-md transition-all">
-                                <div>
-                                    <p class="font-black text-xs text-slate-900 uppercase">{{ p.folio }} - {{ p.nombre }}</p>
-                                    <span class="text-[9px] font-bold bg-slate-100 text-slate-500 px-2 py-1 rounded mt-1 inline-block">{{ p.servicio }}</span>
-                                </div>
-                                <button @click="deletePatient(p.id)" class="text-red-300 hover:text-red-500 p-2"><i class="fas fa-trash-alt text-lg"></i></button>
-                            </div>
-                        </div>
+                        <div class="bg-slate-50 p-6 border-b flex justify-between items-center"><h3 class="font-black uppercase text-xs text-slate-500 tracking-widest">Sala de Espera</h3><span class="bg-slate-200 text-slate-700 px-3 py-1 rounded-full text-[10px] font-bold">{{patients.length}} Pacientes</span></div>
+                        <div class="overflow-y-auto flex-1 p-4"><div v-for="p in patients" :key="p.id" class="flex justify-between items-center p-4 mb-2 bg-white border border-slate-100 rounded-xl hover:shadow-md"><div><p class="font-black text-xs text-slate-900 uppercase">{{ p.folio }} - {{ p.nombre }}</p><span class="text-[9px] font-bold bg-slate-100 text-slate-500 px-2 py-1 rounded mt-1 inline-block">{{ p.servicio }}</span></div><button @click="deletePatient(p.id)" class="text-red-300 hover:text-red-500 p-2"><i class="fas fa-trash-alt text-lg"></i></button></div></div>
                     </div>
                 </section>
 
-                <section v-if="activeTab === 'signos'" class="max-w-3xl mx-auto animate-fade-in">
+                <section v-if="activeTab === 'signos'" class="max-w-3xl mx-auto">
                     <div class="bg-white p-10 rounded-[3rem] shadow-lg border border-slate-100">
-                        <h2 class="text-xl font-black uppercase text-slate-800 mb-8 border-b pb-4">Toma de Signos</h2>
-                        
-                        <div class="mb-8">
-                            <label class="text-[10px] font-black uppercase text-slate-400 mb-2 block ml-2">Seleccionar Paciente</label>
-                            <select v-model="selectedPatientId" @change="loadPatientForVitals" class="input-std">
-                                <option :value="null">-- BUSCAR EN LA LISTA --</option>
-                                <option v-for="p in patients" :key="p.id" :value="p.id">{{ p.folio }} - {{ p.nombre }} ({{p.servicio}})</option>
-                            </select>
-                        </div>
-
+                        <h2 class="text-xl font-black uppercase text-slate-800 mb-8 border-b pb-4">Signos Vitales</h2>
+                        <select v-model="selectedPatientId" @change="loadPatientForVitals" class="input-std mb-8"><option :value="null">-- SELECCIONAR PACIENTE --</option><option v-for="p in patients" :key="p.id" :value="p.id">{{ p.folio }} - {{ p.nombre }}</option></select>
                         <div v-if="currP.enfermeria" class="bg-blue-50/50 p-8 rounded-[2.5rem] border-2 border-blue-100">
-                            <div class="mb-6 text-center border-b border-blue-200 pb-4">
-                                <p class="text-sm font-black text-slate-900 uppercase">{{ currP.enfermeria.nombre }}</p>
-                                <p class="text-[10px] font-bold text-blue-500 mt-1">EDAD: {{ currP.enfermeria.edad }} AÑOS</p>
-                            </div>
-                            
+                            <div class="mb-6 text-center border-b border-blue-200 pb-4"><p class="text-sm font-black text-slate-900 uppercase">{{ currP.enfermeria.nombre }}</p></div>
                             <div class="grid grid-cols-2 gap-4 mb-6">
-                                <input v-model.number="vitalsForm.peso" placeholder="PESO (KG)" class="input-std text-center">
-                                <input v-model.number="vitalsForm.talla" placeholder="TALLA (CM o MTS)" class="input-std text-center">
-                                <input v-model="vitalsForm.ta" placeholder="T/A" class="input-std text-center">
-                                <input v-model="vitalsForm.temp" placeholder="TEMP (°C)" class="input-std text-center">
-                                <input v-model="vitalsForm.fc" placeholder="F.C." class="input-std text-center">
-                                <input v-model="vitalsForm.glucosa" placeholder="GLUCOSA" class="input-std text-center">
+                                <input v-model.number="vitalsForm.peso" placeholder="PESO (KG)" class="input-std text-center"><input v-model.number="vitalsForm.talla" placeholder="TALLA (CM o MTS)" class="input-std text-center"><input v-model="vitalsForm.ta" placeholder="T/A" class="input-std text-center"><input v-model="vitalsForm.temp" placeholder="TEMP (°C)" class="input-std text-center"><input v-model="vitalsForm.fc" placeholder="F.C." class="input-std text-center"><input v-model="vitalsForm.glucosa" placeholder="GLUCOSA" class="input-std text-center">
                             </div>
-                            
-                            <button @click="saveVitals" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-black uppercase text-xs shadow-lg hover:bg-blue-700 transition-all">
-                                Guardar Signos
-                            </button>
+                            <button @click="saveVitals" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-black uppercase text-xs shadow-lg">Guardar Signos</button>
                         </div>
                     </div>
                 </section>
 
-                <section v-if="activeTab === 'juridico'" class="max-w-4xl mx-auto space-y-6 animate-fade-in">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="bg-white p-6 rounded-[2rem] shadow-lg border border-slate-100">
-                            <label class="text-[10px] font-black uppercase text-slate-400 block mb-2 ml-2">1. Beneficiario</label>
-                            <select v-model="selectedPatientId" @change="loadSelectedPatient(activeTab)" class="input-std">
-                                <option :value="null">-- SELECCIONAR --</option>
-                                <option v-for="p in waitingFor(activeTab)" :key="p.id" :value="p.id">{{ p.nombre }}</option>
-                            </select>
-                        </div>
-                        <div class="bg-white p-6 rounded-[2rem] shadow-lg border border-slate-100">
-                            <label class="text-[10px] font-black uppercase text-slate-400 block mb-2 ml-2">2. Abogado</label>
-                            <select v-model="selStaffId[activeTab]" class="input-std">
-                                <option :value="null">-- SELECCIONAR --</option>
-                                <option v-for="s in staffByArea(activeTab)" :key="s.id" :value="s.id">{{ s.nombre }}</option>
-                            </select>
-                        </div>
+                <section v-if="activeTab === 'juridico'" class="max-w-4xl mx-auto space-y-6">
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="bg-white p-6 rounded-[2rem] shadow-lg border border-slate-100"><label class="text-[10px] font-black uppercase text-slate-400 block mb-2 ml-2">1. Beneficiario</label><select v-model="selectedPatientId" @change="loadSelectedPatient(activeTab)" class="input-std"><option :value="null">-- SELECCIONAR --</option><option v-for="p in waitingFor(activeTab)" :key="p.id" :value="p.id">{{ p.nombre }}</option></select></div>
+                        <div class="bg-white p-6 rounded-[2rem] shadow-lg border border-slate-100"><label class="text-[10px] font-black uppercase text-slate-400 block mb-2 ml-2">2. Abogado</label><select v-model="selStaffId[activeTab]" class="input-std"><option :value="null">-- SELECCIONAR --</option><option v-for="s in staffByArea(activeTab)" :key="s.id" :value="s.id">{{ s.nombre }}</option></select></div>
                     </div>
-
                     <div v-if="currP[activeTab]" class="bg-white p-8 rounded-[3rem] shadow-lg border-t-[10px] border-slate-900">
-                        <div class="flex justify-between items-center mb-8 border-b pb-4">
-                            <h2 class="text-xl font-black text-slate-800 uppercase">Expediente Legal</h2>
-                            <span class="bg-slate-100 px-3 py-1 rounded text-xs font-bold uppercase">{{ currP[activeTab].folio }}</span>
-                        </div>
-
-                        <div class="bg-slate-50 p-6 rounded-3xl border border-slate-200 mb-8">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-bold text-slate-800 uppercase">
-                                <div><span class="text-slate-400 block text-[9px]">Nombre:</span> {{ currP[activeTab].nombre }}</div>
-                                <div><span class="text-slate-400 block text-[9px]">Edad:</span> {{ currP[activeTab].edad }} Años</div>
-                                <div><span class="text-slate-400 block text-[9px]">Teléfono:</span> {{ currP[activeTab].telefono }}</div>
-                                <div><span class="text-slate-400 block text-[9px]">Domicilio:</span> {{ currP[activeTab].domicilio }}</div>
-                            </div>
-                        </div>
-
+                        <div class="bg-slate-50 p-6 rounded-3xl border border-slate-200 mb-8"><div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-bold text-slate-800 uppercase"><div><span class="text-slate-400 block text-[9px]">Nombre:</span> {{ currP[activeTab].nombre }}</div><div><span class="text-slate-400 block text-[9px]">Edad:</span> {{ currP[activeTab].edad }} Años</div><div><span class="text-slate-400 block text-[9px]">Teléfono:</span> {{ currP[activeTab].telefono }}</div><div><span class="text-slate-400 block text-[9px]">Domicilio:</span> {{ currP[activeTab].domicilio }}</div></div></div>
                         <textarea v-model="consGen.diagnostico" class="w-full p-5 input-std mb-4 h-32 resize-none" placeholder="DESCRIPCIÓN DEL CASO..."></textarea>
                         <textarea v-model="consGen.tratamiento" class="w-full p-5 input-std mb-6 h-32 resize-none" placeholder="ASESORÍA / PASOS A SEGUIR..."></textarea>
-
-                        <button @click="generatePDF(activeTab)" class="w-full bg-slate-900 text-white py-5 rounded-2xl font-black uppercase shadow-xl hover:bg-black transition-all">
-                            Guardar y Generar PDF
-                        </button>
+                        <button @click="generatePDF(activeTab)" class="w-full bg-slate-900 text-white py-5 rounded-2xl font-black uppercase shadow-xl">Guardar y Generar PDF</button>
                     </div>
                 </section>
 
-                <section v-if="['medico', 'psicologia', 'cosmetologia'].includes(activeTab)" class="max-w-5xl mx-auto space-y-6 animate-fade-in">
+                <section v-if="['medico', 'psicologia', 'cosmetologia'].includes(activeTab)" class="max-w-5xl mx-auto space-y-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div class="bg-white p-5 rounded-2xl shadow-lg border border-slate-100"><label class="text-[10px] font-black uppercase text-slate-400 block mb-2 ml-2">Paciente</label><select v-model="selectedPatientId" @change="loadSelectedPatient(activeTab)" class="input-std"><option :value="null">-- SELECCIONAR --</option><option v-for="p in waitingFor(activeTab)" :key="p.id" :value="p.id">{{ p.nombre }}</option></select></div>
                         <div class="bg-white p-5 rounded-2xl shadow-lg border border-slate-100"><label class="text-[10px] font-black uppercase text-slate-400 block mb-2 ml-2">Especialista</label><select v-model="selStaffId[activeTab]" class="input-std"><option :value="null">-- SELECCIONAR --</option><option v-for="s in staffByArea(activeTab)" :key="s.id" :value="s.id">{{ s.nombre }}</option></select></div>
@@ -242,18 +145,17 @@
                             <input v-model="consGen.alergias" placeholder="ALERGIAS" class="input-std">
                             <textarea v-model="consGen.diagnostico" class="input-std h-24" placeholder="DIAGNÓSTICO"></textarea>
                             <textarea v-model="consGen.tratamiento" class="input-std h-24" placeholder="TRATAMIENTO GENERAL"></textarea>
-                            
                             <div v-if="['medico', 'cosmetologia'].includes(activeTab)" class="bg-slate-50 p-5 rounded-3xl border border-slate-200">
                                 <p class="text-[10px] font-black uppercase mb-3 ml-1 text-slate-500">Receta Médica</p>
                                 <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
-                                    <select v-model="tempMed" class="input-std"><option :value="null">MEDICAMENTO</option><option v-for="m in inventory" :key="m.id" :value="m">{{ m.nombre }} ({{m.stock}})</option></select>
-                                    <input v-model="tempDosis" placeholder="INDICACIONES / DOSIS" class="input-std">
+                                    <select v-model="tempMed" class="input-std"><option :value="null">MEDICAMENTO</option><option v-for="m in inventory" :key="m.id" :value="m">{{ m.nombre }} (Stock: {{m.stock}})</option></select>
+                                    <input v-model="tempDosis" placeholder="DOSIS / INDICACIONES" class="input-std">
                                     <button @click="addToRecipe" class="bg-black text-white rounded-xl font-bold uppercase text-[10px]">Añadir</button>
                                 </div>
                                 <div class="flex flex-wrap gap-2"><div v-for="(m, i) in recipe" :key="i" class="bg-white px-3 py-2 rounded-xl border flex items-center gap-2 shadow-sm"><span class="font-black text-[9px] uppercase">{{ m.nombre }} - <span class="text-blue-600">{{ m.indicacion }}</span></span><i @click="recipe.splice(i,1)" class="fas fa-times text-red-300 cursor-pointer"></i></div></div>
                             </div>
                         </div>
-                        <button @click="generatePDF(activeTab)" class="w-full bg-slate-900 text-white py-5 rounded-2xl font-black uppercase mt-8 shadow-xl hover:bg-black transition-all">Finalizar Consulta</button>
+                        <button @click="generatePDF(activeTab)" class="w-full bg-slate-900 text-white py-5 rounded-2xl font-black uppercase mt-8 shadow-xl">Finalizar Consulta</button>
                     </div>
                 </section>
 
@@ -266,7 +168,6 @@
 
         <div id="pdf-template">
             <div v-if="pdfData" style="border:4px solid black; padding:45px; font-family:Arial; color:black; background:white; width:800px;">
-                
                 <div style="text-align: center; margin-bottom: 25px;">
                     <h1 style="font-size: 26px; font-weight: 900; text-transform: uppercase; margin: 0; letter-spacing: 1px;">{{ pdfData.medicoNombre }}</h1>
                     <p style="font-size: 12px; font-weight: bold; margin: 5px 0;">CÉDULA PROFESIONAL: {{ pdfData.medicoCedula }}</p>
@@ -274,42 +175,27 @@
                     <div style="border-bottom: 3px solid black; margin-top: 15px; margin-bottom: 5px;"></div>
                     <div style="text-align: right; font-size: 11px;">FOLIO: <b>{{ pdfData.folio }}</b> | FECHA: {{ pdfData.fecha }}</div>
                 </div>
-                
                 <div style="background:#f3f4f6; padding:12px; font-size:11px; font-weight:bold; margin-bottom:15px; display:grid; grid-template-columns:2fr 1fr 1fr; border: 1px solid #e5e7eb;">
-                    <div>PACIENTE: {{ pdfData.pacienteNombre }}</div>
-                    <div>EDAD: {{ pdfData.edad }} Años</div>
-                    <div>SEXO: {{ pdfData.sexo }}</div>
+                    <div>PACIENTE: {{ pdfData.pacienteNombre }}</div><div>EDAD: {{ pdfData.edad }} Años</div><div>SEXO: {{ pdfData.sexo }}</div>
                 </div>
-                
                 <div v-if="pdfData.tipoServicio==='JURIDICO'" style="border:1px solid #ccc; padding:10px; margin-bottom:15px; font-size:11px; font-weight:bold;">
                     DOMICILIO: {{ pdfData.domicilio }}<br>TELÉFONO: {{ pdfData.telefono }}
                 </div>
                 <div v-else style="border:1px solid #ccc; padding:8px; margin-bottom:20px; display:flex; justify-content:space-between; font-size:10px; font-weight:bold;">
                     <span>PESO: {{ pdfData.peso }}</span><span>TALLA: {{ pdfData.talla }}</span><span>IMC: {{ pdfData.imc }}</span><span>TA: {{ pdfData.ta }}</span><span>TEMP: {{ pdfData.temp }}</span>
                 </div>
-
                 <div style="min-height:450px;">
                     <h3 style="font-size:11px; font-weight:900; border-bottom:1px solid black; margin-bottom:8px;">{{pdfData.tipoServicio==='JURIDICO'?'DESCRIPCIÓN DEL CASO':'DIAGNÓSTICO'}}</h3>
                     <p style="font-size:12px; text-transform:uppercase; margin-bottom:25px; line-height: 1.4;">{{ pdfData.diagnostico }}</p>
-                    
                     <h3 style="font-size:11px; font-weight:900; border-bottom:1px solid black; margin-bottom:8px;">{{pdfData.tipoServicio==='JURIDICO'?'ASESORÍA / PASOS A SEGUIR':'TRATAMIENTO E INDICACIONES'}}</h3>
-                    
                     <div v-if="pdfData.medicamentos && pdfData.medicamentos.length > 0" style="margin-bottom:20px; border: 1px solid #000;">
                         <table style="width: 100%; border-collapse: collapse;">
-                            <tr style="background: #eee; font-size: 10px; font-weight: bold;">
-                                <td style="padding: 5px; border-right: 1px solid #000; width: 40%;">MEDICAMENTO</td>
-                                <td style="padding: 5px;">INDICACIONES / DOSIS</td>
-                            </tr>
-                            <tr v-for="m in pdfData.medicamentos" style="border-top: 1px solid #ccc;">
-                                <td style="padding: 8px; font-size: 11px; font-weight: 900; border-right: 1px solid #ccc;">{{ m.nombre }}</td>
-                                <td style="padding: 8px; font-size: 11px;">{{ m.indicacion }}</td>
-                            </tr>
+                            <tr style="background: #eee; font-size: 10px; font-weight: bold;"><td style="padding: 5px; border-right: 1px solid #000; width: 40%;">MEDICAMENTO</td><td style="padding: 5px;">INDICACIONES / DOSIS</td></tr>
+                            <tr v-for="m in pdfData.medicamentos" style="border-top: 1px solid #ccc;"><td style="padding: 8px; font-size: 11px; font-weight: 900; border-right: 1px solid #ccc;">{{ m.nombre }}</td><td style="padding: 8px; font-size: 11px;">{{ m.indicacion }}</td></tr>
                         </table>
                     </div>
-                    
                     <p style="font-size:12px; text-transform:uppercase; line-height: 1.4;">{{ pdfData.tratamiento }}</p>
                 </div>
-                
                 <div style="margin-top:60px; text-align:center;">
                     <div style="display:inline-block; border-top:2px solid black; width:280px; padding-top:8px;">
                         <p style="font-size:12px; font-weight:900; text-transform: uppercase;">{{ pdfData.medicoNombre }}</p>
