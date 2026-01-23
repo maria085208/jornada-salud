@@ -10,28 +10,22 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
     <style>
-        /* FONDO E IMAGEN */
         body {
             background-image: url('./logo-fuerza.png'); 
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
             margin: 0;
-            overflow-x: hidden; /* Evita scroll lateral */
         }
-        
-        /* ESTILOS DE PANTALLA */
         .app-content { background-color: rgba(255, 255, 255, 0.95); min-height: 100vh; }
-        
         .login-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(15, 23, 42, 0.96); /* Fondo oscuro sólido casi total */
-            backdrop-filter: blur(10px);
+            background-color: rgba(15, 23, 42, 0.96);
+            backdrop-filter: blur(5px);
             display: flex; align-items: center; justify-content: center;
-            z-index: 9999; /* Siempre encima de todo */
+            z-index: 9999;
         }
-
-        [v-cloak] { display: none; } /* Oculta todo hasta que cargue Vue */
+        [v-cloak] { display: none; }
         .tab-active { border-bottom: 4px solid #0f172a; color: #0f172a; background: rgba(241, 245, 249, 0.9); font-weight: 900; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .card-shadow { box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.2); }
@@ -42,40 +36,29 @@
     <div id="app" v-cloak>
 
         <div v-if="!isLoggedIn" class="login-overlay">
-            <div class="bg-white p-8 rounded-3xl shadow-2xl w-80 text-center animate-fade-in">
-                <div class="bg-slate-900 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg text-white text-2xl">
-                    <i class="fas fa-lock"></i>
-                </div>
+            <div class="bg-white p-8 rounded-3xl shadow-2xl w-80 text-center">
+                <div class="bg-slate-900 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg text-white text-2xl"><i class="fas fa-lock"></i></div>
                 <h2 class="text-xl font-black uppercase text-slate-800 mb-1">Acceso Seguro</h2>
-                <p class="text-[10px] text-slate-400 uppercase tracking-widest mb-6">Solo Personal Autorizado</p>
-                
                 <form @submit.prevent="performLogin" class="space-y-4">
-                    <input v-model="loginData.user" type="text" placeholder="Usuario" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold outline-none focus:border-slate-900 transition-colors text-center uppercase">
-                    <input v-model="loginData.pass" type="password" placeholder="Contraseña" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold outline-none focus:border-slate-900 transition-colors text-center">
-                    
+                    <input v-model="loginData.user" type="text" placeholder="Usuario" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold outline-none focus:border-slate-900 text-center uppercase">
+                    <input v-model="loginData.pass" type="password" placeholder="Contraseña" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold outline-none focus:border-slate-900 text-center">
                     <p v-if="loginError" class="text-red-500 text-[10px] font-black uppercase bg-red-50 py-2 rounded-lg">Datos Incorrectos</p>
-                    
-                    <button type="submit" class="w-full bg-slate-900 text-white py-3 rounded-xl font-black uppercase text-xs hover:bg-black transition-transform transform active:scale-95 shadow-lg">
-                        Entrar al Sistema
-                    </button>
+                    <button type="submit" class="w-full bg-slate-900 text-white py-3 rounded-xl font-black uppercase text-xs hover:bg-black transition-transform transform active:scale-95 shadow-lg">Entrar</button>
                 </form>
             </div>
         </div>
 
         <div v-else class="app-content">
-            
             <header class="bg-white/95 backdrop-blur-md border-b border-slate-200 sticky top-0 z-50">
                 <div class="container mx-auto px-4 py-3 flex justify-between items-center">
                     <div class="flex items-center space-x-3">
                         <div class="bg-slate-900 p-2 rounded-xl shadow-md text-white"><i class="fas fa-hospital-user"></i></div>
                         <div><h1 class="text-lg font-black uppercase tracking-tighter leading-none">Jornadas de Salud</h1><p class="text-[9px] text-slate-500 font-bold uppercase tracking-[0.2em]">Fuerza Generacional</p></div>
                     </div>
-                    <button @click="logout" class="text-[10px] font-black text-red-500 border border-red-100 px-3 py-1 rounded-lg hover:bg-red-50 uppercase">Salir <i class="fas fa-sign-out-alt ml-1"></i></button>
+                    <button @click="logout" class="text-[10px] font-black text-red-500 border border-red-100 px-3 py-1 rounded-lg hover:bg-red-50 uppercase">Salir</button>
                 </div>
                 <nav class="bg-white/90 border-t flex overflow-x-auto no-scrollbar">
-                    <button v-for="t in tabs" :key="t.id" @click="activeTab = t.id" :class="['px-5 py-3 text-[9px] font-bold uppercase flex items-center whitespace-nowrap transition-all border-b-4 border-transparent', activeTab === t.id ? 'tab-active' : 'text-slate-400']">
-                        <i :class="[t.icon, 'mr-2 text-sm']"></i> {{ t.name }}
-                    </button>
+                    <button v-for="t in tabs" :key="t.id" @click="activeTab = t.id" :class="['px-5 py-3 text-[9px] font-bold uppercase flex items-center whitespace-nowrap transition-all border-b-4 border-transparent', activeTab === t.id ? 'tab-active' : 'text-slate-400']"><i :class="[t.icon, 'mr-2 text-sm']"></i> {{ t.name }}</button>
                 </nav>
             </header>
 
@@ -91,12 +74,9 @@
                                 <select v-model="formP.sexo" class="w-full p-3 bg-slate-50 border rounded-xl font-bold text-xs uppercase"><option value="HOMBRE">HOMBRE</option><option value="MUJER">MUJER</option></select>
                             </div>
                             <input v-model="formP.domicilio" placeholder="Domicilio" required class="w-full p-3 bg-slate-50 border rounded-xl font-bold uppercase text-xs">
-                            <div>
-                                <input v-model="formP.telefono" type="tel" maxlength="10" placeholder="Teléfono (10 dígitos)" required class="w-full p-3 bg-slate-50 border rounded-xl font-bold text-xs outline-none focus:ring-2 focus:ring-slate-900">
-                                <p v-if="formP.telefono.length > 0 && formP.telefono.length !== 10" class="text-[8px] text-red-500 font-bold mt-1 uppercase">Faltan dígitos</p>
-                            </div>
+                            <div><input v-model="formP.telefono" type="tel" maxlength="10" placeholder="Teléfono (10 dígitos)" required class="w-full p-3 bg-slate-50 border rounded-xl font-bold text-xs outline-none focus:ring-2 focus:ring-slate-900"><p v-if="formP.telefono.length > 0 && formP.telefono.length !== 10" class="text-[8px] text-red-500 font-bold mt-1 uppercase">Faltan dígitos</p></div>
                             <select v-model="formP.servicio" class="w-full p-3 bg-slate-900 text-white rounded-xl font-black uppercase text-[10px]"><option value="medico">MÉDICO GENERAL</option><option value="psicologia">PSICOLOGÍA</option><option value="juridico">JURÍDICO</option><option value="cosmetologia">COSMETOLOGÍA</option></select>
-                            <button type="submit" :disabled="formP.telefono.length !== 10" :class="['w-full py-4 rounded-xl font-black uppercase text-xs shadow-lg transition-all', formP.telefono.length === 10 ? 'bg-slate-900 text-white hover:bg-black' : 'btn-disabled']">Registrar Ingreso</button>
+                            <button type="submit" :disabled="formP.telefono.length !== 10" :class="['w-full py-4 rounded-xl font-black uppercase text-xs shadow-lg transition-all', formP.telefono.length === 10 ? 'bg-slate-900 text-white hover:bg-black' : 'btn-disabled']">Registrar</button>
                         </form>
                     </div>
                     <div class="lg:col-span-2 bg-white rounded-[2rem] card-shadow border border-slate-100 overflow-hidden flex flex-col h-96">
@@ -104,13 +84,7 @@
                         <div class="overflow-y-auto flex-1 p-2">
                             <table class="w-full text-left uppercase text-[10px] font-bold">
                                 <thead class="text-slate-400 border-b"><tr><th class="p-3">Folio</th><th class="p-3">Paciente</th><th class="p-3">Área</th><th class="p-3 text-center">Acción</th></tr></thead>
-                                <tbody class="divide-y divide-slate-50">
-                                    <tr v-for="p in patients" :key="p.id">
-                                        <td class="p-3 text-slate-900">{{ p.folio }}</td><td class="p-3 text-slate-600">{{ p.nombre }}</td>
-                                        <td class="p-3"><span class="bg-slate-100 text-slate-600 px-2 py-1 rounded">{{ p.servicio }}</span></td>
-                                        <td class="p-3 text-center"><button @click="deletePatient(p.id)" class="text-red-300 hover:text-red-500"><i class="fas fa-trash"></i></button></td>
-                                    </tr>
-                                </tbody>
+                                <tbody class="divide-y divide-slate-50"><tr v-for="p in patients" :key="p.id"><td class="p-3 text-slate-900">{{ p.folio }}</td><td class="p-3 text-slate-600">{{ p.nombre }}</td><td class="p-3"><span class="bg-slate-100 text-slate-600 px-2 py-1 rounded">{{ p.servicio }}</span></td><td class="p-3 text-center"><button @click="deletePatient(p.id)" class="text-red-300 hover:text-red-500"><i class="fas fa-trash"></i></button></td></tr></tbody>
                             </table>
                         </div>
                     </div>
@@ -119,23 +93,10 @@
                 <section v-if="activeTab === 'signos'" class="max-w-3xl mx-auto">
                     <div class="bg-white p-8 rounded-[2.5rem] card-shadow border border-slate-100">
                         <h2 class="text-xl font-black uppercase text-slate-800 mb-6">2. Signos Vitales</h2>
-                        <div class="mb-6">
-                            <label class="text-[10px] font-black uppercase text-slate-400 mb-2 block">Seleccionar Paciente</label>
-                            <select v-model="selectedPatientId" @change="loadPatientForVitals" class="w-full p-4 bg-slate-50 border rounded-xl font-black text-xs uppercase outline-none focus:ring-2 focus:ring-slate-900">
-                                <option :value="null">-- LISTA DE ESPERA --</option>
-                                <option v-for="p in patients" :key="p.id" :value="p.id">{{ p.folio }} - {{ p.nombre }} ({{p.servicio}})</option>
-                            </select>
-                        </div>
+                        <div class="mb-6"><label class="text-[10px] font-black uppercase text-slate-400 mb-2 block">Seleccionar Paciente</label><select v-model="selectedPatientId" @change="loadPatientForVitals" class="w-full p-4 bg-slate-50 border rounded-xl font-black text-xs uppercase outline-none focus:ring-2 focus:ring-slate-900"><option :value="null">-- LISTA DE ESPERA --</option><option v-for="p in patients" :key="p.id" :value="p.id">{{ p.folio }} - {{ p.nombre }} ({{p.servicio}})</option></select></div>
                         <div v-if="currP.enfermeria" class="bg-slate-50 p-6 rounded-3xl border border-slate-200">
                             <div class="flex justify-between items-center mb-4 border-b pb-2"><span class="text-xs font-black uppercase">{{ currP.enfermeria.nombre }}</span><span class="text-[10px] font-bold text-slate-500">{{ currP.enfermeria.edad }} AÑOS</span></div>
-                            <div class="grid grid-cols-2 gap-4 mb-4">
-                                <input v-model.number="vitalsForm.peso" placeholder="Peso (kg)" class="p-3 rounded-xl border text-center font-bold text-sm">
-                                <input v-model.number="vitalsForm.talla" placeholder="Talla (m)" class="p-3 rounded-xl border text-center font-bold text-sm">
-                                <input v-model="vitalsForm.ta" placeholder="T/A (120/80)" class="p-3 rounded-xl border text-center font-bold text-sm">
-                                <input v-model="vitalsForm.temp" placeholder="Temp (°C)" class="p-3 rounded-xl border text-center font-bold text-sm">
-                                <input v-model="vitalsForm.fc" placeholder="F.C." class="p-3 rounded-xl border text-center font-bold text-sm">
-                                <input v-model="vitalsForm.glucosa" placeholder="Glucosa" class="p-3 rounded-xl border text-center font-bold text-sm">
-                            </div>
+                            <div class="grid grid-cols-2 gap-4 mb-4"><input v-model.number="vitalsForm.peso" placeholder="Peso (kg)" class="p-3 rounded-xl border text-center font-bold text-sm"><input v-model.number="vitalsForm.talla" placeholder="Talla (m)" class="p-3 rounded-xl border text-center font-bold text-sm"><input v-model="vitalsForm.ta" placeholder="T/A (120/80)" class="p-3 rounded-xl border text-center font-bold text-sm"><input v-model="vitalsForm.temp" placeholder="Temp (°C)" class="p-3 rounded-xl border text-center font-bold text-sm"><input v-model="vitalsForm.fc" placeholder="F.C." class="p-3 rounded-xl border text-center font-bold text-sm"><input v-model="vitalsForm.glucosa" placeholder="Glucosa" class="p-3 rounded-xl border text-center font-bold text-sm"></div>
                             <button @click="saveVitals" class="w-full bg-green-600 text-white py-4 rounded-xl font-black uppercase text-xs shadow-lg hover:bg-green-700">Guardar Signos</button>
                         </div>
                     </div>
@@ -143,52 +104,14 @@
 
                 <section v-if="activeTab === 'juridico'" class="max-w-4xl mx-auto space-y-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="bg-white p-5 rounded-2xl card-shadow border border-slate-100">
-                            <label class="text-[10px] font-black uppercase text-slate-400 block mb-2 tracking-widest">1. Beneficiario</label>
-                            <select v-model="selectedPatientId" @change="loadSelectedPatient(activeTab)" class="w-full p-4 bg-slate-50 border rounded-xl font-black text-xs uppercase outline-none focus:ring-2 focus:ring-slate-900">
-                                <option :value="null">-- SELECCIONAR --</option>
-                                <option v-for="p in waitingFor(activeTab)" :key="p.id" :value="p.id">{{ p.nombre }}</option>
-                            </select>
-                        </div>
-                        <div class="bg-white p-5 rounded-2xl card-shadow border border-slate-100">
-                            <label class="text-[10px] font-black uppercase text-slate-400 block mb-2 tracking-widest">2. Abogado</label>
-                            <select v-model="selStaffId[activeTab]" class="w-full p-4 bg-slate-50 border rounded-xl font-black text-xs uppercase outline-none focus:ring-2 focus:ring-slate-900">
-                                <option :value="null">-- SELECCIONAR --</option>
-                                <option v-for="s in staffByArea(activeTab)" :key="s.id" :value="s.id">{{ s.nombre }}</option>
-                            </select>
-                        </div>
+                        <div class="bg-white p-5 rounded-2xl card-shadow border border-slate-100"><label class="text-[10px] font-black uppercase text-slate-400 block mb-2 tracking-widest">1. Beneficiario</label><select v-model="selectedPatientId" @change="loadSelectedPatient(activeTab)" class="w-full p-4 bg-slate-50 border rounded-xl font-black text-xs uppercase outline-none focus:ring-2 focus:ring-slate-900"><option :value="null">-- SELECCIONAR --</option><option v-for="p in waitingFor(activeTab)" :key="p.id" :value="p.id">{{ p.nombre }}</option></select></div>
+                        <div class="bg-white p-5 rounded-2xl card-shadow border border-slate-100"><label class="text-[10px] font-black uppercase text-slate-400 block mb-2 tracking-widest">2. Abogado</label><select v-model="selStaffId[activeTab]" class="w-full p-4 bg-slate-50 border rounded-xl font-black text-xs uppercase outline-none focus:ring-2 focus:ring-slate-900"><option :value="null">-- SELECCIONAR --</option><option v-for="s in staffByArea(activeTab)" :key="s.id" :value="s.id">{{ s.nombre }}</option></select></div>
                     </div>
-
                     <div v-if="currP[activeTab]" class="bg-white p-8 rounded-[3rem] card-shadow border-t-[10px] border-slate-900">
-                        <div class="flex justify-between mb-6 border-b pb-4">
-                            <h2 class="text-xl font-black text-slate-800 uppercase">Expediente Legal</h2>
-                            <span class="bg-slate-100 px-3 py-1 rounded text-xs font-bold uppercase">{{ currP[activeTab].folio }}</span>
-                        </div>
-
-                        <div class="bg-slate-50 p-6 rounded-3xl border border-slate-200 mb-8">
-                            <h3 class="font-black text-slate-400 text-[10px] uppercase tracking-widest mb-3 border-b border-slate-200 pb-2">Datos Generales</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-bold text-slate-800 uppercase">
-                                <div><span class="text-slate-400 block text-[9px] mb-1">Nombre Completo:</span> {{ currP[activeTab].nombre }}</div>
-                                <div><span class="text-slate-400 block text-[9px] mb-1">Edad/Sexo:</span> {{ currP[activeTab].edad }} Años / {{ currP[activeTab].sexo }}</div>
-                                <div><span class="text-slate-400 block text-[9px] mb-1">Teléfono:</span> {{ currP[activeTab].telefono }}</div>
-                                <div class="col-span-full"><span class="text-slate-400 block text-[9px] mb-1">Domicilio:</span> {{ currP[activeTab].domicilio }}</div>
-                            </div>
-                        </div>
-
-                        <div class="space-y-6">
-                            <div>
-                                <label class="text-[11px] font-black text-slate-800 uppercase tracking-widest mb-2 block">Descripción del Caso</label>
-                                <textarea v-model="consGen.diagnostico" class="w-full p-4 bg-white border-2 border-slate-100 rounded-2xl h-40 text-xs font-bold uppercase outline-none focus:border-slate-900 transition-colors" placeholder="Describa la situación..."></textarea>
-                            </div>
-                            <div>
-                                <label class="text-[11px] font-black text-slate-800 uppercase tracking-widest mb-2 block">Observaciones y Pasos a Seguir</label>
-                                <textarea v-model="consGen.tratamiento" class="w-full p-4 bg-white border-2 border-slate-100 rounded-2xl h-40 text-xs font-bold uppercase outline-none focus:border-slate-900 transition-colors" placeholder="Asesoría..."></textarea>
-                            </div>
-                        </div>
-
-                        <button @click="generatePDF(activeTab)" class="w-full bg-slate-900 text-white py-6 rounded-2xl font-black uppercase mt-8 shadow-xl hover:bg-black transition-all">
-                            <i class="fas fa-file-pdf mr-3"></i> Guardar y Generar PDF
-                        </button>
+                        <div class="flex justify-between mb-6 border-b pb-4"><h2 class="text-xl font-black text-slate-800 uppercase">Expediente Legal</h2><span class="bg-slate-100 px-3 py-1 rounded text-xs font-bold uppercase">{{ currP[activeTab].folio }}</span></div>
+                        <div class="bg-slate-50 p-6 rounded-3xl border border-slate-200 mb-8"><h3 class="font-black text-slate-400 text-[10px] uppercase tracking-widest mb-3 border-b border-slate-200 pb-2">Datos Generales</h3><div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-bold text-slate-800 uppercase"><div><span class="text-slate-400 block text-[9px] mb-1">Nombre:</span> {{ currP[activeTab].nombre }}</div><div><span class="text-slate-400 block text-[9px] mb-1">Edad/Sexo:</span> {{ currP[activeTab].edad }} Años / {{ currP[activeTab].sexo }}</div><div><span class="text-slate-400 block text-[9px] mb-1">Teléfono:</span> {{ currP[activeTab].telefono }}</div><div class="col-span-full"><span class="text-slate-400 block text-[9px] mb-1">Domicilio:</span> {{ currP[activeTab].domicilio }}</div></div></div>
+                        <div class="space-y-6"><div><label class="text-[11px] font-black text-slate-800 uppercase tracking-widest mb-2 block">Descripción del Caso</label><textarea v-model="consGen.diagnostico" class="w-full p-4 bg-white border-2 border-slate-100 rounded-2xl h-40 text-xs font-bold uppercase outline-none focus:border-slate-900" placeholder="Describa la situación..."></textarea></div><div><label class="text-[11px] font-black text-slate-800 uppercase tracking-widest mb-2 block">Observaciones</label><textarea v-model="consGen.tratamiento" class="w-full p-4 bg-white border-2 border-slate-100 rounded-2xl h-40 text-xs font-bold uppercase outline-none focus:border-slate-900" placeholder="Asesoría..."></textarea></div></div>
+                        <button @click="generatePDF(activeTab)" class="w-full bg-slate-900 text-white py-6 rounded-2xl font-black uppercase mt-8 shadow-xl hover:bg-black transition-all">Guardar y Generar PDF</button>
                     </div>
                 </section>
 
