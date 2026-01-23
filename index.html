@@ -3,254 +3,454 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jornadas Salud V19</title>
+    <title>Jornadas de Salud - Sistema Integral</title>
+    
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
     <style>
-        body { background-image: url('./logo-fuerza.png'); background-size: cover; background-position: center; background-attachment: fixed; margin: 0; }
-        /* PANTALLA DE LOGIN NEGRA QUE CUBRE TODO */
-        .login-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f172a; display: flex; align-items: center; justify-content: center; z-index: 9999; }
-        .app-content { background: rgba(255,255,255,0.96); min-height: 100vh; padding-bottom: 50px; }
-        .tab-active { background: #0f172a; color: white; }
+        /* FONDO PRINCIPAL */
+        body {
+            background-image: url('./logo-fuerza.png'); 
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            margin: 0;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+
+        /* PANTALLA DE LOGIN (CUBRE TODO) */
+        .login-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(15, 23, 42, 0.98); /* Fondo oscuro casi sólido */
+            display: flex; align-items: center; justify-content: center;
+            z-index: 9999;
+        }
+
+        /* CONTENEDOR PRINCIPAL DE LA APP */
+        .app-content { 
+            background-color: rgba(255, 255, 255, 0.95); 
+            min-height: 100vh; 
+            padding-bottom: 80px; 
+        }
+
+        /* ESTILOS DE PESTAÑAS */
+        .tab-active { 
+            border-bottom: 4px solid #0f172a; 
+            color: #0f172a; 
+            background: rgba(241, 245, 249, 0.8); 
+            font-weight: 900; 
+        }
+        
+        /* UTILIDADES VISUALES */
+        .card-shadow { box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.15); }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        
+        /* OCULTAR VUE HASTA QUE CARGUE */
         [v-cloak] { display: none; }
-        /* ESTO OCULTA EL PDF PARA SIEMPRE HASTA QUE SE DESCARGUE */
-        #pdf-template { display: none !important; } 
+
+        /* REGLA DE ORO: EL PDF SIEMPRE OCULTO HASTA QUE SE GENERE */
+        #pdf-template { display: none; }
     </style>
 </head>
-<body class="font-sans text-slate-900">
+<body class="text-slate-800">
 
     <div id="app" v-cloak>
 
-        <div v-if="!isLoggedIn" class="login-screen">
-            <div class="bg-white p-8 rounded-xl shadow-2xl text-center w-80">
-                <h1 class="text-2xl font-black mb-4">ACCESO V19</h1>
-                <form @submit.prevent="login">
-                    <label class="block text-xs font-bold text-left mb-1">USUARIO (MARIA0852)</label>
-                    <input v-model="user" class="w-full p-3 mb-3 border-2 border-black rounded text-center font-bold uppercase" placeholder="MARIA0852">
+        <div v-if="!isLoggedIn" class="login-overlay">
+            <div class="bg-white p-10 rounded-[2rem] shadow-2xl w-96 text-center border-4 border-slate-100">
+                <div class="bg-slate-900 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg text-white text-3xl">
+                    <i class="fas fa-user-lock"></i>
+                </div>
+                <h2 class="text-2xl font-black uppercase text-slate-900 mb-2">Acceso Seguro</h2>
+                <p class="text-[10px] text-slate-400 uppercase tracking-widest mb-8 font-bold">Sistema Administrativo V20</p>
+                
+                <form @submit.prevent="performLogin" class="space-y-5">
+                    <div class="text-left">
+                        <label class="text-[10px] font-black uppercase ml-2 text-slate-500">Usuario</label>
+                        <input v-model="loginData.user" type="text" placeholder="MARIA0852" class="w-full p-4 bg-slate-50 border-2 border-slate-200 rounded-2xl text-sm font-bold outline-none focus:border-slate-900 text-center uppercase transition-all">
+                    </div>
+                    <div class="text-left">
+                        <label class="text-[10px] font-black uppercase ml-2 text-slate-500">Contraseña</label>
+                        <input v-model="loginData.pass" type="password" placeholder="ASUNA0852" class="w-full p-4 bg-slate-50 border-2 border-slate-200 rounded-2xl text-sm font-bold outline-none focus:border-slate-900 text-center transition-all">
+                    </div>
                     
-                    <label class="block text-xs font-bold text-left mb-1">CONTRASEÑA (ASUNA0852)</label>
-                    <input v-model="pass" type="password" class="w-full p-3 mb-3 border-2 border-black rounded text-center font-bold" placeholder="ASUNA0852">
+                    <div v-if="loginError" class="bg-red-50 text-red-600 p-3 rounded-xl flex items-center justify-center gap-2 animate-pulse">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span class="text-[10px] font-black uppercase">Credenciales Incorrectas</span>
+                    </div>
                     
-                    <p v-if="error" class="text-red-600 font-bold text-xs mb-3 bg-red-100 p-2 rounded">DATOS INCORRECTOS</p>
-                    <button class="w-full bg-black text-white p-3 rounded font-bold hover:bg-slate-800">ENTRAR AL SISTEMA</button>
+                    <button type="submit" class="w-full bg-slate-900 text-white py-4 rounded-2xl font-black uppercase text-xs hover:bg-black hover:scale-[1.02] transition-all shadow-xl">
+                        Ingresar al Sistema
+                    </button>
                 </form>
             </div>
         </div>
 
         <div v-else class="app-content">
-            <div class="bg-white sticky top-0 z-50 border-b shadow-sm">
-                <div class="p-3 flex justify-between items-center bg-slate-100">
-                    <span class="font-black uppercase text-xs">Jornadas de Salud</span>
-                    <button @click="logout" class="text-xs font-bold text-red-600 border border-red-600 px-2 py-1 rounded">SALIR</button>
+            
+            <header class="bg-white/95 backdrop-blur-md border-b border-slate-200 sticky top-0 z-50">
+                <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+                    <div class="flex items-center space-x-3">
+                        <div class="bg-slate-900 p-2 rounded-xl shadow-md text-white"><i class="fas fa-hospital-symbol text-lg"></i></div>
+                        <div>
+                            <h1 class="text-lg font-black uppercase tracking-tighter leading-none text-slate-900">Jornadas de Salud</h1>
+                            <p class="text-[9px] text-slate-500 font-bold uppercase tracking-[0.2em]">Fuerza Generacional</p>
+                        </div>
+                    </div>
+                    <button @click="logout" class="text-[10px] font-black text-red-500 border border-red-100 px-4 py-2 rounded-xl hover:bg-red-50 transition-colors uppercase flex items-center gap-2">
+                        Salir <i class="fas fa-sign-out-alt"></i>
+                    </button>
                 </div>
-                <div class="flex overflow-x-auto">
-                    <button v-for="t in tabs" :key="t.id" @click="activeTab=t.id" :class="['p-3 text-[10px] font-bold uppercase whitespace-nowrap', activeTab===t.id ? 'tab-active' : 'text-slate-500']">{{t.name}}</button>
-                </div>
-            </div>
-
-            <div class="container mx-auto p-4">
                 
-                <div v-if="activeTab==='recepcion'" class="grid gap-6">
-                    <div class="bg-white p-5 rounded-xl border-2 border-slate-200">
-                        <h3 class="font-black text-xs mb-3 uppercase">Registrar Paciente</h3>
-                        <div class="space-y-3">
-                            <input v-model="formP.nombre" placeholder="NOMBRE COMPLETO" class="w-full p-3 border rounded font-bold text-xs uppercase">
-                            <div class="flex gap-2">
-                                <input v-model="formP.edad" type="number" placeholder="EDAD" class="w-1/2 p-3 border rounded font-bold text-xs">
-                                <select v-model="formP.sexo" class="w-1/2 p-3 border rounded font-bold text-xs"><option>MUJER</option><option>HOMBRE</option></select>
-                            </div>
-                            <input v-model="formP.domicilio" placeholder="DOMICILIO" class="w-full p-3 border rounded font-bold text-xs uppercase">
-                            <input v-model="formP.telefono" placeholder="TELÉFONO (10 DÍGITOS)" class="w-full p-3 border rounded font-bold text-xs">
-                            <select v-model="formP.servicio" class="w-full p-3 border rounded font-bold text-xs uppercase"><option value="medico">MÉDICO</option><option value="juridico">JURÍDICO</option><option value="psicologia">PSICOLOGÍA</option><option value="cosmetologia">COSMETOLOGÍA</option></select>
-                            <button @click="regPatient" class="w-full bg-black text-white p-3 rounded font-bold text-xs">GUARDAR</button>
-                        </div>
-                    </div>
-                    <div class="bg-white p-5 rounded-xl border-2 border-slate-200">
-                        <h3 class="font-black text-xs mb-3 uppercase">Lista de Espera</h3>
-                        <div v-for="p in patients" :key="p.id" class="flex justify-between border-b py-2 text-xs font-bold">
-                            <span>{{p.nombre}} ({{p.servicio}})</span>
-                            <button @click="delPatient(p.id)" class="text-red-500">X</button>
-                        </div>
-                    </div>
-                </div>
+                <nav class="bg-white/90 border-t flex overflow-x-auto no-scrollbar pb-1">
+                    <button v-for="t in tabs" :key="t.id" @click="activeTab = t.id" 
+                        :class="['px-6 py-4 text-[10px] font-black uppercase flex items-center whitespace-nowrap transition-all border-b-4 border-transparent', activeTab === t.id ? 'tab-active' : 'text-slate-400 hover:text-slate-600']">
+                        <i :class="[t.icon, 'mr-2 text-sm']"></i> {{ t.name }}
+                    </button>
+                </nav>
+            </header>
 
-                <div v-if="activeTab==='signos'" class="bg-white p-5 rounded-xl border-2 border-slate-200">
-                    <h3 class="font-black text-xs mb-3 uppercase">Toma de Signos</h3>
-                    <select v-model="selPatient" @change="loadVitals" class="w-full p-3 border rounded mb-4 font-bold text-xs uppercase"><option :value="null">SELECCIONAR PACIENTE</option><option v-for="p in patients" :value="p.id">{{p.nombre}}</option></select>
-                    <div v-if="currP.enfermeria" class="grid grid-cols-2 gap-3">
-                        <input v-model="vitals.peso" placeholder="PESO" class="p-3 border rounded text-xs font-bold">
-                        <input v-model="vitals.talla" placeholder="TALLA" class="p-3 border rounded text-xs font-bold">
-                        <input v-model="vitals.ta" placeholder="PRESION" class="p-3 border rounded text-xs font-bold">
-                        <input v-model="vitals.temp" placeholder="TEMP" class="p-3 border rounded text-xs font-bold">
-                        <input v-model="vitals.fc" placeholder="F.C." class="p-3 border rounded text-xs font-bold">
-                        <input v-model="vitals.glucosa" placeholder="GLUCOSA" class="p-3 border rounded text-xs font-bold">
-                        <button @click="saveVitals" class="col-span-2 bg-green-600 text-white p-3 rounded font-bold text-xs">GUARDAR SIGNOS</button>
-                    </div>
-                </div>
-
-                <div v-if="activeTab==='juridico'" class="bg-white p-5 rounded-xl border-2 border-slate-200">
-                    <h3 class="font-black text-xs mb-3 uppercase">Área Jurídica</h3>
-                    <div class="flex gap-2 mb-4">
-                        <select v-model="selPatient" @change="loadConsult" class="w-1/2 p-2 border rounded text-xs font-bold uppercase"><option :value="null">BENEFICIARIO</option><option v-for="p in filterP('juridico')" :value="p.id">{{p.nombre}}</option></select>
-                        <select v-model="selDoc" class="w-1/2 p-2 border rounded text-xs font-bold uppercase"><option :value="null">ABOGADO</option><option v-for="s in filterS('juridico')" :value="s.id">{{s.nombre}}</option></select>
-                    </div>
-                    <div v-if="currP.juridico" class="space-y-3">
-                        <div class="bg-slate-100 p-3 rounded text-[10px] font-bold uppercase">
-                            <p>NOMBRE: {{currP.juridico.nombre}}</p>
-                            <p>EDAD: {{currP.juridico.edad}} | SEXO: {{currP.juridico.sexo}}</p>
-                            <p class="text-blue-600">DOMICILIO: {{currP.juridico.domicilio}}</p>
-                            <p class="text-blue-600">TEL: {{currP.juridico.telefono}}</p>
-                        </div>
-                        <textarea v-model="consult.diagnostico" class="w-full p-3 border rounded font-bold text-xs uppercase h-24" placeholder="DESCRIPCIÓN DEL CASO"></textarea>
-                        <textarea v-model="consult.tratamiento" class="w-full p-3 border rounded font-bold text-xs uppercase h-24" placeholder="ASESORÍA / PASOS A SEGUIR"></textarea>
-                        <button @click="genPDF" class="w-full bg-black text-white p-4 rounded font-black text-xs">GENERAR EXPEDIENTE</button>
-                    </div>
-                </div>
-
-                <div v-if="['medico','psicologia','cosmetologia'].includes(activeTab)" class="bg-white p-5 rounded-xl border-2 border-slate-200">
-                    <h3 class="font-black text-xs mb-3 uppercase">Consulta {{activeTab}}</h3>
-                    <div class="flex gap-2 mb-4">
-                        <select v-model="selPatient" @change="loadConsult" class="w-1/2 p-2 border rounded text-xs font-bold uppercase"><option :value="null">PACIENTE</option><option v-for="p in filterP(activeTab)" :value="p.id">{{p.nombre}}</option></select>
-                        <select v-model="selDoc" class="w-1/2 p-2 border rounded text-xs font-bold uppercase"><option :value="null">ESPECIALISTA</option><option v-for="s in filterS(activeTab)" :value="s.id">{{s.nombre}}</option></select>
-                    </div>
-                    <div v-if="currP[activeTab]" class="space-y-3">
-                        <div class="grid grid-cols-6 gap-1 text-center bg-slate-50 p-2 rounded text-[10px] font-bold">
-                            <div><p>PESO</p>{{consult.peso||'-'}}</div><div><p>TALLA</p>{{consult.talla||'-'}}</div><div><p>TA</p>{{consult.ta||'-'}}</div>
-                            <div><p>TEMP</p>{{consult.temp||'-'}}</div><div><p>FC</p>{{consult.fc||'-'}}</div><div><p>GLUC</p>{{consult.glucosa||'-'}}</div>
-                        </div>
-                        <input v-model="consult.alergias" placeholder="ALERGIAS" class="w-full p-2 border rounded font-bold text-xs uppercase">
-                        <textarea v-model="consult.diagnostico" class="w-full p-3 border rounded font-bold text-xs uppercase h-20" placeholder="DIAGNÓSTICO"></textarea>
-                        <textarea v-model="consult.tratamiento" class="w-full p-3 border rounded font-bold text-xs uppercase h-20" placeholder="TRATAMIENTO"></textarea>
-                        
-                        <div v-if="activeTab!=='psicologia'" class="bg-slate-50 p-3 rounded border">
-                            <p class="text-[10px] font-black mb-2">RECETA</p>
-                            <div class="flex gap-1 mb-2">
-                                <select v-model="tmpMed" class="flex-1 p-2 border rounded text-[10px] font-bold uppercase"><option :value="null">MEDICAMENTO</option><option v-for="m in inventory" :value="m">{{m.nombre}} ({{m.stock}})</option></select>
-                                <button @click="addRec" class="bg-black text-white px-3 rounded">+</button>
-                            </div>
-                            <div class="flex flex-wrap gap-1"><span v-for="(r,i) in recipe" :key="i" class="bg-white border px-2 py-1 rounded text-[9px] font-bold">{{r.nombre}} <span class="text-red-500 cursor-pointer" @click="recipe.splice(i,1)">x</span></span></div>
-                        </div>
-                        <button @click="genPDF" class="w-full bg-black text-white p-4 rounded font-black text-xs">FINALIZAR CONSULTA</button>
-                    </div>
-                </div>
-
-                <div v-if="activeTab==='farmacia'" class="bg-white p-5 rounded-xl border"><h3 class="font-black text-xs mb-3">FARMACIA</h3><input v-model="formI.nombre" placeholder="NOMBRE" class="w-full p-2 border mb-2 text-xs uppercase font-bold"><input v-model.number="formI.stock" placeholder="CANTIDAD" class="w-full p-2 border mb-2 text-xs font-bold"><button @click="addInv" class="w-full bg-black text-white p-2 rounded text-xs font-bold">GUARDAR</button><div v-for="m in inventory" class="flex justify-between border-b py-2 text-xs font-bold"><span>{{m.nombre}}</span><span>{{m.stock}}</span><span @click="delInv(m.id)" class="text-red-500 cursor-pointer">X</span></div></div>
-                <div v-if="activeTab==='config'" class="bg-white p-5 rounded-xl border"><h3 class="font-black text-xs mb-3">PERSONAL</h3><input v-model="formS.nombre" placeholder="NOMBRE" class="w-full p-2 border mb-2 text-xs uppercase font-bold"><input v-model="formS.cedula" placeholder="CEDULA" class="w-full p-2 border mb-2 text-xs font-bold"><select v-model="formS.area" class="w-full p-2 border mb-2 text-xs font-bold uppercase"><option value="medico">MEDICO</option><option value="juridico">JURIDICO</option><option value="psicologia">PSICOLOGIA</option><option value="cosmetologia">COSMETOLOGÍA</option></select><button @click="addStf" class="w-full bg-black text-white p-2 rounded text-xs font-bold">GUARDAR</button><div v-for="s in staff" class="flex justify-between border-b py-2 text-xs font-bold"><span>{{s.nombre}}</span><span @click="delStf(s.id)" class="text-red-500 cursor-pointer">X</span></div></div>
-                <div v-if="activeTab==='historial'" class="bg-white p-5 rounded-xl border"><h3 class="font-black text-xs mb-3">HISTORIAL</h3><div v-for="h in history" class="flex justify-between border-b py-2 text-xs font-bold uppercase"><div>{{h.pacienteNombre}}<br><span class="text-[9px] text-gray-400">{{h.tipoServicio}}</span></div><div><button @click="printH(h)" class="mr-2">🖨️</button><button @click="delH(h.id)" class="text-red-500">X</button></div></div></div>
-                <div v-if="activeTab==='data'" class="p-5 text-center"><button @click="nuke" class="bg-red-600 text-white p-4 rounded-xl font-black text-xs w-full">BORRAR TODO</button></div>
-
-            </div>
-        </div>
-
-        <div id="pdf-template" style="background:white; color:black; font-family:Arial; padding:40px; border:1px solid black; width:800px;">
-            <div v-if="pdfData">
-                <div style="border-bottom:3px solid black; padding-bottom:10px; margin-bottom:20px; display:flex; justify-content:space-between;">
-                    <div><h1 style="font-weight:900; text-transform:uppercase; font-size:20px;">{{pdfData.medicoNombre}}</h1><p style="font-size:10px; font-weight:bold;">CED: {{pdfData.medicoCedula}} | AREA: {{pdfData.tipoServicio}}</p></div>
-                    <div style="text-align:right;"><p style="font-weight:900; font-size:12px;">FOLIO: {{pdfData.folio}}</p><p style="font-size:10px;">{{pdfData.fecha}}</p></div>
-                </div>
-                <div style="background:#eee; padding:10px; font-weight:bold; font-size:11px; margin-bottom:10px;">PACIENTE: {{pdfData.pacienteNombre}} | EDAD: {{pdfData.edad}} | SEXO: {{pdfData.sexo}}</div>
+            <main class="container mx-auto px-4 py-8">
                 
-                <div v-if="pdfData.tipoServicio==='JURIDICO'" style="border:1px solid #ccc; padding:10px; margin-bottom:15px; font-size:11px; font-weight:bold;">
-                    DOMICILIO: {{pdfData.domicilio}}<br>TELÉFONO: {{pdfData.telefono}}
-                </div>
-                <div v-else style="border:1px solid #ccc; padding:5px; margin-bottom:15px; display:flex; justify-content:space-between; font-size:10px; font-weight:bold;">
-                    <span>PESO: {{pdfData.peso}}</span><span>TALLA: {{pdfData.talla}}</span><span>TA: {{pdfData.ta}}</span><span>TEMP: {{pdfData.temp}}</span>
-                </div>
-
-                <div style="min-height:400px;">
-                    <h3 style="font-weight:900; font-size:11px; border-bottom:1px solid black; margin-bottom:5px;">{{pdfData.tipoServicio==='JURIDICO'?'DESCRIPCIÓN DEL CASO':'DIAGNÓSTICO'}}</h3>
-                    <p style="font-size:11px; text-transform:uppercase; margin-bottom:20px;">{{pdfData.diagnostico}}</p>
+                <section v-if="activeTab === 'recepcion'" class="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-fade-in">
+                    <div class="bg-white p-8 rounded-[2rem] card-shadow border border-slate-100">
+                        <h2 class="font-black uppercase text-xs mb-6 text-slate-400 tracking-widest border-b pb-2">1. Registro de Paciente</h2>
+                        <form @submit.prevent="registerPatient" class="space-y-4">
+                            <input v-model="formP.nombre" placeholder="Nombre Completo" required class="w-full p-4 bg-slate-50 border rounded-2xl font-bold uppercase text-xs outline-none focus:ring-2 focus:ring-slate-900">
+                            <div class="grid grid-cols-2 gap-4">
+                                <input v-model.number="formP.edad" type="number" placeholder="Edad" required class="w-full p-4 bg-slate-50 border rounded-2xl font-bold text-xs outline-none">
+                                <select v-model="formP.sexo" class="w-full p-4 bg-slate-50 border rounded-2xl font-bold text-xs uppercase outline-none"><option value="HOMBRE">HOMBRE</option><option value="MUJER">MUJER</option></select>
+                            </div>
+                            <input v-model="formP.domicilio" placeholder="Domicilio" required class="w-full p-4 bg-slate-50 border rounded-2xl font-bold uppercase text-xs outline-none">
+                            <div>
+                                <input v-model="formP.telefono" type="tel" maxlength="10" placeholder="Teléfono (10 dígitos)" required class="w-full p-4 bg-slate-50 border rounded-2xl font-bold text-xs outline-none focus:ring-2 focus:ring-slate-900">
+                                <p v-if="formP.telefono.length > 0 && formP.telefono.length !== 10" class="text-[9px] text-red-500 font-bold mt-1 uppercase ml-2">⚠️ Deben ser 10 dígitos</p>
+                            </div>
+                            <select v-model="formP.servicio" class="w-full p-4 bg-slate-900 text-white rounded-2xl font-black uppercase text-[10px] tracking-wide outline-none">
+                                <option value="medico">MÉDICO GENERAL</option>
+                                <option value="psicologia">PSICOLOGÍA</option>
+                                <option value="juridico">JURÍDICO</option>
+                                <option value="cosmetologia">COSMETOLOGÍA</option>
+                            </select>
+                            <button type="submit" :disabled="formP.telefono.length !== 10" :class="['w-full py-5 rounded-2xl font-black uppercase text-xs shadow-lg transition-all', formP.telefono.length === 10 ? 'bg-slate-900 text-white hover:bg-black' : 'bg-slate-300 text-slate-500 cursor-not-allowed']">Registrar Ingreso</button>
+                        </form>
+                    </div>
                     
-                    <h3 style="font-weight:900; font-size:11px; border-bottom:1px solid black; margin-bottom:5px;">{{pdfData.tipoServicio==='JURIDICO'?'ASESORÍA':'TRATAMIENTO'}}</h3>
-                    <div v-if="pdfData.medicamentos" style="margin-bottom:10px;"><div v-for="m in pdfData.medicamentos" style="font-size:10px;">- {{m.nombre}}</div></div>
-                    <p style="font-size:11px; text-transform:uppercase;">{{pdfData.tratamiento}}</p>
+                    <div class="lg:col-span-2 bg-white rounded-[2rem] card-shadow border border-slate-100 overflow-hidden flex flex-col h-[500px]">
+                        <div class="bg-slate-50 p-6 border-b flex justify-between items-center">
+                            <h3 class="font-black uppercase text-xs text-slate-500 tracking-widest">Sala de Espera</h3>
+                            <span class="bg-slate-200 text-slate-700 px-3 py-1 rounded-full text-[10px] font-bold">{{patients.length}} Pacientes</span>
+                        </div>
+                        <div class="overflow-y-auto flex-1 p-4">
+                            <table class="w-full text-left uppercase text-[10px] font-bold">
+                                <thead class="text-slate-400 border-b-2 border-slate-100"><tr><th class="p-4">Folio</th><th class="p-4">Paciente</th><th class="p-4">Área</th><th class="p-4 text-center">Acción</th></tr></thead>
+                                <tbody class="divide-y divide-slate-50">
+                                    <tr v-for="p in patients" :key="p.id" class="hover:bg-slate-50 transition-colors">
+                                        <td class="p-4 text-slate-900">{{ p.folio }}</td>
+                                        <td class="p-4 text-slate-600">{{ p.nombre }}</td>
+                                        <td class="p-4"><span class="bg-slate-100 text-slate-600 px-3 py-1 rounded-lg">{{ p.servicio }}</span></td>
+                                        <td class="p-4 text-center"><button @click="deletePatient(p.id)" class="text-red-300 hover:text-red-500 transition-colors"><i class="fas fa-trash-alt text-lg"></i></button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <section v-if="activeTab === 'signos'" class="max-w-3xl mx-auto animate-fade-in">
+                    <div class="bg-white p-10 rounded-[3rem] card-shadow border border-slate-100">
+                        <h2 class="text-xl font-black uppercase text-slate-800 mb-8 border-b pb-4">2. Toma de Signos Vitales</h2>
+                        
+                        <div class="mb-8">
+                            <label class="text-[10px] font-black uppercase text-slate-400 mb-2 block tracking-widest ml-2">Seleccionar Paciente</label>
+                            <select v-model="selectedPatientId" @change="loadPatientForVitals" class="w-full p-5 bg-slate-50 border-2 border-slate-100 rounded-2xl font-black text-xs uppercase outline-none focus:border-slate-900 transition-all">
+                                <option :value="null">-- SELECCIONAR DE LA LISTA --</option>
+                                <option v-for="p in patients" :key="p.id" :value="p.id">{{ p.folio }} - {{ p.nombre }} ({{p.servicio}})</option>
+                            </select>
+                        </div>
+
+                        <div v-if="currP.enfermeria" class="bg-blue-50/50 p-8 rounded-[2.5rem] border-2 border-blue-100 transition-all">
+                            <div class="flex justify-between items-center mb-6 border-b border-blue-200 pb-4">
+                                <div>
+                                    <p class="text-sm font-black text-slate-900 uppercase">{{ currP.enfermeria.nombre }}</p>
+                                    <p class="text-[10px] font-bold text-blue-500 mt-1">EDAD: {{ currP.enfermeria.edad }} AÑOS | SEXO: {{ currP.enfermeria.sexo }}</p>
+                                </div>
+                                <div class="bg-white p-2 rounded-xl text-blue-500 shadow-sm"><i class="fas fa-user-check text-xl"></i></div>
+                            </div>
+                            
+                            <div class="grid grid-cols-2 gap-4 mb-6">
+                                <input v-model.number="vitalsForm.peso" placeholder="Peso (kg)" class="p-4 rounded-xl border border-slate-200 text-center font-black text-sm outline-none focus:ring-2 focus:ring-blue-200">
+                                <input v-model.number="vitalsForm.talla" placeholder="Talla (m)" class="p-4 rounded-xl border border-slate-200 text-center font-black text-sm outline-none focus:ring-2 focus:ring-blue-200">
+                                <input v-model="vitalsForm.ta" placeholder="T/A (120/80)" class="p-4 rounded-xl border border-slate-200 text-center font-black text-sm outline-none focus:ring-2 focus:ring-blue-200">
+                                <input v-model="vitalsForm.temp" placeholder="Temp (°C)" class="p-4 rounded-xl border border-slate-200 text-center font-black text-sm outline-none focus:ring-2 focus:ring-blue-200">
+                                <input v-model="vitalsForm.fc" placeholder="F.C." class="p-4 rounded-xl border border-slate-200 text-center font-black text-sm outline-none focus:ring-2 focus:ring-blue-200">
+                                <input v-model="vitalsForm.glucosa" placeholder="Glucosa" class="p-4 rounded-xl border border-slate-200 text-center font-black text-sm outline-none focus:ring-2 focus:ring-blue-200">
+                            </div>
+                            
+                            <button @click="saveVitals" class="w-full bg-blue-600 text-white py-5 rounded-2xl font-black uppercase text-xs shadow-lg hover:bg-blue-700 transition-all flex justify-center items-center gap-2">
+                                <i class="fas fa-save"></i> Guardar Signos
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <section v-if="activeTab === 'juridico'" class="max-w-4xl mx-auto space-y-6 animate-fade-in">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-white p-6 rounded-[2rem] card-shadow border border-slate-100">
+                            <label class="text-[10px] font-black uppercase text-slate-400 block mb-2 tracking-widest ml-2">1. Beneficiario</label>
+                            <select v-model="selectedPatientId" @change="loadSelectedPatient(activeTab)" class="w-full p-4 bg-slate-50 border rounded-xl font-black text-xs uppercase outline-none focus:ring-2 focus:ring-slate-900">
+                                <option :value="null">-- BUSCAR EN SALA DE ESPERA --</option>
+                                <option v-for="p in waitingFor(activeTab)" :key="p.id" :value="p.id">{{ p.nombre }}</option>
+                            </select>
+                        </div>
+                        <div class="bg-white p-6 rounded-[2rem] card-shadow border border-slate-100">
+                            <label class="text-[10px] font-black uppercase text-slate-400 block mb-2 tracking-widest ml-2">2. Abogado Asignado</label>
+                            <select v-model="selStaffId[activeTab]" class="w-full p-4 bg-slate-50 border rounded-xl font-black text-xs uppercase outline-none focus:ring-2 focus:ring-slate-900">
+                                <option :value="null">-- SELECCIONAR ABOGADO --</option>
+                                <option v-for="s in staffByArea(activeTab)" :key="s.id" :value="s.id">{{ s.nombre }}</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div v-if="currP[activeTab]" class="bg-white p-8 rounded-[3rem] card-shadow border-t-[12px] border-slate-900">
+                        <div class="flex justify-between items-center mb-8 border-b pb-4">
+                            <h2 class="text-xl font-black text-slate-800 uppercase">Expediente Legal</h2>
+                            <div class="bg-slate-100 px-4 py-2 rounded-xl border border-slate-200">
+                                <span class="text-[10px] font-bold text-slate-500 block">FOLIO INTERNO</span>
+                                <span class="text-sm font-black text-slate-900">{{ currP[activeTab].folio }}</span>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-50 p-6 rounded-3xl border border-slate-200 mb-8">
+                            <h3 class="font-black text-slate-400 text-[10px] uppercase tracking-widest mb-4 border-b border-slate-200 pb-2">Datos Generales del Beneficiario</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-8 text-xs font-bold text-slate-800 uppercase">
+                                <div>
+                                    <span class="text-slate-400 block text-[9px] mb-1">Nombre Completo</span>
+                                    <p class="bg-white p-2 rounded border border-slate-100">{{ currP[activeTab].nombre }}</p>
+                                </div>
+                                <div>
+                                    <span class="text-slate-400 block text-[9px] mb-1">Edad / Sexo</span>
+                                    <p class="bg-white p-2 rounded border border-slate-100">{{ currP[activeTab].edad }} Años  /  {{ currP[activeTab].sexo }}</p>
+                                </div>
+                                <div>
+                                    <span class="text-slate-400 block text-[9px] mb-1">Teléfono de Contacto</span>
+                                    <p class="bg-white p-2 rounded border border-slate-100">{{ currP[activeTab].telefono }}</p>
+                                </div>
+                                <div class="col-span-full">
+                                    <span class="text-slate-400 block text-[9px] mb-1">Domicilio Particular</span>
+                                    <p class="bg-white p-2 rounded border border-slate-100">{{ currP[activeTab].domicilio }}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="space-y-6">
+                            <div>
+                                <label class="text-[11px] font-black text-slate-800 uppercase tracking-widest mb-2 block ml-2">Descripción del Caso / Situación</label>
+                                <textarea v-model="consGen.diagnostico" class="w-full p-5 bg-white border-2 border-slate-100 rounded-3xl h-32 text-xs font-bold uppercase outline-none focus:border-slate-900 transition-colors resize-none" placeholder="Describa aquí los detalles del caso legal..."></textarea>
+                            </div>
+                            <div>
+                                <label class="text-[11px] font-black text-slate-800 uppercase tracking-widest mb-2 block ml-2">Asesoría Brindada / Pasos a Seguir</label>
+                                <textarea v-model="consGen.tratamiento" class="w-full p-5 bg-white border-2 border-slate-100 rounded-3xl h-32 text-xs font-bold uppercase outline-none focus:border-slate-900 transition-colors resize-none" placeholder="Escriba aquí la orientación legal o los trámites recomendados..."></textarea>
+                            </div>
+                        </div>
+
+                        <button @click="generatePDF(activeTab)" class="w-full bg-slate-900 text-white py-6 rounded-2xl font-black uppercase mt-10 shadow-xl hover:bg-black transition-all transform hover:scale-[1.01] flex justify-center items-center gap-3">
+                            <i class="fas fa-file-pdf text-lg"></i> Guardar y Generar Expediente PDF
+                        </button>
+                    </div>
+                </section>
+
+                <section v-if="['medico', 'psicologia', 'cosmetologia'].includes(activeTab)" class="max-w-5xl mx-auto space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-white p-5 rounded-2xl card-shadow border border-slate-100"><label class="text-[10px] font-black uppercase text-slate-400 block mb-2 tracking-widest">Paciente</label><select v-model="selectedPatientId" @change="loadSelectedPatient(activeTab)" class="w-full p-4 bg-slate-50 border rounded-xl font-black text-xs uppercase outline-none"><option :value="null">-- SELECCIONAR --</option><option v-for="p in waitingFor(activeTab)" :key="p.id" :value="p.id">{{ p.nombre }}</option></select></div>
+                        <div class="bg-white p-5 rounded-2xl card-shadow border border-slate-100"><label class="text-[10px] font-black uppercase text-slate-400 block mb-2 tracking-widest">Especialista</label><select v-model="selStaffId[activeTab]" class="w-full p-4 bg-slate-50 border rounded-xl font-black text-xs uppercase outline-none"><option :value="null">-- SELECCIONAR --</option><option v-for="s in staffByArea(activeTab)" :key="s.id" :value="s.id">{{ s.nombre }}</option></select></div>
+                    </div>
+                    <div v-if="currP[activeTab]" class="bg-white p-8 rounded-[3rem] card-shadow border-t-[10px] border-slate-900">
+                        <div class="flex justify-between items-center mb-8 border-b pb-6"><div><h2 class="text-xl font-black text-slate-800 uppercase">Consulta: {{ activeTab }}</h2><p class="text-[10px] font-bold text-slate-400 mt-1">{{ currP[activeTab].nombre }} ({{ currP[activeTab].edad }} Años)</p></div><div class="text-right"><span v-if="consGen.peso" class="bg-green-100 text-green-700 px-3 py-1 rounded-lg text-[10px] font-black uppercase">Signos OK</span><span v-else class="bg-red-100 text-red-700 px-3 py-1 rounded-lg text-[10px] font-black uppercase">Sin Signos</span></div></div>
+                        <div class="grid grid-cols-3 md:grid-cols-7 gap-3 mb-8 bg-slate-50 p-4 rounded-3xl border border-slate-200"><div><label class="text-[8px] font-black text-slate-400 uppercase block">Peso</label><input v-model.number="consGen.peso" class="w-full bg-transparent font-black text-sm outline-none"></div><div><label class="text-[8px] font-black text-slate-400 uppercase block">Talla</label><input v-model.number="consGen.talla" class="w-full bg-transparent font-black text-sm outline-none"></div><div><label class="text-[8px] font-black text-slate-400 uppercase block">T/A</label><input v-model="consGen.ta" class="w-full bg-transparent font-black text-sm outline-none"></div><div><label class="text-[8px] font-black text-slate-400 uppercase block">Temp</label><input v-model="consGen.temp" class="w-full bg-transparent font-black text-sm outline-none"></div><div><label class="text-[8px] font-black text-slate-400 uppercase block">F.C.</label><input v-model="consGen.fc" class="w-full bg-transparent font-black text-sm outline-none"></div><div><label class="text-[8px] font-black text-slate-400 uppercase block">Glucosa</label><input v-model="consGen.glucosa" class="w-full bg-transparent font-black text-sm outline-none"></div><div class="bg-white p-1 rounded text-center border"><span class="text-[8px] font-bold text-slate-400 block">IMC</span><span class="text-sm font-black">{{ calculateIMC }}</span></div></div>
+                        <div class="space-y-6">
+                            <div><label class="text-[11px] font-black text-slate-800 uppercase tracking-widest mb-2 block">Alergias</label><input v-model="consGen.alergias" class="w-full p-3 bg-slate-50 border rounded-xl text-xs font-bold uppercase outline-none"></div>
+                            <div v-if="activeTab === 'medico'" class="bg-red-50 p-6 rounded-3xl border border-red-100"><label class="text-[11px] font-black text-red-800 uppercase tracking-widest mb-3 block flex items-center gap-2"><i class="fas fa-procedures"></i> Antecedentes Quirúrgicos</label><div class="flex items-center gap-4 mb-4"><p class="text-xs font-bold text-slate-600">¿Ha tenido operaciones?</p><select v-model="consGen.cirugiasFlag" class="p-2 border rounded-xl font-black text-xs uppercase outline-none bg-white"><option value="NO">NO</option><option value="SI">SÍ</option></select></div><div v-if="consGen.cirugiasFlag === 'SI'"><textarea v-model="consGen.cirugiasDetalles" class="w-full p-4 bg-white border rounded-xl text-xs font-bold uppercase outline-none h-20" placeholder="Especifique detalles..."></textarea></div></div>
+                            <div><label class="text-[11px] font-black text-slate-800 uppercase tracking-widest mb-2 block">Diagnóstico</label><textarea v-model="consGen.diagnostico" class="w-full p-4 bg-slate-50 border rounded-2xl h-24 text-xs font-bold uppercase outline-none"></textarea></div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6"><div><label class="text-[11px] font-black text-slate-800 uppercase tracking-widest mb-2 block">Observaciones</label><textarea v-model="consGen.observaciones" class="w-full p-4 bg-yellow-50 border border-yellow-200 rounded-2xl h-32 text-xs font-bold uppercase outline-none"></textarea></div><div><label class="text-[11px] font-black text-slate-800 uppercase tracking-widest mb-2 block">Tratamiento</label><textarea v-model="consGen.tratamiento" class="w-full p-4 bg-slate-50 border rounded-2xl h-32 text-xs font-bold uppercase outline-none"></textarea></div></div>
+                            <div v-if="['medico', 'cosmetologia'].includes(activeTab)" class="bg-slate-50 p-6 rounded-[2rem] border border-slate-100"><p class="text-[11px] font-black uppercase mb-4 text-slate-800">Receta</p><div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4"><select v-model="tempMed" class="p-3 bg-white border rounded-xl text-xs font-bold uppercase outline-none"><option :value="null">-- SELECCIONAR --</option><option v-for="m in inventory" :key="m.id" :value="m">{{ m.nombre }} (Stock: {{m.stock}})</option></select><input v-model="tempDosis" placeholder="Indicaciones" class="p-3 bg-white border rounded-xl text-xs font-bold uppercase outline-none"><button @click="addToRecipe" class="bg-slate-900 text-white rounded-xl font-black uppercase text-[10px]">Añadir</button></div><div class="flex flex-wrap gap-2"><div v-for="(m, i) in recipe" :key="i" class="bg-white px-3 py-2 rounded-xl border border-slate-200 flex justify-between items-center gap-3 shadow-sm"><span class="font-black text-slate-800 text-[9px] uppercase">{{ m.nombre }} - {{ m.indicacion }}</span><i @click="recipe.splice(i,1)" class="fas fa-times text-red-300 cursor-pointer"></i></div></div></div>
+                        </div>
+                        <button @click="generatePDF(activeTab)" class="w-full bg-slate-900 text-white py-5 rounded-2xl font-black uppercase mt-8 shadow-xl hover:bg-black transition-all">Guardar, Generar PDF y Finalizar</button>
+                    </div>
+                </section>
+
+                <section v-if="activeTab === 'farmacia'" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div class="bg-white p-8 rounded-3xl card-shadow border h-fit"><h2 class="font-black uppercase text-xs mb-6 text-slate-400">7. Farmacia</h2><form @submit.prevent="addInventory" class="space-y-4"><input v-model="formI.nombre" placeholder="Nombre Medicamento" required class="w-full p-4 bg-slate-50 border rounded-2xl font-bold uppercase text-xs"><div class="grid grid-cols-2 gap-4"><input v-model.number="formI.stock" type="number" placeholder="Cantidad" required class="w-full p-4 bg-slate-50 border rounded-2xl font-bold text-xs"><input v-model="formI.caducidad" type="date" required class="w-full p-4 bg-slate-50 border rounded-2xl font-bold text-xs"></div><button type="submit" class="w-full bg-slate-800 text-white py-4 rounded-2xl font-black uppercase text-xs">Guardar</button></form></div>
+                    <div class="lg:col-span-2 bg-white rounded-3xl card-shadow border overflow-hidden"><table class="w-full text-left text-[10px] font-bold uppercase"><thead class="bg-slate-900 text-white"><tr><th class="p-4">Medicamento</th><th class="p-4">Stock</th><th class="p-4">Acción</th></tr></thead><tbody class="divide-y divide-slate-100"><tr v-for="m in inventory" :key="m.id"><td class="p-4">{{ m.nombre }}</td><td class="p-4"><span :class="m.stock < 10 ? 'stock-low' : 'stock-ok'">{{ m.stock }} PZAS</span></td><td class="p-4"><button @click="deleteInventory(m.id)" class="text-red-300"><i class="fas fa-trash"></i></button></td></tr></tbody></table></div>
+                </section>
+
+                <section v-if="activeTab === 'config'" class="max-w-4xl mx-auto">
+                    <div class="bg-white p-10 rounded-[3rem] border card-shadow">
+                        <h3 class="font-black text-xs uppercase mb-8 text-slate-400 border-b pb-4">8. Personal</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8"><input v-model="formS.nombre" placeholder="Nombre" class="p-4 bg-slate-50 border rounded-2xl font-bold uppercase text-xs"><input v-model="formS.cedula" placeholder="Cédula" class="p-4 bg-slate-50 border rounded-2xl font-bold uppercase text-xs"><input v-model="formS.telefono" placeholder="Teléfono" class="p-4 bg-slate-50 border rounded-2xl font-bold uppercase text-xs"><select v-model="formS.area" class="p-4 bg-slate-50 border rounded-2xl font-black uppercase text-xs"><option value="medico">MÉDICO</option><option value="psicologia">PSICOLOGÍA</option><option value="juridico">JURÍDICO</option><option value="cosmetologia">COSMETOLOGÍA</option></select><button @click="addStaff" class="bg-slate-900 text-white py-4 rounded-2xl font-black uppercase text-xs col-span-full">Guardar</button></div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4"><div v-for="s in staff" :key="s.id" class="p-5 border rounded-2xl flex justify-between items-center bg-slate-50 uppercase"><div><p class="font-black text-xs">{{ s.nombre }}</p><p class="text-[9px] text-slate-400 font-bold">CÉD: {{ s.cedula }}</p><span class="text-[8px] bg-slate-200 px-2 rounded">{{ s.area }}</span></div><button @click="deleteStaff(s.id)" class="text-red-300"><i class="fas fa-trash"></i></button></div></div>
+                    </div>
+                </section>
+
+                <section v-if="activeTab === 'historial'" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 uppercase">
+                    <div v-for="h in history" :key="h.id" class="bg-white p-6 rounded-2xl border card-shadow flex justify-between items-center group"><div><p class="font-black text-xs text-slate-800">{{ h.pacienteNombre }}</p><p class="text-[9px] text-slate-400 font-bold mt-1">{{ h.fecha }}</p><span class="text-[8px] px-2 py-1 rounded bg-slate-100 font-black mt-3 inline-block">{{ h.tipoServicio }}</span></div><div class="flex gap-2"><button @click="reprintPDF(h)" class="bg-slate-900 text-white w-10 h-10 rounded-xl shadow-lg"><i class="fas fa-print"></i></button><button @click="deleteHistory(h.id)" class="text-slate-300 hover:text-red-500 w-10 h-10"><i class="fas fa-trash"></i></button></div></div>
+                </section>
+
+                <section v-if="activeTab === 'data'" class="max-w-2xl mx-auto text-center space-y-8">
+                    <div class="bg-white p-12 rounded-[3rem] card-shadow border border-slate-100">
+                        <i class="fas fa-database text-6xl text-slate-200 mb-6"></i><h2 class="text-2xl font-black text-slate-800 uppercase mb-2">10. Datos</h2><div class="grid grid-cols-1 gap-4"><button @click="exportData" class="bg-slate-900 text-white py-6 rounded-3xl font-black uppercase tracking-widest shadow-xl transition-all">Exportar JSON</button><button @click="nukeDatabase" class="bg-red-600 text-white py-6 rounded-3xl font-black uppercase tracking-widest shadow-xl border-4 border-red-200">BORRAR TODO</button><div class="relative mt-4"><input type="file" @change="importData" id="importFile" class="hidden"><label for="importFile" class="block bg-slate-100 text-slate-600 py-6 rounded-3xl font-black uppercase tracking-widest cursor-pointer border-2 border-dashed border-slate-300">Importar JSON</label></div></div>
+                    </div>
+                </section>
+
+            </main>
+
+            <div id="pdf-template">
+                <div style="border: 4px solid #000; padding: 45px; position: relative; min-height: 1040px; background: white; color: black; font-family: Arial;">
+                    <div v-if="pdfData" style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 5px solid #000; padding-bottom: 25px; margin-bottom: 30px;">
+                        <div style="width: 70%;"><h1 style="font-size: 24px; font-weight: 900; margin: 0; text-transform: uppercase;">{{ pdfData.medicoNombre }}</h1><p v-if="pdfData.tipoServicio !== 'JURIDICO'" style="font-size: 11px; font-weight: 900;">CÉDULA PROFESIONAL: {{ pdfData.medicoCedula }}</p><p style="font-size: 11px; font-weight: 900; color: #555;">ÁREA: {{ pdfData.tipoServicio }}</p></div>
+                        <div style="text-align: right; width: 30%;"><p style="font-size: 12px; font-weight: 900;">FOLIO: {{ pdfData.folio }}</p><p style="font-size: 11px;">FECHA: {{ pdfData.fecha }}</p></div>
+                    </div>
+                    
+                    <div v-if="pdfData" style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 10px; margin-bottom: 25px; background: #eee; padding: 15px;"><div><div class="field-label">Paciente:</div><div class="field-value">{{ pdfData.pacienteNombre }}</div></div><div><div class="field-label">Edad:</div><div class="field-value">{{ pdfData.edad }} Años</div></div><div><div class="field-label">Sexo:</div><div class="field-value">{{ pdfData.sexo }}</div></div></div>
+                    
+                    <div v-if="pdfData && pdfData.tipoServicio === 'JURIDICO'" style="background: #f8fafc; padding: 15px; margin-bottom: 20px; border: 1px solid #ccc;">
+                        <p style="font-size: 12px; font-weight: bold; margin-bottom: 5px; text-transform: uppercase;">Datos de Contacto:</p>
+                        <p style="font-size: 12px; margin-bottom: 5px; text-transform: uppercase;">DOMICILIO: {{ pdfData.domicilio }}</p>
+                        <p style="font-size: 12px; text-transform: uppercase;">TELÉFONO: {{ pdfData.telefono }}</p>
+                    </div>
+
+                    <div v-if="pdfData && pdfData.tipoServicio !== 'JURIDICO'" style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 5px; margin-bottom: 20px; border: 1px solid #ccc; padding: 10px;">
+                         <div><div class="field-label">Peso:</div><div class="field-value">{{ pdfData.peso }} KG</div></div><div><div class="field-label">Talla:</div><div class="field-value">{{ pdfData.talla }}</div></div><div><div class="field-label">T/A:</div><div class="field-value">{{ pdfData.ta }}</div></div><div><div class="field-label">Temp:</div><div class="field-value">{{ pdfData.temp }}</div></div><div><div class="field-label">FC:</div><div class="field-value">{{ pdfData.fc }}</div></div><div><div class="field-label">Gluc:</div><div class="field-value">{{ pdfData.glucosa }}</div></div>
+                    </div>
+                    <div v-if="pdfData && pdfData.tipoServicio !== 'JURIDICO'" class="mb-6 p-2 bg-black text-white text-center font-bold">IMC: {{ pdfData.imc }}</div>
+                    
+                    <div v-if="pdfData" style="flex-grow: 1;">
+                        <div v-if="pdfData.cirugiasFlag === 'SI'" style="margin-bottom: 20px;"><h3 style="font-size: 12px; font-weight: 900; border-bottom: 2px solid #000; margin-bottom: 5px; text-transform: uppercase;">Antecedentes Quirúrgicos</h3><p style="font-size: 12px; text-transform: uppercase; margin-bottom: 5px;">{{ pdfData.cirugiasDetalles }}</p></div>
+                        <h3 style="font-size: 12px; font-weight: 900; border-bottom: 2px solid #000; margin-bottom: 5px; text-transform: uppercase;">{{ pdfData.tipoServicio === 'JURIDICO' ? 'Descripción del Caso / Situación' : 'Diagnóstico' }}</h3><p style="font-size: 12px; text-transform: uppercase; margin-bottom: 15px;">{{ pdfData.diagnostico }}</p>
+                        <h3 style="font-size: 12px; font-weight: 900; border-bottom: 2px solid #000; margin-bottom: 5px; text-transform: uppercase;">{{ pdfData.tipoServicio === 'JURIDICO' ? 'Observaciones / Asesoría' : 'Observaciones' }}</h3><p style="font-size: 12px; text-transform: uppercase; margin-bottom: 10px;">{{ pdfData.observaciones }}</p>
+                        
+                        <div v-if="pdfData.tipoServicio !== 'JURIDICO'">
+                            <h3 style="font-size: 12px; font-weight: 900; border-bottom: 2px solid #000; margin-bottom: 5px; text-transform: uppercase;">Tratamiento</h3>
+                            <div v-if="pdfData.medicamentos && pdfData.medicamentos.length > 0" style="margin-top: 10px; margin-bottom: 10px;"><div v-for="m in pdfData.medicamentos" style="margin-bottom: 5px; border-bottom: 1px dashed #000; padding-bottom: 2px;"><span style="font-weight: 900; font-size: 12px;">{{ m.nombre }}</span> — <span style="font-size: 11px;">{{ m.indicacion }}</span></div></div>
+                            <p style="font-size: 12px; text-transform: uppercase; margin-top: 10px;">{{ pdfData.tratamiento }}</p>
+                        </div>
+                    </div>
+                    
+                    <div v-if="pdfData && pdfData.tipoServicio !== 'JURIDICO'" style="margin-top: 50px; text-align: center;"><div style="border-top: 2px solid #000; display: inline-block; padding-top: 5px; width: 250px;"><p style="font-weight: bold; font-size: 12px;">FIRMA AUTORIZADA</p></div></div>
                 </div>
-                <div v-if="pdfData.tipoServicio!=='JURIDICO'" style="text-align:center; margin-top:50px; border-top:1px solid black; width:200px; padding-top:5px; font-size:10px; font-weight:bold;">FIRMA</div>
             </div>
-        </div>
 
-    </div>
-
-    <script type="module">
+        </div> </div> <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getDatabase, ref, push, onValue, remove, set, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-        const app = initializeApp({ apiKey: "AIzaSyCK6A7G6IvAJyYPCEspvvHg6qjDZdhuQuY", authDomain: "jornada-de-salud1.firebaseapp.com", projectId: "jornada-de-salud1", storageBucket: "jornada-de-salud1.firebasestorage.app", messagingSenderId: "947161304402", appId: "1:947161304402:web:906da7370cc343300cbe8b", measurementId: "G-W945F157DC" });
-        const db = getDatabase(app);
-        const { createApp, ref: vRef, reactive, onMounted } = Vue;
+
+        const firebaseConfig = { apiKey: "AIzaSyCK6A7G6IvAJyYPCEspvvHg6qjDZdhuQuY", authDomain: "jornada-de-salud1.firebaseapp.com", projectId: "jornada-de-salud1", storageBucket: "jornada-de-salud1.firebasestorage.app", messagingSenderId: "947161304402", appId: "1:947161304402:web:906da7370cc343300cbe8b", measurementId: "G-W945F157DC" };
+        const fbApp = initializeApp(firebaseConfig);
+        const db = getDatabase(fbApp);
+        const { createApp, ref: vRef, reactive, computed, onMounted, watch } = Vue;
 
         createApp({
             setup() {
-                const isLoggedIn = vRef(false); const user = vRef(''); const pass = vRef(''); const error = vRef(false);
-                const activeTab = vRef('recepcion');
-                const patients = vRef([]); const staff = vRef([]); const inventory = vRef([]); const history = vRef([]);
-                const formP = reactive({nombre:'', edad:'', sexo:'MUJER', domicilio:'', telefono:'', servicio:'medico'});
-                const formS = reactive({nombre:'', cedula:'', telefono:'', area:'medico'});
-                const formI = reactive({nombre:'', stock:'', caducidad:''});
-                const selPatient = vRef(null); const selDoc = vRef(null);
-                const currP = reactive({enfermeria:null, medico:null, juridico:null, psicologia:null, cosmetologia:null});
-                const vitals = reactive({peso:'', talla:'', ta:'', temp:'', fc:'', glucosa:''});
-                const consult = reactive({alergias:'', diagnostico:'', tratamiento:'', peso:'', talla:'', ta:'', temp:'', fc:'', glucosa:''});
-                const recipe = vRef([]); const tmpMed = vRef(null); const pdfData = vRef(null);
-
-                // LOGIN CORREGIDO A MAYUSCULAS
-                const login = () => { 
-                    if(user.value.toUpperCase() === 'MARIA0852' && pass.value.toUpperCase() === 'ASUNA0852') {
-                        isLoggedIn.value = true;
-                    } else {
-                        error.value = true;
-                    }
+                const isLoggedIn = vRef(false);
+                const loginData = reactive({ user: '', pass: '' });
+                const loginError = vRef(false);
+                
+                // LOGIN: AHORA VERIFICA MAYÚSCULAS
+                const performLogin = () => { 
+                    if (loginData.user.toUpperCase() === 'MARIA0852' && loginData.pass.toUpperCase() === 'ASUNA0852') { 
+                        isLoggedIn.value = true; 
+                        loginError.value = false; 
+                    } else { 
+                        loginError.value = true; 
+                    } 
                 };
-                const logout = () => { isLoggedIn.value=false; user.value=''; pass.value=''; };
+                const logout = () => { isLoggedIn.value = false; loginData.user = ''; loginData.pass = ''; };
+
+                const activeTab = vRef('recepcion');
+                const tabs = [{ id: 'recepcion', name: '1. Admisión', icon: 'fas fa-id-card' }, { id: 'signos', name: '2. Signos', icon: 'fas fa-heartbeat' }, { id: 'medico', name: '3. Medicina', icon: 'fas fa-stethoscope' }, { id: 'psicologia', name: '4. Psicología', icon: 'fas fa-brain' }, { id: 'juridico', name: '5. Jurídico', icon: 'fas fa-balance-scale' }, { id: 'cosmetologia', name: '6. Cosmetología', icon: 'fas fa-spa' }, { id: 'farmacia', name: '7. Inventario', icon: 'fas fa-pills' }, { id: 'config', name: '8. Personal', icon: 'fas fa-user-md' }, { id: 'historial', name: '9. Historial', icon: 'fas fa-folder-open' }, { id: 'data', name: '10. Datos', icon: 'fas fa-cloud' }];
+                
+                const patients = vRef([]);
+                const staff = vRef([]);
+                const inventory = vRef([]);
+                const history = vRef([]);
+                const formP = reactive({ nombre: '', edad: null, sexo: 'MUJER', domicilio: '', telefono: '', servicio: 'medico' });
+                const formS = reactive({ nombre: '', area: 'medico', cedula: '', telefono: '' });
+                const formI = reactive({ nombre: '', stock: null, caducidad: '' });
+                const selectedPatientId = vRef(null);
+                const currP = reactive({ enfermeria: null, medico: null, psicologia: null, juridico: null, cosmetologia: null });
+                const selStaffId = reactive({ medico: null, psicologia: null, juridico: null, cosmetologia: null });
+                const vitalsForm = reactive({ peso: null, talla: null, ta: '', temp: '', fc: '', glucosa: '' });
+                const consGen = reactive({ alergias: '', peso: null, talla: null, ta: '', temp:'', fc:'', glucosa:'', diagnostico: '', observaciones: '', tratamiento: '', cirugiasFlag: 'NO', cirugiasDetalles: '' });
+                const recipe = vRef([]);
+                const tempMed = vRef(null);
+                const tempDosis = vRef('');
+                const pdfData = vRef(null);
+                
+                watch(activeTab, () => { selectedPatientId.value = null; Object.assign(consGen, { alergias: '', peso: null, talla: null, ta: '', temp:'', fc:'', glucosa:'', diagnostico: '', observaciones: '', tratamiento: '', cirugiasFlag: 'NO', cirugiasDetalles: '' }); recipe.value = []; });
 
                 onMounted(() => {
-                    ['patients','staff','inventory','history'].forEach(k => onValue(ref(db, k), s => {
-                        const val = s.val();
-                        if(k==='patients') patients.value = val ? Object.keys(val).map(x=>({...val[x], id:x})) : [];
-                        if(k==='staff') staff.value = val ? Object.keys(val).map(x=>({...val[x], id:x})) : [];
-                        if(k==='inventory') inventory.value = val ? Object.keys(val).map(x=>({...val[x], id:x})) : [];
-                        if(k==='history') history.value = val ? Object.keys(val).map(x=>({...val[x], id:x})) : [];
-                    }));
+                    onValue(ref(db, 'patients'), snap => { const v = snap.val(); patients.value = v ? Object.keys(v).map(k => ({...v[k], id: k})) : []; });
+                    onValue(ref(db, 'staff'), snap => { const v = snap.val(); if(v) { staff.value = Object.keys(v).map(k => ({...v[k], id: k})); } else { push(ref(db, 'staff'), {nombre: "DR. EJEMPLO", area: "medico", cedula: "12345", telefono: "555"}); } });
+                    onValue(ref(db, 'inventory'), snap => { const v = snap.val(); if(v) { inventory.value = Object.keys(v).map(k => ({...v[k], id: k})); } else { const meds = [{nombre: "PARACETAMOL 500MG", stock: 100, caducidad: "2026-01-01"}, {nombre: "IBUPROFENO", stock: 10, caducidad: "2025-12-01"}]; meds.forEach(m => push(ref(db, 'inventory'), m)); } });
+                    onValue(ref(db, 'history'), snap => { const v = snap.val(); history.value = v ? Object.keys(v).map(k => ({...v[k], id: k})) : []; });
                 });
 
-                const regPatient = () => { if(formP.telefono.length==10) { push(ref(db,'patients'), {...formP, folio:'EXP-'+Math.floor(Math.random()*9000)}); Object.assign(formP, {nombre:'', edad:'', domicilio:'', telefono:''}); } };
-                const delPatient = (id) => remove(ref(db, `patients/${id}`));
-                const loadVitals = () => { const p = patients.value.find(x=>x.id===selPatient.value); if(p) { currP.enfermeria=p; if(p.vitals) Object.assign(vitals, p.vitals); } };
-                const saveVitals = () => { update(ref(db,`patients/${currP.enfermeria.id}`), {vitals:{...vitals}}).then(()=>{alert('OK'); selPatient.value=null; currP.enfermeria=null;}); };
-                const filterP = (area) => patients.value.filter(p=>p.servicio===area);
-                const filterS = (area) => staff.value.filter(s=>s.area===area);
-                const loadConsult = () => { const p = patients.value.find(x=>x.id===selPatient.value); if(p) { currP[activeTab.value]=p; if(p.vitals) Object.assign(consult, p.vitals); } };
-                const addRec = () => { if(tmpMed.value) { recipe.value.push({id:tmpMed.value.id, nombre:tmpMed.value.nombre}); tmpMed.value=null; } };
-                
-                const genPDF = () => {
-                    if(!selDoc.value) return alert('FALTA MEDICO');
-                    const doc = staff.value.find(s=>s.id===selDoc.value);
-                    const p = currP[activeTab.value];
-                    const data = { ...consult, ...p, medicoNombre:doc.nombre, medicoCedula:doc.cedula, tipoServicio:activeTab.value.toUpperCase(), fecha:new Date().toLocaleDateString(), pacienteNombre:p.nombre, medicamentos:[...recipe.value] };
-                    pdfData.value = data;
-                    setTimeout(() => {
-                        const el = document.getElementById('pdf-template');
-                        el.style.display='block';
-                        html2pdf().from(el).save(`EXP_${data.folio}.pdf`).then(()=>{
-                            el.style.display='none';
-                            push(ref(db,'history'), data);
-                            if(activeTab.value!=='juridico') recipe.value.forEach(r => { const i = inventory.value.find(x=>x.id===r.id); if(i) set(ref(db,`inventory/${i.id}/stock`), i.stock-1); });
-                            delPatient(p.id); selPatient.value=null; currP[activeTab.value]=null; recipe.value=[];
-                        });
-                    }, 500);
+                const nukeDatabase = () => { if(confirm("¿BORRAR TODO?")) { remove(ref(db, 'patients')); remove(ref(db, 'staff')).then(() => { push(ref(db, 'staff'), {nombre: "DR. EJEMPLO", area: "medico", cedula: "12345", telefono: "555"}); }); remove(ref(db, 'inventory')).then(() => { push(ref(db, 'inventory'), {nombre: "PARACETAMOL 500MG", stock: 100, caducidad: "2026-01-01"}); }); remove(ref(db, 'history')); alert("REINICIADO."); location.reload(); } };
+                const registerPatient = () => { if(formP.telefono.length !== 10) return; push(ref(db, 'patients'), { ...formP, folio: 'EXP-'+Math.floor(Math.random()*8999+1000), timestamp: Date.now() }); Object.assign(formP, { nombre:'', edad:null, domicilio:'', telefono:'' }); };
+                const deletePatient = (id) => remove(ref(db, `patients/${id}`));
+                const loadPatientForVitals = () => { const f = patients.value.find(x => x.id === selectedPatientId.value); if(f) { currP.enfermeria = f; if(f.vitals) Object.assign(vitalsForm, f.vitals); } };
+                const saveVitals = () => { if(!currP.enfermeria) return; update(ref(db, `patients/${currP.enfermeria.id}`), { vitals: {...vitalsForm} }).then(() => { alert("Guardado."); currP.enfermeria = null; selectedPatientId.value = null; }); };
+                const loadSelectedPatient = (area) => { const f = patients.value.find(x => x.id === selectedPatientId.value); if(f) { currP[area] = f; const s = staff.value.filter(x => x.area === area); if(s.length > 0 && !selStaffId[area]) selStaffId[area] = s[0].id; if(f.vitals) Object.assign(consGen, f.vitals); } };
+                const generatePDF = (area) => { 
+                    if(!selStaffId[area]) return alert("Seleccione un especialista."); 
+                    const doc = staff.value.find(s => s.id === selStaffId[area]); 
+                    const d = { 
+                        fecha: new Date().toLocaleString(), 
+                        tipoServicio: area.toUpperCase(), 
+                        pacienteNombre: currP[area].nombre, 
+                        edad: currP[area].edad, 
+                        sexo: currP[area].sexo, 
+                        folio: currP[area].folio, 
+                        medicoNombre: doc.nombre, 
+                        medicoCedula: doc.cedula, 
+                        domicilio: currP[area].domicilio, 
+                        telefono: currP[area].telefono,
+                        medicamentos: [...recipe.value], 
+                        imc: calculateIMC.value, 
+                        ...consGen 
+                    }; 
+                    pdfData.value = d; 
+                    setTimeout(() => { 
+                        const el = document.getElementById('pdf-template'); 
+                        el.style.display = 'block'; 
+                        html2pdf().from(el).set({ margin: 0, filename: `EXP_${d.folio}.pdf`, html2canvas: { scale: 2 } }).save().then(() => { 
+                            el.style.display = 'none'; 
+                            push(ref(db, 'history'), d); 
+                            if(area !== 'juridico') { 
+                                recipe.value.forEach(r => { const it = inventory.value.find(i => i.id === r.id); if(it) set(ref(db, `inventory/${it.id}/stock`), it.stock - 1); }); 
+                            } 
+                            deletePatient(currP[area].id); 
+                            currP[area] = null; selectedPatientId.value = null; recipe.value = []; 
+                        }); 
+                    }, 500); 
                 };
+                const addInventory = () => { push(ref(db, 'inventory'), {...formI}); Object.assign(formI, {nombre:'', stock:null, caducidad:''}); };
+                const deleteInventory = (id) => remove(ref(db, `inventory/${id}`));
+                const addStaff = () => { push(ref(db, 'staff'), {...formS}); Object.assign(formS, {nombre:'', area:'medico', cedula:'', telefono:''}); };
+                const deleteStaff = (id) => remove(ref(db, `staff/${id}`));
+                const addToRecipe = () => { if(tempMed.value) { recipe.value.push({ id: tempMed.value.id, nombre: tempMed.value.nombre, indicacion: tempDosis.value }); tempMed.value = null; tempDosis.value = ''; } };
+                const calculateIMC = computed(() => { if (consGen.peso > 0 && consGen.talla > 0) { let t = parseFloat(consGen.talla); if (t > 3) t = t / 100; return (consGen.peso / (t * t)).toFixed(2); } return '0.00'; });
+                const exportData = () => { const data = { patients: patients.value, staff: staff.value, inventory: inventory.value, history: history.value }; const blob = new Blob([JSON.stringify(data)], { type: 'application/json' }); const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = `RESPALDO_${new Date().toISOString().slice(0,10)}.json`; link.click(); };
+                const importData = (e) => { const file = e.target.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = (ev) => { const d = JSON.parse(ev.target.result); if(d.patients) d.patients.forEach(p => push(ref(db, 'patients'), p)); if(d.staff) d.staff.forEach(s => push(ref(db, 'staff'), s)); if(d.inventory) d.inventory.forEach(i => push(ref(db, 'inventory'), i)); alert("Datos cargados."); }; reader.readAsText(file); };
+                const reprintPDF = (h) => { pdfData.value = h; setTimeout(() => { const el = document.getElementById('pdf-template'); el.style.display = 'block'; html2pdf().from(el).save().then(() => el.style.display = 'none'); }, 500); };
+                const deleteHistory = (id) => remove(ref(db, `history/${id}`));
+                const staffByArea = (area) => staff.value.filter(x => x.area === area);
+                const waitingFor = (area) => patients.value.filter(x => x.servicio === area);
 
-                const addStf = () => { push(ref(db,'staff'), {...formS}); Object.assign(formS, {nombre:'', cedula:'', telefono:''}); };
-                const delStf = (id) => remove(ref(db, `staff/${id}`));
-                const addInv = () => { push(ref(db,'inventory'), {...formI}); Object.assign(formI, {nombre:'', stock:''}); };
-                const delInv = (id) => remove(ref(db, `inventory/${id}`));
-                const printH = (h) => { pdfData.value=h; setTimeout(()=>{ const el=document.getElementById('pdf-template'); el.style.display='block'; html2pdf().from(el).save().then(()=>el.style.display='none'); },500); };
-                const delH = (id) => remove(ref(db, `history/${id}`));
-                const nuke = () => { if(confirm('SEGURA?')) { remove(ref(db,'patients')); remove(ref(db,'staff')); remove(ref(db,'inventory')); remove(ref(db,'history')); } };
-
-                return { isLoggedIn, user, pass, error, login, logout, activeTab, tabs, patients, staff, inventory, history, formP, formS, formI, currP, vitals, consult, selPatient, selDoc, recipe, tmpMed, pdfData, regPatient, delPatient, loadVitals, saveVitals, filterP, filterS, loadConsult, addRec, genPDF, addStf, delStf, addInv, delInv, printH, delH, nuke };
+                return { isLoggedIn, loginData, loginError, performLogin, logout, activeTab, tabs, patients, staff, history, inventory, formP, formS, formI, vitalsForm, consGen, currP, selStaffId, selectedPatientId, recipe, tempMed, tempDosis, pdfData, calculateIMC, registerPatient, loadSelectedPatient, loadPatientForVitals, saveVitals, generatePDF, reprintPDF, exportData, importData, addStaff, deleteStaff, staffByArea, addInventory, deleteInventory, addToRecipe, deleteHistory, nukeDatabase };
             }
         }).mount('#app');
     </script>
