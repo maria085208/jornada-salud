@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SISTEMA MÉDICO INTEGRAL V74 - FUERZA GENERACIONAL</title>
+    <title>JORNADAS DE SALUD -FUERZA GENERACIONAL-MMCF </title>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.3.4/vue.global.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -184,11 +184,11 @@
         /* ========================================== */
         #print-zone { display: none; }
 
-        /* --- REGLAS DE ORO PARA IMPRESIÓN --- */
+        /* --- REGLAS DE ORO PARA IMPRESIÓN (AJUSTE CARTA) --- */
         @media print {
             /* 1. Ocultar la app interactiva */
             #app-container, #login-overlay, header, nav, .no-print { display: none !important; }
-            body { background: white; }
+            body { background: white; height: 100vh; overflow: hidden; }
             
             /* 2. Mostrar SOLO la zona de impresión */
             #print-zone { 
@@ -199,10 +199,25 @@
                 margin: 0; padding: 0;
             }
             
-            /* 3. Forzar visibilidad y colores */
-            #print-zone * { visibility: visible; color: black !important; -webkit-print-color-adjust: exact; }
-            
-            @page { size: auto; margin: 5mm; }
+            /* 3. Ajuste perfecto a la hoja */
+            .receta-maestra {
+                width: 100% !important;
+                max-width: 100% !important;
+                margin: 0 !important;
+                padding: 20px 40px !important; /* Ajuste de márgenes internos para que quepa */
+                box-shadow: none !important;
+                border: 2px solid #000 !important;
+                page-break-inside: avoid; /* Evita que se corte en dos hojas */
+            }
+
+            /* 4. Configuración de página CARTA */
+            @page { 
+                size: letter portrait; /* Tamaño Carta Vertical */
+                margin: 0.5cm; /* Margen pequeño para aprovechar la hoja */
+            }
+
+            /* 5. Forzar colores */
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
         }
 
         [v-cloak] { display: none; }
@@ -435,7 +450,7 @@
                 const loadSelectedPatient = (area) => { const p = patients.value.find(x=>x.id===selectedPatientId.value); if(p) { currP[area]=p; if(p.vitals) Object.assign(consGen, p.vitals); else Object.assign(consGen, {peso:null, talla:null, ta:'', temp:'', fc:'', glucosa:''}); } };
                 const addToRecipe = () => { if(tempMed.value) { recipe.value.push({id:tempMed.value.id, nombre:tempMed.value.nombre, indicacion:tempDosis.value}); tempMed.value=null; tempDosis.value=''; } };
 
-                // --- FUNCIÓN DE IMPRESIÓN ROBUSTA ---
+                // --- FUNCIÓN DE IMPRESIÓN ROBUSTA Y ASÍNCRONA ---
                 const printRecipe = async (area) => {
                     if(!selStaffId[area]) return alert('Seleccione Especialista');
                     
