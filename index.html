@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema V29 - Arranque</title>
+    <title>Jornadas V30</title>
     
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -14,22 +14,23 @@
         body {
             background-image: url('./logo-fuerza.png'); 
             background-size: cover; background-position: center; background-attachment: fixed; margin: 0;
-            font-family: system-ui, -apple-system, sans-serif;
+            font-family: sans-serif;
         }
         
-        /* LOGIN: Siempre visible por defecto para evitar pantallas blancas */
-        .login-overlay {
+        /* ESTO GARANTIZA QUE EL LOGIN SE VEA SIEMPRE AL INICIO */
+        #login-static {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-color: #0f172a; 
             display: flex; align-items: center; justify-content: center;
-            z-index: 10000;
+            z-index: 9999;
         }
 
         .app-content { background-color: rgba(255, 255, 255, 0.97); min-height: 100vh; padding-bottom: 80px; }
         .tab-active { background-color: #0f172a; color: white; border-bottom: 4px solid #000; }
         
-        /* Ocultar solo el PDF, no la app entera */
+        /* Ocultar PDF y Vue cloak */
         #pdf-template { display: none; }
+        [v-cloak] { display: none; }
         
         /* Inputs sólidos */
         .input-std {
@@ -41,15 +42,20 @@
 </head>
 <body class="text-slate-800">
 
+    <script>
+        window.onerror = function(msg, source, lineno) {
+            alert("Error del Sistema:\n" + msg + "\nLínea: " + lineno);
+        };
+    </script>
+
     <div id="app">
 
-        <div v-if="!isLoggedIn" class="login-overlay">
+        <div id="login-static" v-if="!isLoggedIn">
             <div class="bg-white p-10 rounded-[2rem] shadow-2xl w-96 text-center">
                 <div class="bg-black w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 text-white text-3xl">
                     <i class="fas fa-lock"></i>
                 </div>
-                <h2 class="text-2xl font-black uppercase text-slate-900 mb-2">Acceso V29</h2>
-                <p class="text-[10px] text-slate-400 uppercase tracking-widest mb-8 font-bold">Arranque Directo</p>
+                <h2 class="text-2xl font-black uppercase text-slate-900 mb-2">Acceso V30</h2>
                 
                 <form @submit.prevent="performLogin" class="space-y-6">
                     <div class="text-left">
@@ -66,7 +72,7 @@
                     </div>
                     
                     <button type="submit" class="w-full bg-black text-white py-4 rounded-2xl font-black uppercase text-xs hover:bg-slate-800 transition-all">
-                        INGRESAR
+                        INGRESAR AL SISTEMA
                     </button>
                 </form>
             </div>
