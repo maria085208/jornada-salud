@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jornadas Salud</title>
+    <title>Jornadas Salud V19</title>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -11,12 +11,13 @@
     
     <style>
         body { background-image: url('./logo-fuerza.png'); background-size: cover; background-position: center; background-attachment: fixed; margin: 0; }
+        /* PANTALLA DE LOGIN NEGRA QUE CUBRE TODO */
         .login-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f172a; display: flex; align-items: center; justify-content: center; z-index: 9999; }
         .app-content { background: rgba(255,255,255,0.96); min-height: 100vh; padding-bottom: 50px; }
         .tab-active { background: #0f172a; color: white; }
         [v-cloak] { display: none; }
-        /* Ocultar PDF estrictamente */
-        #pdf-template { display: none; } 
+        /* ESTO OCULTA EL PDF PARA SIEMPRE HASTA QUE SE DESCARGUE */
+        #pdf-template { display: none !important; } 
     </style>
 </head>
 <body class="font-sans text-slate-900">
@@ -25,12 +26,16 @@
 
         <div v-if="!isLoggedIn" class="login-screen">
             <div class="bg-white p-8 rounded-xl shadow-2xl text-center w-80">
-                <h1 class="text-2xl font-black mb-4">ACCESO</h1>
+                <h1 class="text-2xl font-black mb-4">ACCESO V19</h1>
                 <form @submit.prevent="login">
-                    <input v-model="user" class="w-full p-3 mb-3 border-2 border-black rounded text-center font-bold uppercase" placeholder="USUARIO">
-                    <input v-model="pass" type="password" class="w-full p-3 mb-3 border-2 border-black rounded text-center font-bold" placeholder="CONTRASEÑA">
-                    <p v-if="error" class="text-red-600 font-bold text-xs mb-3">DATOS INCORRECTOS</p>
-                    <button class="w-full bg-black text-white p-3 rounded font-bold hover:bg-slate-800">ENTRAR</button>
+                    <label class="block text-xs font-bold text-left mb-1">USUARIO (MARIA0852)</label>
+                    <input v-model="user" class="w-full p-3 mb-3 border-2 border-black rounded text-center font-bold uppercase" placeholder="MARIA0852">
+                    
+                    <label class="block text-xs font-bold text-left mb-1">CONTRASEÑA (ASUNA0852)</label>
+                    <input v-model="pass" type="password" class="w-full p-3 mb-3 border-2 border-black rounded text-center font-bold" placeholder="ASUNA0852">
+                    
+                    <p v-if="error" class="text-red-600 font-bold text-xs mb-3 bg-red-100 p-2 rounded">DATOS INCORRECTOS</p>
+                    <button class="w-full bg-black text-white p-3 rounded font-bold hover:bg-slate-800">ENTRAR AL SISTEMA</button>
                 </form>
             </div>
         </div>
@@ -133,7 +138,7 @@
                 </div>
 
                 <div v-if="activeTab==='farmacia'" class="bg-white p-5 rounded-xl border"><h3 class="font-black text-xs mb-3">FARMACIA</h3><input v-model="formI.nombre" placeholder="NOMBRE" class="w-full p-2 border mb-2 text-xs uppercase font-bold"><input v-model.number="formI.stock" placeholder="CANTIDAD" class="w-full p-2 border mb-2 text-xs font-bold"><button @click="addInv" class="w-full bg-black text-white p-2 rounded text-xs font-bold">GUARDAR</button><div v-for="m in inventory" class="flex justify-between border-b py-2 text-xs font-bold"><span>{{m.nombre}}</span><span>{{m.stock}}</span><span @click="delInv(m.id)" class="text-red-500 cursor-pointer">X</span></div></div>
-                <div v-if="activeTab==='config'" class="bg-white p-5 rounded-xl border"><h3 class="font-black text-xs mb-3">PERSONAL</h3><input v-model="formS.nombre" placeholder="NOMBRE" class="w-full p-2 border mb-2 text-xs uppercase font-bold"><input v-model="formS.cedula" placeholder="CEDULA" class="w-full p-2 border mb-2 text-xs font-bold"><select v-model="formS.area" class="w-full p-2 border mb-2 text-xs font-bold uppercase"><option value="medico">MEDICO</option><option value="juridico">JURIDICO</option><option value="psicologia">PSICOLOGIA</option><option value="cosmetologia">COSMETOLOGIA</option></select><button @click="addStf" class="w-full bg-black text-white p-2 rounded text-xs font-bold">GUARDAR</button><div v-for="s in staff" class="flex justify-between border-b py-2 text-xs font-bold"><span>{{s.nombre}}</span><span @click="delStf(s.id)" class="text-red-500 cursor-pointer">X</span></div></div>
+                <div v-if="activeTab==='config'" class="bg-white p-5 rounded-xl border"><h3 class="font-black text-xs mb-3">PERSONAL</h3><input v-model="formS.nombre" placeholder="NOMBRE" class="w-full p-2 border mb-2 text-xs uppercase font-bold"><input v-model="formS.cedula" placeholder="CEDULA" class="w-full p-2 border mb-2 text-xs font-bold"><select v-model="formS.area" class="w-full p-2 border mb-2 text-xs font-bold uppercase"><option value="medico">MEDICO</option><option value="juridico">JURIDICO</option><option value="psicologia">PSICOLOGIA</option><option value="cosmetologia">COSMETOLOGÍA</option></select><button @click="addStf" class="w-full bg-black text-white p-2 rounded text-xs font-bold">GUARDAR</button><div v-for="s in staff" class="flex justify-between border-b py-2 text-xs font-bold"><span>{{s.nombre}}</span><span @click="delStf(s.id)" class="text-red-500 cursor-pointer">X</span></div></div>
                 <div v-if="activeTab==='historial'" class="bg-white p-5 rounded-xl border"><h3 class="font-black text-xs mb-3">HISTORIAL</h3><div v-for="h in history" class="flex justify-between border-b py-2 text-xs font-bold uppercase"><div>{{h.pacienteNombre}}<br><span class="text-[9px] text-gray-400">{{h.tipoServicio}}</span></div><div><button @click="printH(h)" class="mr-2">🖨️</button><button @click="delH(h.id)" class="text-red-500">X</button></div></div></div>
                 <div v-if="activeTab==='data'" class="p-5 text-center"><button @click="nuke" class="bg-red-600 text-white p-4 rounded-xl font-black text-xs w-full">BORRAR TODO</button></div>
 
@@ -190,7 +195,14 @@
                 const consult = reactive({alergias:'', diagnostico:'', tratamiento:'', peso:'', talla:'', ta:'', temp:'', fc:'', glucosa:''});
                 const recipe = vRef([]); const tmpMed = vRef(null); const pdfData = vRef(null);
 
-                const login = () => { if(user.value==='MARIA0852' && pass.value==='ASUNA0852') isLoggedIn.value=true; else error.value=true; };
+                // LOGIN CORREGIDO A MAYUSCULAS
+                const login = () => { 
+                    if(user.value.toUpperCase() === 'MARIA0852' && pass.value.toUpperCase() === 'ASUNA0852') {
+                        isLoggedIn.value = true;
+                    } else {
+                        error.value = true;
+                    }
+                };
                 const logout = () => { isLoggedIn.value=false; user.value=''; pass.value=''; };
 
                 onMounted(() => {
