@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema V29 - Arranque Rápido</title>
+    <title>Sistema V29 - Arranque</title>
     
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -128,7 +128,7 @@
                         <div class="bg-slate-50 p-6 rounded-3xl border border-slate-200 mb-8"><div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-bold text-slate-800 uppercase"><div><span class="text-slate-400 block text-[9px]">Nombre:</span> {{ currP[activeTab].nombre }}</div><div><span class="text-slate-400 block text-[9px]">Edad:</span> {{ currP[activeTab].edad }} Años</div><div><span class="text-slate-400 block text-[9px]">Teléfono:</span> {{ currP[activeTab].telefono }}</div><div><span class="text-slate-400 block text-[9px]">Domicilio:</span> {{ currP[activeTab].domicilio }}</div></div></div>
                         <textarea v-model="consGen.diagnostico" class="w-full p-5 input-std mb-4 h-32 resize-none" placeholder="DESCRIPCIÓN DEL CASO..."></textarea>
                         <textarea v-model="consGen.tratamiento" class="w-full p-5 input-std mb-6 h-32 resize-none" placeholder="ASESORÍA / PASOS A SEGUIR..."></textarea>
-                        <button @click="generatePDF(activeTab)" class="w-full bg-slate-900 text-white py-5 rounded-2xl font-black uppercase shadow-xl">Guardar y Generar PDF</button>
+                        <button @click="generatePDF(activeTab)" class="w-full bg-slate-900 text-white py-5 rounded-2xl font-black uppercase shadow-xl hover:bg-black transition-all">Guardar y Generar PDF</button>
                     </div>
                 </section>
 
