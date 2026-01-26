@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SISTEMA INTEGRAL JORNADAS DE SALUD - FUERZA GENERACIONAL</title>
+    <title>JORNADAS DE SALUD - FUERZA GENERACIONAL</title>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.3.4/vue.global.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -14,46 +14,86 @@
     
     <style>
         /* ========================================= */
-        /* ESTÉTICA Y DISEÑO VISUAL */
+        /* DISEÑO VISUAL IDÉNTICO A TU IMAGEN (BEIGE) */
         /* ========================================= */
-        :root { --primary: #0f172a; --accent: #2d5a27; --bg: #f8fafc; }
+        :root { 
+            --bg-color: #fffbeb; /* Beige claro de la foto */
+            --text-color: #1e293b; 
+            --accent-color: #b45309; /* Tono Ámbar/Naranja del logo */
+        }
         
         body { 
-            background-image: url('./logo-fuerza.png'); 
-            background-size: cover; background-position: center; background-attachment: fixed;
-            font-family: 'Inter', sans-serif; background-color: var(--bg); color: #1e293b;
-            margin: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact;
+            background-color: var(--bg-color); 
+            color: var(--text-color); 
+            margin: 0; 
+            font-family: 'Inter', sans-serif; 
+            -webkit-print-color-adjust: exact; 
+            print-color-adjust: exact;
         }
 
-        /* CLASES DE UTILIDAD INTERFAZ */
-        .input-std { width: 100%; padding: 14px; border: 2px solid #cbd5e1; border-radius: 12px; font-weight: 700; text-transform: uppercase; outline: none; background: #fff; font-size: 13px; transition: all 0.3s; }
-        .input-std:focus { border-color: #334155; box-shadow: 0 0 0 4px rgba(51, 65, 85, 0.15); }
-        .tab-active { background-color: #334155 !important; color: white !important; font-weight: 900; box-shadow: inset 0 -3px 0 #000; }
-        .tab-inactive { color: #64748b; background-color: white; font-weight: 600; }
+        /* INPUTS ESTILO LIMPIO */
+        .input-std { 
+            width: 100%; 
+            padding: 14px; 
+            border: 2px solid #e2e8f0; 
+            border-radius: 12px; 
+            font-weight: 700; 
+            text-transform: uppercase; 
+            outline: none; 
+            background: #ffffff; 
+            font-size: 13px; 
+            transition: all 0.3s; 
+        }
+        .input-std:focus { 
+            border-color: var(--accent-color); 
+            box-shadow: 0 0 0 4px rgba(180, 83, 9, 0.1); 
+        }
 
-        /* SEMÁFORO INTELIGENTE DE INVENTARIO */
-        .stock-red { background: #fee2e2; border-left: 8px solid #ef4444; color: #991b1b; } /* AGOTADO */
-        .stock-yellow { background: #fefce8; border-left: 8px solid #eab308; color: #854d0e; } /* BAJO */
-        .stock-green { background: #f0fdf4; border-left: 8px solid #22c55e; color: #166534; } /* OPTIMO */
-        .stock-expired { background: #450a0a !important; color: #ffffff !important; border-left: 8px solid #000000; } /* CADUCADO */
+        /* PESTAÑAS */
+        .tab-active { background-color: #451a03 !important; color: white !important; font-weight: 900; }
+        .tab-inactive { color: #78350f; background-color: white; font-weight: 600; border-bottom: 2px solid #fed7aa; }
 
-        /* TABLAS DE DATOS */
+        /* SEMÁFORO */
+        .stock-red { background: #fee2e2; border-left: 8px solid #ef4444; color: #991b1b; }
+        .stock-yellow { background: #fefce8; border-left: 8px solid #eab308; color: #854d0e; }
+        .stock-green { background: #f0fdf4; border-left: 8px solid #22c55e; color: #166534; }
+        .stock-expired { background: #450a0a !important; color: white !important; border-left: 8px solid black; }
+
+        /* TABLAS */
         .excel-table { width: 100%; border-collapse: collapse; font-size: 11px; background: white; }
-        .excel-table th { background: #f1f5f9; border: 1px solid #cbd5e1; padding: 10px; text-transform: uppercase; font-weight: 900; text-align: left; }
-        .excel-table td { border: 1px solid #e2e8f0; padding: 10px; font-weight: 600; }
+        .excel-table th { background: #ffedd5; border: 1px solid #fdba74; padding: 10px; text-transform: uppercase; font-weight: 900; text-align: left; color: #7c2d12; }
+        .excel-table td { border: 1px solid #fed7aa; padding: 10px; font-weight: 600; }
 
-        /* MODAL DE LOGIN */
-        #login-overlay { position: fixed; inset: 0; background-color: #0f172a; display: flex; align-items: center; justify-content: center; z-index: 1000; }
-        .login-box { background: white; padding: 3.5rem; border-radius: 2.5rem; width: 90%; max-width: 420px; text-align: center; box-shadow: 0 25px 50px rgba(0,0,0,0.5); }
+        /* PANTALLA LOGIN (ESTILO FOTO) */
+        #login-overlay { 
+            position: fixed; inset: 0; 
+            background-color: #fffbeb; /* FONDO BEIGE */
+            display: flex; align-items: center; justify-content: center; z-index: 1000; 
+        }
+        .login-box { 
+            background: transparent; /* Sin caja blanca para que parezca la foto */
+            padding: 2rem; 
+            width: 100%; 
+            max-width: 400px; 
+            text-align: center; 
+        }
+        .logo-text {
+            font-family: 'Inter', sans-serif;
+            font-weight: 900;
+            text-transform: uppercase;
+            color: #000;
+            line-height: 0.9;
+            letter-spacing: -1px;
+        }
 
-        /* FORMATO DE IMPRESIÓN (RECETA/NOTA) */
+        /* IMPRESIÓN */
         #print-zone { display: none; }
         @media print {
             #app-container, #login-overlay, header, nav, .no-print { display: none !important; }
             body { background: white; margin: 0; padding: 0; }
             #print-zone { display: block !important; position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 9999; }
             .receta-maestra { width: 100%; padding: 40px; border: 2px solid #000; color: #000; min-height: 980px; position: relative; }
-            .receta-header { text-align: center; border-bottom: 4px solid #2d5a27; padding-bottom: 15px; margin-bottom: 20px; }
+            .receta-header { text-align: center; border-bottom: 4px solid #d97706; padding-bottom: 15px; margin-bottom: 20px; }
             @page { size: letter; margin: 0.5cm; }
         }
         [v-cloak] { display: none; }
@@ -65,21 +105,24 @@
 
         <div id="login-overlay" v-if="!isLoggedIn">
             <div class="login-box">
-                <div class="bg-slate-900 w-24 h-24 rounded-3xl flex items-center justify-center mx-auto mb-8 text-white text-4xl shadow-2xl">
-                    <i class="fas fa-user-shield"></i>
+                <div class="mb-10">
+                    <i class="fas fa-users text-6xl text-red-800 mb-4" style="opacity: 0.8;"></i> <div class="logo-text text-4xl mb-1">FUERZA</div>
+                    <div class="logo-text text-5xl">GENERACIONAL</div>
                 </div>
-                <h2 class="text-3xl font-black uppercase mb-2 tracking-tighter">Acceso Seguro</h2>
-                <p class="text-[11px] text-slate-400 font-bold uppercase tracking-widest mb-10 italic">Panel Online v2.0</p>
                 
                 <form @submit.prevent="performLogin" class="space-y-6">
-                    <input v-model="loginData.user" type="text" class="input-std text-center" placeholder="ID DE USUARIO" autocomplete="off">
-                    <input v-model="loginData.pass" type="password" class="input-std text-center" placeholder="CONTRASEÑA" autocomplete="off">
-                    
-                    <div v-if="loginError" class="bg-red-50 text-red-600 p-4 rounded-xl text-[10px] font-black uppercase border border-red-100">
-                        <i class="fas fa-exclamation-circle mr-2"></i> {{ errorMsg }}
+                    <div>
+                        <input v-model="loginData.user" type="text" class="input-std text-center" placeholder="USUARIO" style="background: white; border: 2px solid #000;" autocomplete="off">
+                    </div>
+                    <div>
+                        <input v-model="loginData.pass" type="password" class="input-std text-center" placeholder="CONTRASEÑA" style="background: white; border: 2px solid #000;" autocomplete="off">
                     </div>
                     
-                    <button type="submit" class="w-full bg-slate-900 text-white py-6 rounded-2xl font-black uppercase shadow-2xl hover:bg-black transition-all">
+                    <div v-if="loginError" class="bg-red-100 text-red-800 p-3 rounded-lg text-xs font-bold border border-red-200">
+                        <i class="fas fa-exclamation-triangle"></i> {{ errorMsg }}
+                    </div>
+                    
+                    <button type="submit" class="w-full bg-black text-white py-4 rounded-xl font-black uppercase shadow-xl hover:bg-gray-800 transition-all text-sm tracking-widest">
                         INGRESAR
                     </button>
                 </form>
@@ -91,10 +134,10 @@
             <header class="bg-white border-b sticky top-0 z-40 shadow-sm">
                 <div class="container mx-auto px-4 py-3 flex justify-between items-center bg-white">
                     <div class="flex items-center gap-4">
-                        <div class="bg-slate-900 text-white p-3 rounded-2xl shadow-lg"><i class="fas fa-hospital-symbol text-2xl"></i></div>
+                        <div class="bg-amber-700 text-white p-3 rounded-2xl shadow"><i class="fas fa-cloud text-2xl"></i></div>
                         <div>
                             <h1 class="text-xl font-black uppercase tracking-tighter text-slate-900 leading-none">Jornadas Salud</h1>
-                            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{{ roleName }} - {{ loginData.user }}</p>
+                            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{{ roleName }} (ONLINE)</p>
                         </div>
                     </div>
                     <button @click="logout" class="bg-red-50 text-red-600 border-2 border-red-100 px-6 py-2 rounded-xl font-black uppercase text-[10px]">
@@ -115,7 +158,7 @@
                 <section v-if="activeTab === 'nosotros'" class="max-w-6xl mx-auto space-y-12 animate-fade-in">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
                         <div class="bg-white p-10 rounded-[3rem] border shadow-xl">
-                            <h2 class="text-3xl font-black text-red-600 uppercase mb-6 italic underline">¿Quiénes somos?</h2>
+                            <h2 class="text-3xl font-black text-amber-800 uppercase mb-6 italic underline">¿Quiénes somos?</h2>
                             <p class="text-lg font-medium text-slate-700 leading-relaxed uppercase text-justify">Somos una plataforma ciudadana que busca convertirse en un referente en la ejecución de proyectos de ciudadanía activa y organizada.</p>
                         </div>
                         <div class="bg-slate-900 p-10 rounded-[3rem] text-white shadow-2xl">
@@ -142,7 +185,7 @@
                                 <option value="juridico">JURÍDICO</option>
                                 <option value="cosmetologia">COSMETOLOGÍA</option>
                             </select>
-                            <button @click="registerPatient" class="w-full bg-blue-600 text-white py-5 rounded-2xl font-black uppercase text-xs shadow-xl active:scale-95 transition-all">GUARDAR REGISTRO</button>
+                            <button @click="registerPatient" class="w-full bg-amber-600 text-white py-5 rounded-2xl font-black uppercase text-xs shadow-xl active:scale-95 transition-all">GUARDAR REGISTRO</button>
                         </div>
                     </div>
                     <div class="lg:col-span-2 bg-white rounded-[2.5rem] border-2 h-[600px] flex flex-col shadow-xl overflow-hidden">
@@ -400,7 +443,7 @@
         <div id="print-zone" v-if="printData">
             <div class="receta-maestra">
                 <div class="receta-header">
-                    <h1 style="font-size: 28px; font-weight: 900; color: #2d5a27; margin: 0; text-transform: uppercase;">JORNADAS DE SALUD FUERZA GENERACIONAL</h1>
+                    <h1 style="font-size: 28px; font-weight: 900; color: #d97706; margin: 0; text-transform: uppercase;">JORNADAS DE SALUD FUERZA GENERACIONAL</h1>
                     <p style="font-size: 12px; font-weight: 900; letter-spacing: 3px; color: #000; margin-top: 5px;">CFMM | PUEBLA</p>
                 </div>
                 
@@ -499,6 +542,7 @@
                 const patients = vRef([]); const staff = vRef([]); const inventory = vRef([]); const history = vRef([]);
                 const printData = vRef(null);
             
+                // FORMULARIOS (CON ESCUELA)
                 const formP = reactive({ nombre: '', edad: null, sexo: 'MUJER', domicilio: '', telefono: '', servicio: 'medico' });
                 const formS = reactive({ nombre: '', area: 'medico', cedula: '', escuela: '' });
                 const formI = reactive({ nombre: '', stock: null, caducidad: '', presentacion: '' });
@@ -540,7 +584,7 @@
 
                     if (!email) {
                         loginError.value = true;
-                        errorMsg.value = 'Usuario no registrado en el sistema';
+                        errorMsg.value = 'USUARIO NO VÁLIDO (Revise mayúsculas)';
                         return;
                     }
 
@@ -552,9 +596,9 @@
                             isLoggedIn.value = true; loginError.value = false;
                         }).catch((err) => {
                             loginError.value = true;
-                            if(err.code === 'auth/invalid-credential') errorMsg.value = 'Contraseña Incorrecta';
-                            else if(err.code === 'auth/network-request-failed') errorMsg.value = 'Error de Conexión (Sin Internet)';
-                            else errorMsg.value = 'Error de Acceso: ' + err.message;
+                            if(err.code === 'auth/invalid-credential') errorMsg.value = 'CONTRASEÑA INCORRECTA (Verifique en Firebase)';
+                            else if(err.code === 'auth/network-request-failed') errorMsg.value = 'ERROR DE RED (Sin Internet)';
+                            else errorMsg.value = 'ERROR: ' + err.code;
                         });
                 };
 
@@ -599,7 +643,7 @@
                         domicilio: p.domicilio, telefono: p.telefono,
                         vitals: p.vitals || null, alergias: consGen.alergias, diagnostico: consGen.diagnostico,
                         tratamiento: consGen.tratamiento, medicamentos: [...recipe.value],
-                        medicoNombre: doc.nombre, medicoCedula: doc.cedula, medicoEscuela: doc.escuela, 
+                        medicoNombre: doc.nombre, medicoCedula: doc.cedula, medicoEscuela: doc.escuela, // ESCUELA
                         tipoServicio: area, fecha: new Date().toLocaleString()
                     };
 
@@ -611,7 +655,10 @@
 
                     remove(ref(db, `patients/${p.id}`));
                     printData.value = report;
-                    nextTick(() => { setTimeout(() => { window.print(); printData.value = null; }, 1500); }); // TIEMPO EXTRA PARA CARGAR
+                    
+                    // ESPERA 1.5 SEGUNDOS PARA PINTAR DATOS ANTES DE ABRIR DIÁLOGO DE IMPRESIÓN
+                    nextTick(() => { setTimeout(() => { window.print(); printData.value = null; }, 1500); });
+                    
                     currP[area] = null; selectedPatientId.value = null;
                     consGen.diagnostico = ''; consGen.tratamiento = ''; recipe.value = [];
                 };
@@ -632,262 +679,57 @@
                         ['patients','staff','inventory','history'].forEach(k => remove(ref(db, k)));
                         alert('BASE DE DATOS REINICIADA CORRECTAMENTE');
                     }
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SISTEMA INTEGRAL JORNADAS DE SALUD - FUERZA GENERACIONAL</title>
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.3.4/vue.global.min.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.6.0/jspdf.plugin.autotable.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    
-    <style>
-        /* ========================================= */
-        /* ESTÉTICA Y DISEÑO VISUAL (RESTAURADO A TU GUSTO) */
-        /* ========================================= */
-        :root { --primary: #451a03; --accent: #d97706; --bg: #fffbeb; } /* VUELVE EL TONO BEIGE/TIERRA */
-        
-        body { 
-            background-image: url('./logo-fuerza.png'); 
-            background-size: cover; background-position: center; background-attachment: fixed;
-            font-family: 'Inter', sans-serif; background-color: var(--bg); color: #1e293b;
-            margin: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact;
-        }
+                };
 
-        /* CLASES DE UTILIDAD INTERFAZ */
-        .input-std { width: 100%; padding: 14px; border: 2px solid #cbd5e1; border-radius: 12px; font-weight: 700; text-transform: uppercase; outline: none; background: #fff; font-size: 13px; transition: all 0.3s; }
-        .input-std:focus { border-color: #d97706; box-shadow: 0 0 0 4px rgba(217, 119, 6, 0.2); } /* Foco Ámbar */
-        
-        .tab-active { background-color: #451a03 !important; color: white !important; font-weight: 900; box-shadow: inset 0 -3px 0 #d97706; }
-        .tab-inactive { color: #78350f; background-color: white; font-weight: 600; }
-
-        /* SEMÁFORO INTELIGENTE DE INVENTARIO */
-        .stock-red { background: #fee2e2; border-left: 8px solid #ef4444; color: #991b1b; } /* AGOTADO */
-        .stock-yellow { background: #fefce8; border-left: 8px solid #eab308; color: #854d0e; } /* BAJO */
-        .stock-green { background: #f0fdf4; border-left: 8px solid #22c55e; color: #166534; } /* OPTIMO */
-        .stock-expired { background: #450a0a !important; color: #ffffff !important; border-left: 8px solid #000000; } /* CADUCADO */
-
-        /* TABLAS DE DATOS */
-        .excel-table { width: 100%; border-collapse: collapse; font-size: 11px; background: white; }
-        .excel-table th { background: #fff7ed; border: 1px solid #fed7aa; padding: 10px; text-transform: uppercase; font-weight: 900; text-align: left; color: #9a3412; }
-        .excel-table td { border: 1px solid #fed7aa; padding: 10px; font-weight: 600; }
-
-        /* MODAL DE LOGIN (RESTAURADO AL ESTILO DE LA FOTO) */
-        #login-overlay { position: fixed; inset: 0; background-color: #fffbeb; display: flex; align-items: center; justify-content: center; z-index: 1000; }
-        .login-box { background: white; padding: 3rem; border-radius: 2rem; width: 90%; max-width: 400px; text-align: center; box-shadow: 0 20px 40px rgba(120, 53, 15, 0.15); border: 2px solid #fde68a; }
-
-        /* FORMATO DE IMPRESIÓN (RECETA/NOTA) */
-        #print-zone { display: none; }
-        @media print {
-            #app-container, #login-overlay, header, nav, .no-print { display: none !important; }
-            body { background: white; margin: 0; padding: 0; }
-            #print-zone { display: block !important; position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 9999; }
-            .receta-maestra { width: 100%; padding: 40px; border: 2px solid #000; color: #000; min-height: 980px; position: relative; }
-            .receta-header { text-align: center; border-bottom: 4px solid #d97706; padding-bottom: 15px; margin-bottom: 20px; }
-            @page { size: letter; margin: 0.5cm; }
-        }
-        [v-cloak] { display: none; }
-    </style>
-</head>
-<body>
-
-    <div id="app" v-cloak>
-
-        <div id="login-overlay" v-if="!isLoggedIn">
-            <div class="login-box">
-                <div class="text-amber-700 text-6xl mb-4"><i class="fas fa-hands-holding-circle"></i></div>
-                <h1 class="text-3xl font-black uppercase text-slate-800 tracking-tighter mb-1">Fuerza</h1>
-                <h1 class="text-3xl font-black uppercase text-slate-800 tracking-tighter mb-8">Generacional</h1>
-                
-                <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-6">Acceso al Sistema Online</p>
-                
-                <form @submit.prevent="performLogin" class="space-y-5">
-                    <input v-model="loginData.user" type="text" class="input-std text-center bg-slate-50" placeholder="USUARIO (EJ: MARIA0852)" autocomplete="off">
-                    <input v-model="loginData.pass" type="password" class="input-std text-center bg-slate-50" placeholder="CONTRASEÑA" autocomplete="off">
-                    
-                    <div v-if="loginError" class="bg-red-50 text-red-600 p-3 rounded-xl text-[10px] font-black uppercase border border-red-100">
-                        <i class="fas fa-exclamation-circle mr-1"></i> {{ errorMsg }}
-                    </div>
-                    
-                    <button type="submit" class="w-full bg-amber-600 text-white py-5 rounded-xl font-black uppercase shadow-lg hover:bg-amber-700 transition-all text-sm">
-                        INICIAR SESIÓN
-                    </button>
-                </form>
-            </div>
-        </div>
-
-        <div v-else id="app-container" class="min-h-screen pb-20">
-            
-            <header class="bg-white border-b sticky top-0 z-40 shadow-sm">
-                <div class="container mx-auto px-4 py-3 flex justify-between items-center bg-white">
-                    <div class="flex items-center gap-4">
-                        <div class="bg-amber-700 text-white p-3 rounded-2xl shadow"><i class="fas fa-cloud text-2xl"></i></div>
-                        <div>
-                            <h1 class="text-xl font-black uppercase tracking-tighter text-slate-900 leading-none">Jornadas Salud</h1>
-                            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">ONLINE: {{ roleName }}</p>
-                        </div>
-                    </div>
-                    <button @click="logout" class="bg-slate-100 text-slate-600 border-2 border-slate-200 px-6 py-2 rounded-xl font-black uppercase text-[10px] hover:bg-slate-200">
-                        SALIR <i class="fas fa-sign-out-alt ml-1"></i>
-                    </button>
-                </div>
-                
-                <nav class="flex overflow-x-auto bg-white border-t no-scrollbar shadow-inner">
-                    <button v-for="t in filteredTabs" :key="t.id" @click="changeTab(t.id)" 
-                        :class="['px-6 py-4 text-[9px] font-black uppercase border-r flex items-center gap-2 transition-all whitespace-nowrap', activeTab === t.id ? 'tab-active' : 'tab-inactive']">
-                        <i :class="t.icon"></i> {{ t.name }}
-                    </button>
-                </nav>
-            </header>
-
-            <main class="container mx-auto px-4 py-8">
-                
-                <section v-if="activeTab === 'nosotros'" class="max-w-6xl mx-auto space-y-12 animate-fade-in">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
-                        <div class="bg-white p-10 rounded-[3rem] border shadow-xl">
-                            <h2 class="text-3xl font-black text-amber-700 uppercase mb-6 italic underline">¿Quiénes somos?</h2>
-                            <p class="text-lg font-medium text-slate-700 leading-relaxed uppercase text-justify">Somos una plataforma ciudadana que busca convertirse en un referente en la ejecución de proyectos de ciudadanía activa y organizada.</p>
-                        </div>
-                        <div class="bg-slate-800 p-10 rounded-[3rem] text-white shadow-2xl">
-                            <h2 class="text-3xl font-black uppercase mb-6 italic underline underline-offset-8">Nuestra Visión</h2>
-                            <p class="text-lg font-bold leading-relaxed uppercase text-justify">Convertirnos en un referente de participación ciudadana activa y organizada para generar cambios sostenibles y positivos en Puebla.</p>
-                        </div>
-                    </div>
-                </section>
-
-                <section v-if="activeTab === 'recepcion'" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    <div class="bg-white p-8 rounded-[2.5rem] border-2 shadow-xl h-fit">
-                        <h3 class="font-black text-xs uppercase mb-6 text-slate-400 border-b pb-2 italic">Registro Beneficiario</h3>
-                        <div class="space-y-4">
-                            <input v-model="formP.nombre" placeholder="Nombre Completo" class="input-std">
-                            <div class="grid grid-cols-2 gap-4">
-                                <input v-model.number="formP.edad" type="number" placeholder="Edad" class="input-std">
-                                <select v-model="formP.sexo" class="input-std"><option value="HOMBRE">HOMBRE</option><option value="MUJER">MUJER</option></select>
-                            </div>
-                            <input v-model="formP.domicilio" placeholder="Domicilio" class="input-std">
-                            <input v-model="formP.telefono" placeholder="Teléfono" class="input-std">
-                            <select v-model="formP.servicio" class="input-std bg-slate-800 text-white">
-                                <option value="medico">MÉDICO GENERAL</option>
-                                <option value="psicologia">PSICOLOGÍA</option>
-                                <option value="juridico">JURÍDICO</option>
-                                <option value="cosmetologia">COSMETOLOGÍA</option>
-                            </select>
-                            <button @click="registerPatient" class="w-full bg-amber-600 text-white py-5 rounded-2xl font-black uppercase text-xs shadow-xl active:scale-95 transition-all">GUARDAR REGISTRO</button>
-                        </div>
-                    </div>
-                    <div class="lg:col-span-2 bg-white rounded-[2.5rem] border-2 h-[600px] flex flex-col shadow-xl overflow-hidden">
-                        <div class="bg-slate-800 p-6 text-white font-black uppercase text-xs flex justify-between">
-                            <span>Lista de Espera Actual</span>
-                            <span class="bg-white/20 px-3 py-1 rounded-full">{{patients.length}} Pacientes</span>
-                        </div>
-                        <div class="overflow-y-auto p-4 space-y-3">
-                            <div v-for="p in patients" :key="p.id" class="flex justify-between items-center p-5 border-2 rounded-[2rem] hover:bg-slate-50 transition-all">
-                                <div>
-                                    <p class="font-black text-sm uppercase text-slate-900">{{ p.nombre }}</p>
-                                    <span class="text-[8px] font-black bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full uppercase">{{ p.servicio }}</span>
-                                </div>
-                                <button @click="deletePatient(p.id)" class="text-red-300 hover:text-red-500 p-2"><i class="fas fa-trash-alt text-xl"></i></button>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <section v-if="activeTab === 'signos'" class="max-w-4xl mx-auto">
-                    <div class="bg-white p-10 rounded-[3rem] border-4 shadow-2xl text-center">
-                        <h3 class="font-black text-xl uppercase mb-8 text-slate-800">Enfermería / Triaje</h3>
-                        <select v-model="selectedPatientId" @change="loadPatientForVitals" class="input-std h-16 text-lg mb-8 shadow-md">
-                            <option :value="null">-- SELECCIONAR PACIENTE DE LISTA --</option>
-                            <option v-for="p in pendingVitalsList" :key="p.id" :value="p.id">{{ p.nombre }} ({{p.servicio}})</option>
-                        </select>
-                        <div v-if="currP.enfermeria" class="bg-slate-50 p-10 rounded-[3rem] border-2 text-left space-y-6">
-                            <p class="text-center font-black text-xl uppercase text-slate-700 underline">{{ currP.enfermeria.nombre }}</p>
-                            <div class="grid grid-cols-2 md:grid-cols-3 gap-6">
-                                <div v-for="(label, key) in {peso:'Peso (kg)', talla:'Talla (m)', ta:'Presión (TA)', temp:'Temp (°C)', fc:'Frec. Card.', glucosa:'Glucosa'}" :key="key">
-                                    <label class="text-[10px] font-black uppercase text-slate-400 block mb-1 ml-2">{{ label }}</label>
-                                    <input v-model="vitalsForm[key]" class="input-std text-center text-xl shadow-inner">
-                                </div>
-                            </div>
-                            <button @click="saveVitals" class="w-full bg-slate-800 text-white py-6 rounded-2xl font-black uppercase text-xs mt-6 shadow-xl active:scale-95 transition-all">GUARDAR VALORACIÓN</button>
-                        </div>
-                    </div>
-                </section>
-
-                <section v-if="['medico', 'psicologia', 'cosmetologia', 'juridico'].includes(activeTab)" class="max-w-5xl mx-auto space-y-6">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="bg-white p-6 border-2 rounded-3xl shadow-lg">
-                            <label class="text-[10px] font-black text-slate-400 uppercase ml-2">1. Beneficiario en Turno</label>
-                            <select v-model="selectedPatientId" @change="loadSelectedPatient(activeTab)" class="input-std">
-                                <option :value="null">-- SELECCIONAR PACIENTE --</option>
-                                <option v-for="p in waitingFor(activeTab)" :key="p.id" :value="p.id">{{ p.nombre }}</option>
-                            </select>
-                        </div>
-                        <div class="bg-white p-6 border-2 rounded-3xl shadow-lg">
-                            <label class="text-[10px] font-black text-slate-400 uppercase ml-2">2. Especialista Atendiendo</label>
-                            <select v-model="selStaffId[activeTab]" class="input-std">
-                                <option :value="null">-- SELECCIONAR {{ activeTab === 'juridico' ? 'LICENCIADO' : 'MÉDICO' }} --</option>
-                                <option v-for="s in staffByArea(activeTab)" :key="s.id" :value="s.id">{{ s.nombre }}</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div v-if="currP[activeTab]" class="bg-white p-12 rounded-[4rem] border-t-8 border-slate-800 shadow-2xl space-y-8">
-                        <div v-if="activeTab !== 'juridico'">
-                            <label class="text-[10px] font-black text-red-500 uppercase ml-2 italic">Alergias Detectadas</label>
-                            <input v-model="consGen.alergias" class="input-std border-red-100 font-black text-red-600 h-16 text-lg shadow-inner" placeholder="ESCRIBIR: NEGADAS O ALERGIA ESPECÍFICA">
-                        </div>
+                // CARGA DE EJEMPLOS ONLINE
+                const loadExampleData = () => {
+                    if(confirm("¿Cargar datos de ejemplo?")) {
+                        push(ref(db, 'staff'), { nombre: "Dr. Juan Pérez", area: "medico", cedula: "11111", escuela: "BUAP" });
+                        push(ref(db, 'staff'), { nombre: "Lic. María Gómez", area: "juridico", cedula: "87654321", escuela: "IBERO" });
                         
-                        <div class="space-y-4">
-                            <label class="text-[10px] font-black uppercase text-slate-400 ml-2">Diagnóstico / Motivo</label>
-                            <textarea v-model="consGen.diagnostico" class="input-std h-32" :placeholder="activeTab === 'juridico' ? 'Descripción de Hechos...' : 'Diagnóstico Clínico...'"></textarea>
-                            
-                            <label class="text-[10px] font-black uppercase text-slate-400 ml-2">Tratamiento / Asesoría</label>
-                            <textarea v-model="consGen.tratamiento" class="input-std h-32" :placeholder="activeTab === 'juridico' ? 'Asesoría Jurídica brindada...' : 'Tratamiento e Indicaciones...'"></textarea>
-                        </div>
+                        const meds = [
+                            { nombre: "Paracetamol", presentacion: "Caja", stock: 50, caducidad: "2028-01-01" },
+                            { nombre: "Ibuprofeno", presentacion: "Caja", stock: 5, caducidad: "2027-01-01" }, 
+                            { nombre: "Metformina", presentacion: "Caja", stock: 0, caducidad: "2025-01-01" }, 
+                            { nombre: "Vendas", presentacion: "Paquete", stock: 100, caducidad: "2030-01-01" },
+                            { nombre: "Omeprazol", presentacion: "Frasco", stock: 15, caducidad: "2026-06-01" },
+                            { nombre: "Loratadina", presentacion: "Tabs", stock: 20, caducidad: "2029-01-01" },
+                            { nombre: "Ketorolaco", presentacion: "Iny", stock: 8, caducidad: "2026-02-01" },
+                            { nombre: "Amoxicilina", presentacion: "Susp", stock: 3, caducidad: "2026-01-01" },
+                            { nombre: "Diclofenaco", presentacion: "Gel", stock: 12, caducidad: "2027-08-01" },
+                            { nombre: "Complejo B", presentacion: "Iny", stock: 30, caducidad: "2028-03-01" }
+                        ];
+                        meds.forEach(m => push(ref(db, 'inventory'), m));
+                        alert("Datos de ejemplo cargados exitosamente.");
+                    }
+                };
 
-                        <div v-if="['medico', 'cosmetologia'].includes(activeTab)" class="bg-slate-800 p-8 rounded-[2.5rem] shadow-2xl">
-                            <p class="text-white font-black text-[10px] uppercase mb-6 tracking-widest text-center">Suministro de Insumos Médicos</p>
-                            <div class="flex flex-col md:flex-row gap-4 mb-6">
-                                <select v-model="tempMed" class="input-std flex-1 h-14">
-                                    <option :value="null">-- Seleccionar de Farmacia --</option>
-                                    <option v-for="m in inventory" :key="m.id" :value="m">{{m.nombre}} (Stock: {{m.stock}})</option>
-                                </select>
-                                <input v-model="tempDosis" class="input-std flex-1 h-14" placeholder="Dosis / Indicación">
-                                <button @click="addToRecipe" class="bg-white text-slate-900 px-10 rounded-xl font-black uppercase text-xs hover:bg-slate-200">AÑADIR A RECETA</button>
-                            </div>
-                            <div class="space-y-2">
-                                <div v-for="(m, i) in recipe" :key="i" class="bg-white/10 p-3 text-white rounded-xl flex justify-between items-center text-[11px] font-bold uppercase border border-white/10">
-                                    <span>{{ m.nombre }} - <span class="text-blue-300">{{ m.indicacion }}</span></span>
-                                    <i @click="recipe.splice(i,1)" class="fas fa-times cursor-pointer hover:text-red-400 text-lg"></i>
-                                </div>
-                            </div>
-                        </div>
+                const addStaff = () => { 
+                    push(ref(db,'staff'),{...formS}); 
+                    formS.nombre=''; formS.cedula=''; formS.escuela=''; 
+                };
 
-                        <button @click="printRecipe(activeTab)" class="w-full bg-slate-900 text-white py-8 rounded-[2rem] font-black uppercase text-sm shadow-xl hover:bg-black active:scale-95 transition-all">
-                            <i class="fas fa-print mr-2"></i> GUARDAR E IMPRIMIR RECETA
-                        </button>
-                    </div>
-                </section>
-
-                <section v-if="activeTab === 'farmacia'" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    <div class="bg-white p-8 rounded-[2.5rem] border-2 shadow-xl h-fit">
-                        <h3 class="font-black text-xs uppercase mb-6 text-slate-400 border-b pb-2 italic">Nuevo Insumo</h3>
-                        <div class="space-y-4">
-                            <input v-model="formI.nombre" placeholder="Nombre Comercial" class="input-std">
-                            <input v-model="formI.presentacion" placeholder="Presentación (Ej. Caja/Tablet)" class="input-std">
-                            <input v-model.number="formI.stock" type="number" placeholder="Stock Inicial" class="input-std">
-                            <div>
-                                <label class="text-[10px] font-black uppercase text-slate-400 ml-2">Fecha de Caducidad</label>
-                                <input v-model="formI.caducidad" type="date" class="input-std">
-                            </div>
-                            <button @click="addInventory" class="w-full bg-slate-800 text-white py-4 rounded-xl font-black uppercase text-xs">GUARDAR EN SISTEMA</button>
-                        </div>
-                    </div>
-                    <div class="lg:col-span-2 bg-white rounded-[2.5rem] border-2 h-[650px] overflow-hidden flex flex-col shadow-xl"> loadExampleData,
+                return { 
+                    isLoggedIn, loginData, loginError, errorMsg, performLogin, logout, 
+                    activeTab, filteredTabs, roleName: computed(() => userRole.value),
+                    patients, staff, inventory, history, formP, formS, formI,
+                    currP, vitalsForm, consGen, selectedPatientIndex, selStaffId, recipe, tempMed, tempDosis, printData,
+                    historyLimit, displayHistory,
+                    registerPatient, saveVitals, printRecipe, getStockClass, isExpired, formatDate,
+                    changeTab: (id) => { activeTab.value = id; selectedPatientId.value = null; historyLimit.value = 50; },
+                    loadPatientForVitals: () => currP.enfermeria = patients.value.find(x=>x.id===selectedPatientId.value),
+                    loadSelectedPatient: (area) => currP[area] = patients.value.find(x=>x.id===selectedPatientId.value),
+                    addToRecipe: () => { if(tempMed.value){ recipe.value.push({id:tempMed.value.id, nombre:tempMed.value.nombre, indicacion:tempDosis.value}); tempMed.value=null; tempDosis.value=''; } },
+                    staffByArea: (a) => staff.value.filter(s => s.area === a),
+                    waitingFor: (a) => patients.value.filter(p => p.servicio === a),
+                    pendingVitalsList: computed(() => patients.value.filter(p => !p.vitals)),
+                    addStaff,
+                    deleteStaff: (id) => remove(ref(db,`staff/${id}`)),
+                    addInventory: () => { push(ref(db,'inventory'),{...formI}); Object.assign(formI,{nombre:'',stock:null,caducidad:'',presentacion:''}); },
+                    deleteInventory: (id) => remove(ref(db,`inventory/${id}`)),
+                    deleteHistory: (id) => remove(ref(db,`history/${id}`)),
+                    reprintHistory: (h) => { printData.value = h; nextTick(()=>setTimeout(()=>window.print(),1500)); },
+                    nukeDatabase, loadExampleData,
                     exportData: () => { const b=new Blob([JSON.stringify({history:history.value,inventory:inventory.value,staff:staff.value})],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='Respaldo_Sistema.json'; a.click(); },
                     downloadBeneficiariosPDF,
                     importData: (e) => { const r = new FileReader(); r.onload=ev=>{ const d=JSON.parse(ev.target.result); if(d.history) d.history.forEach(h=>push(ref(db,'history'),h)); alert('Carga Exitosa'); }; r.readAsText(e.target.files[0]); },
