@@ -3,90 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JORNADAS DE SALUD - FUERZA GENERACIONAL</title>
+    <title>SISTEMA INTEGRAL JORNADAS DE SALUD - FUERZA GENERACIONAL</title>
     
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.3.4/vue.global.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.3.4/vue.global.prod.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.6.0/jspdf.plugin.autotable.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     
     <style>
         /* ========================================= */
-        /* DISEÑO VISUAL IDÉNTICO A TU IMAGEN (BEIGE) */
+        /* DISEÑO VISUAL BEIGE (ORIGINAL) */
         /* ========================================= */
-        :root { 
-            --bg-color: #fffbeb; /* Beige claro de la foto */
-            --text-color: #1e293b; 
-            --accent-color: #b45309; /* Tono Ámbar/Naranja del logo */
-        }
+        :root { --bg-color: #fffbeb; --text-color: #1e293b; --accent-color: #b45309; }
         
         body { 
-            background-color: var(--bg-color); 
-            color: var(--text-color); 
-            margin: 0; 
-            font-family: 'Inter', sans-serif; 
-            -webkit-print-color-adjust: exact; 
-            print-color-adjust: exact;
+            background-color: var(--bg-color); color: var(--text-color); margin: 0; 
+            font-family: 'Inter', sans-serif; -webkit-print-color-adjust: exact; print-color-adjust: exact;
         }
 
-        /* INPUTS ESTILO LIMPIO */
-        .input-std { 
-            width: 100%; 
-            padding: 14px; 
-            border: 2px solid #e2e8f0; 
-            border-radius: 12px; 
-            font-weight: 700; 
-            text-transform: uppercase; 
-            outline: none; 
-            background: #ffffff; 
-            font-size: 13px; 
-            transition: all 0.3s; 
-        }
-        .input-std:focus { 
-            border-color: var(--accent-color); 
-            box-shadow: 0 0 0 4px rgba(180, 83, 9, 0.1); 
-        }
+        .input-std { width: 100%; padding: 14px; border: 2px solid #e2e8f0; border-radius: 12px; font-weight: 700; text-transform: uppercase; outline: none; background: #ffffff; font-size: 13px; transition: all 0.3s; }
+        .input-std:focus { border-color: var(--accent-color); box-shadow: 0 0 0 4px rgba(180, 83, 9, 0.1); }
 
-        /* PESTAÑAS */
         .tab-active { background-color: #451a03 !important; color: white !important; font-weight: 900; }
         .tab-inactive { color: #78350f; background-color: white; font-weight: 600; border-bottom: 2px solid #fed7aa; }
 
-        /* SEMÁFORO */
         .stock-red { background: #fee2e2; border-left: 8px solid #ef4444; color: #991b1b; }
         .stock-yellow { background: #fefce8; border-left: 8px solid #eab308; color: #854d0e; }
         .stock-green { background: #f0fdf4; border-left: 8px solid #22c55e; color: #166534; }
         .stock-expired { background: #450a0a !important; color: white !important; border-left: 8px solid black; }
 
-        /* TABLAS */
         .excel-table { width: 100%; border-collapse: collapse; font-size: 11px; background: white; }
         .excel-table th { background: #ffedd5; border: 1px solid #fdba74; padding: 10px; text-transform: uppercase; font-weight: 900; text-align: left; color: #7c2d12; }
         .excel-table td { border: 1px solid #fed7aa; padding: 10px; font-weight: 600; }
 
-        /* PANTALLA LOGIN (ESTILO FOTO) */
-        #login-overlay { 
-            position: fixed; inset: 0; 
-            background-color: #fffbeb; /* FONDO BEIGE */
-            display: flex; align-items: center; justify-content: center; z-index: 1000; 
-        }
-        .login-box { 
-            background: transparent; /* Sin caja blanca para que parezca la foto */
-            padding: 2rem; 
-            width: 100%; 
-            max-width: 400px; 
-            text-align: center; 
-        }
-        .logo-text {
-            font-family: 'Inter', sans-serif;
-            font-weight: 900;
-            text-transform: uppercase;
-            color: #000;
-            line-height: 0.9;
-            letter-spacing: -1px;
-        }
+        #login-overlay { position: fixed; inset: 0; background-color: #fffbeb; display: flex; align-items: center; justify-content: center; z-index: 1000; flex-direction: column; }
+        .login-box { background: transparent; padding: 2rem; width: 100%; max-width: 400px; text-align: center; }
+        .logo-text { font-family: 'Inter', sans-serif; font-weight: 900; text-transform: uppercase; color: #000; line-height: 0.9; letter-spacing: -1px; }
 
-        /* IMPRESIÓN */
         #print-zone { display: none; }
         @media print {
             #app-container, #login-overlay, header, nav, .no-print { display: none !important; }
@@ -106,17 +65,14 @@
         <div id="login-overlay" v-if="!isLoggedIn">
             <div class="login-box">
                 <div class="mb-10">
-                    <i class="fas fa-users text-6xl text-red-800 mb-4" style="opacity: 0.8;"></i> <div class="logo-text text-4xl mb-1">FUERZA</div>
+                    <i class="fas fa-users text-6xl text-red-800 mb-4" style="opacity: 0.8;"></i>
+                    <div class="logo-text text-4xl mb-1">FUERZA</div>
                     <div class="logo-text text-5xl">GENERACIONAL</div>
                 </div>
                 
                 <form @submit.prevent="performLogin" class="space-y-6">
-                    <div>
-                        <input v-model="loginData.user" type="text" class="input-std text-center" placeholder="USUARIO" style="background: white; border: 2px solid #000;" autocomplete="off">
-                    </div>
-                    <div>
-                        <input v-model="loginData.pass" type="password" class="input-std text-center" placeholder="CONTRASEÑA" style="background: white; border: 2px solid #000;" autocomplete="off">
-                    </div>
+                    <div><input v-model="loginData.user" type="text" class="input-std text-center" placeholder="USUARIO" style="background: white; border: 2px solid #000;" autocomplete="off"></div>
+                    <div><input v-model="loginData.pass" type="password" class="input-std text-center" placeholder="CONTRASEÑA" style="background: white; border: 2px solid #000;" autocomplete="off"></div>
                     
                     <div v-if="loginError" class="bg-red-100 text-red-800 p-3 rounded-lg text-xs font-bold border border-red-200">
                         <i class="fas fa-exclamation-triangle"></i> {{ errorMsg }}
@@ -140,9 +96,7 @@
                             <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{{ roleName }} (ONLINE)</p>
                         </div>
                     </div>
-                    <button @click="logout" class="bg-red-50 text-red-600 border-2 border-red-100 px-6 py-2 rounded-xl font-black uppercase text-[10px]">
-                        SALIR <i class="fas fa-sign-out-alt ml-1"></i>
-                    </button>
+                    <button @click="logout" class="bg-slate-100 text-slate-600 border-2 border-slate-200 px-6 py-2 rounded-xl font-black uppercase text-[10px] hover:bg-slate-200">SALIR</button>
                 </div>
                 
                 <nav class="flex overflow-x-auto bg-white border-t no-scrollbar shadow-inner">
@@ -158,10 +112,10 @@
                 <section v-if="activeTab === 'nosotros'" class="max-w-6xl mx-auto space-y-12 animate-fade-in">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
                         <div class="bg-white p-10 rounded-[3rem] border shadow-xl">
-                            <h2 class="text-3xl font-black text-amber-800 uppercase mb-6 italic underline">¿Quiénes somos?</h2>
+                            <h2 class="text-3xl font-black text-amber-700 uppercase mb-6 italic underline">¿Quiénes somos?</h2>
                             <p class="text-lg font-medium text-slate-700 leading-relaxed uppercase text-justify">Somos una plataforma ciudadana que busca convertirse en un referente en la ejecución de proyectos de ciudadanía activa y organizada.</p>
                         </div>
-                        <div class="bg-slate-900 p-10 rounded-[3rem] text-white shadow-2xl">
+                        <div class="bg-slate-800 p-10 rounded-[3rem] text-white shadow-2xl">
                             <h2 class="text-3xl font-black uppercase mb-6 italic underline underline-offset-8">Nuestra Visión</h2>
                             <p class="text-lg font-bold leading-relaxed uppercase text-justify">Convertirnos en un referente de participación ciudadana activa y organizada para generar cambios sostenibles y positivos en Puebla.</p>
                         </div>
@@ -179,7 +133,7 @@
                             </div>
                             <input v-model="formP.domicilio" placeholder="Domicilio" class="input-std">
                             <input v-model="formP.telefono" placeholder="Teléfono" class="input-std">
-                            <select v-model="formP.servicio" class="input-std bg-slate-900 text-white">
+                            <select v-model="formP.servicio" class="input-std bg-slate-800 text-white">
                                 <option value="medico">MÉDICO GENERAL</option>
                                 <option value="psicologia">PSICOLOGÍA</option>
                                 <option value="juridico">JURÍDICO</option>
@@ -189,7 +143,7 @@
                         </div>
                     </div>
                     <div class="lg:col-span-2 bg-white rounded-[2.5rem] border-2 h-[600px] flex flex-col shadow-xl overflow-hidden">
-                        <div class="bg-slate-900 p-6 text-white font-black uppercase text-xs flex justify-between">
+                        <div class="bg-slate-800 p-6 text-white font-black uppercase text-xs flex justify-between">
                             <span>Lista de Espera Actual</span>
                             <span class="bg-white/20 px-3 py-1 rounded-full">{{patients.length}} Pacientes</span>
                         </div>
@@ -197,7 +151,7 @@
                             <div v-for="p in patients" :key="p.id" class="flex justify-between items-center p-5 border-2 rounded-[2rem] hover:bg-slate-50 transition-all">
                                 <div>
                                     <p class="font-black text-sm uppercase text-slate-900">{{ p.nombre }}</p>
-                                    <span class="text-[8px] font-black bg-blue-100 text-blue-600 px-2 py-0.5 rounded-full uppercase">{{ p.servicio }}</span>
+                                    <span class="text-[8px] font-black bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full uppercase">{{ p.servicio }}</span>
                                 </div>
                                 <button @click="deletePatient(p.id)" class="text-red-300 hover:text-red-500 p-2"><i class="fas fa-trash-alt text-xl"></i></button>
                             </div>
@@ -220,7 +174,7 @@
                                     <input v-model="vitalsForm[key]" class="input-std text-center text-xl shadow-inner">
                                 </div>
                             </div>
-                            <button @click="saveVitals" class="w-full bg-slate-900 text-white py-6 rounded-2xl font-black uppercase text-xs mt-6 shadow-xl active:scale-95 transition-all">GUARDAR VALORACIÓN</button>
+                            <button @click="saveVitals" class="w-full bg-slate-800 text-white py-6 rounded-2xl font-black uppercase text-xs mt-6 shadow-xl active:scale-95 transition-all">GUARDAR VALORACIÓN</button>
                         </div>
                     </div>
                 </section>
@@ -243,7 +197,7 @@
                         </div>
                     </div>
 
-                    <div v-if="currP[activeTab]" class="bg-white p-12 rounded-[4rem] border-t-8 border-slate-900 shadow-2xl space-y-8">
+                    <div v-if="currP[activeTab]" class="bg-white p-12 rounded-[4rem] border-t-8 border-slate-800 shadow-2xl space-y-8">
                         <div v-if="activeTab !== 'juridico'">
                             <label class="text-[10px] font-black text-red-500 uppercase ml-2 italic">Alergias Detectadas</label>
                             <input v-model="consGen.alergias" class="input-std border-red-100 font-black text-red-600 h-16 text-lg shadow-inner" placeholder="ESCRIBIR: NEGADAS O ALERGIA ESPECÍFICA">
@@ -252,12 +206,11 @@
                         <div class="space-y-4">
                             <label class="text-[10px] font-black uppercase text-slate-400 ml-2">Diagnóstico / Motivo</label>
                             <textarea v-model="consGen.diagnostico" class="input-std h-32" :placeholder="activeTab === 'juridico' ? 'Descripción de Hechos...' : 'Diagnóstico Clínico...'"></textarea>
-                            
                             <label class="text-[10px] font-black uppercase text-slate-400 ml-2">Tratamiento / Asesoría</label>
                             <textarea v-model="consGen.tratamiento" class="input-std h-32" :placeholder="activeTab === 'juridico' ? 'Asesoría Jurídica brindada...' : 'Tratamiento e Indicaciones...'"></textarea>
                         </div>
 
-                        <div v-if="['medico', 'cosmetologia'].includes(activeTab)" class="bg-slate-900 p-8 rounded-[2.5rem] shadow-2xl">
+                        <div v-if="['medico', 'cosmetologia'].includes(activeTab)" class="bg-slate-800 p-8 rounded-[2.5rem] shadow-2xl">
                             <p class="text-white font-black text-[10px] uppercase mb-6 tracking-widest text-center">Suministro de Insumos Médicos</p>
                             <div class="flex flex-col md:flex-row gap-4 mb-6">
                                 <select v-model="tempMed" class="input-std flex-1 h-14">
@@ -292,11 +245,11 @@
                                 <label class="text-[10px] font-black uppercase text-slate-400 ml-2">Fecha de Caducidad</label>
                                 <input v-model="formI.caducidad" type="date" class="input-std">
                             </div>
-                            <button @click="addInventory" class="w-full bg-slate-900 text-white py-4 rounded-xl font-black uppercase text-xs">GUARDAR EN SISTEMA</button>
+                            <button @click="addInventory" class="w-full bg-slate-800 text-white py-4 rounded-xl font-black uppercase text-xs">GUARDAR EN SISTEMA</button>
                         </div>
                     </div>
                     <div class="lg:col-span-2 bg-white rounded-[2.5rem] border-2 h-[650px] overflow-hidden flex flex-col shadow-xl">
-                        <div class="bg-slate-900 p-6 text-white font-black uppercase text-xs flex justify-between items-center">
+                        <div class="bg-slate-800 p-6 text-white font-black uppercase text-xs flex justify-between items-center">
                             <span>Semaforización de Insumos</span>
                             <div class="flex gap-4 text-[9px]">
                                 <span class="flex items-center gap-1"><i class="fas fa-circle text-red-500"></i> AGOTADO</span>
@@ -516,49 +469,49 @@
 
     </div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, push, onValue, remove, set, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-        import { getAuth, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
+    <script>
+        // CONFIGURACIÓN DE TU FIREBASE (NO TOCAR)
         const firebaseConfig = { apiKey: "AIzaSyCK6A7G6IvAJyYPCEspvvHg6qjDZdhuQuY", authDomain: "jornada-de-salud1.firebaseapp.com", projectId: "jornada-de-salud1", storageBucket: "jornada-de-salud1.firebasestorage.app", messagingSenderId: "947161304402", appId: "1:947161304402:web:906da7370cc343300cbe8b", measurementId: "G-W945F157DC" };
-        
-        const fbApp = initializeApp(firebaseConfig);
-        const db = getDatabase(fbApp);
-        const auth = getAuth(fbApp);
-        
-        const { createApp, ref: vRef, reactive, computed, onMounted, nextTick } = Vue;
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+        const auth = firebase.auth();
+
+        const { createApp, ref, reactive, computed, onMounted, nextTick } = Vue;
 
         createApp({
             setup() {
-                const isLoggedIn = vRef(false); 
-                const userRole = vRef(''); 
+                const isLoggedIn = ref(false); 
+                const userRole = ref(''); 
                 const loginData = reactive({ user: '', pass: '' }); 
-                const loginError = vRef(false);
-                const errorMsg = vRef('');
-                const activeTab = vRef('nosotros'); 
-                const historyLimit = vRef(50);
+                const loginError = ref(false);
+                const errorMsg = ref('');
+                const activeTab = ref('nosotros'); 
+                const historyLimit = ref(50);
                 
-                const patients = vRef([]); const staff = vRef([]); const inventory = vRef([]); const history = vRef([]);
-                const printData = vRef(null);
+                const patients = ref([]); const staff = ref([]); const inventory = ref([]); const history = ref([]);
+                const printData = ref(null);
             
                 // FORMULARIOS (CON ESCUELA)
                 const formP = reactive({ nombre: '', edad: null, sexo: 'MUJER', domicilio: '', telefono: '', servicio: 'medico' });
                 const formS = reactive({ nombre: '', area: 'medico', cedula: '', escuela: '' });
                 const formI = reactive({ nombre: '', stock: null, caducidad: '', presentacion: '' });
 
-                const selectedPatientId = vRef(null);
+                const selectedPatientId = ref(null);
                 const currP = reactive({ enfermeria: null, medico: null, juridico: null, psicologia: null, cosmetologia: null });
                 const vitalsForm = reactive({ peso: '', talla: '', ta: '', temp: '', fc: '', glucosa: '' });
                 const consGen = reactive({ alergias: '', diagnostico: '', tratamiento: '' });
                 const selStaffId = reactive({ medico: null, juridico: null, psicologia: null, cosmetologia: null });
-                const recipe = vRef([]); const tempMed = vRef(null); const tempDosis = vRef('');
+                const recipe = ref([]); const tempMed = ref(null); const tempDosis = ref('');
 
                 onMounted(() => {
-                    onValue(ref(db, 'patients'), s => { patients.value = s.exists() ? Object.entries(s.val()).map(([id,v])=>({id,...v})) : []; });
-                    onValue(ref(db, 'staff'), s => { staff.value = s.exists() ? Object.entries(s.val()).map(([id,v])=>({id,...v})) : []; });
-                    onValue(ref(db, 'inventory'), s => { inventory.value = s.exists() ? Object.entries(s.val()).map(([id,v])=>({id,...v})) : []; });
-                    onValue(ref(db, 'history'), s => { history.value = s.exists() ? Object.entries(s.val()).map(([id,v])=>({id,...v})) : []; });
+                    db.ref('patients').on('value', s => { patients.value = s.exists() ? Object.entries(s.val()).map(([id,v])=>({id,...v})) : []; });
+                    db.ref('staff').on('value', s => { staff.value = s.exists() ? Object.entries(s.val()).map(([id,v])=>({id,...v})) : []; });
+                    db.ref('inventory').on('value', s => { inventory.value = s.exists() ? Object.entries(s.val()).map(([id,v])=>({id,...v})) : []; });
+                    db.ref('history').on('value', s => { history.value = s.exists() ? Object.entries(s.val()).map(([id,v])=>({id,...v})) : []; });
                 });
 
                 const displayHistory = computed(() => {
@@ -584,11 +537,11 @@
 
                     if (!email) {
                         loginError.value = true;
-                        errorMsg.value = 'USUARIO NO VÁLIDO (Revise mayúsculas)';
+                        errorMsg.value = 'USUARIO NO ENCONTRADO EN SISTEMA';
                         return;
                     }
 
-                    signInWithEmailAndPassword(auth, email, p)
+                    auth.signInWithEmailAndPassword(email, p)
                         .then(res => {
                             if (email.includes('jornadas')) userRole.value = 'SUPER';
                             else if (email.includes('jorjev')) userRole.value = 'ADMIN';
@@ -596,13 +549,14 @@
                             isLoggedIn.value = true; loginError.value = false;
                         }).catch((err) => {
                             loginError.value = true;
-                            if(err.code === 'auth/invalid-credential') errorMsg.value = 'CONTRASEÑA INCORRECTA (Verifique en Firebase)';
-                            else if(err.code === 'auth/network-request-failed') errorMsg.value = 'ERROR DE RED (Sin Internet)';
+                            if(err.code === 'auth/wrong-password') errorMsg.value = 'CONTRASEÑA INCORRECTA';
+                            else if(err.code === 'auth/network-request-failed') errorMsg.value = 'SIN CONEXIÓN A INTERNET';
+                            else if(err.code === 'auth/too-many-requests') errorMsg.value = 'DEMASIADOS INTENTOS (ESPERE)';
                             else errorMsg.value = 'ERROR: ' + err.code;
                         });
                 };
 
-                const logout = () => signOut(auth).then(() => { isLoggedIn.value = false; userRole.value = ''; });
+                const logout = () => auth.signOut().then(() => { isLoggedIn.value = false; userRole.value = ''; });
 
                 const filteredTabs = computed(() => {
                     const all = [
@@ -625,14 +579,14 @@
                 });
 
                 const registerPatient = () => {
-                    push(ref(db, 'patients'), { ...formP, fecha: new Date().toLocaleString() });
+                    db.ref('patients').push({ ...formP, fecha: new Date().toLocaleString() });
                     Object.assign(formP, { nombre: '', edad: null, domicilio: '', telefono: '' });
                 };
 
                 const saveVitals = () => {
                     const p = patients.value.find(x => x.id === selectedPatientId.value);
                     const imc = (vitalsForm.peso / (vitalsForm.talla * vitalsForm.talla)).toFixed(1);
-                    update(ref(db, `patients/${p.id}`), { vitals: { ...vitalsForm, imc } });
+                    db.ref(`patients/${p.id}`).update({ vitals: { ...vitalsForm, imc } });
                     selectedPatientId.value = null; currP.enfermeria = null;
                 };
 
@@ -647,16 +601,15 @@
                         tipoServicio: area, fecha: new Date().toLocaleString()
                     };
 
-                    push(ref(db, 'history'), report);
+                    db.ref('history').push(report);
                     recipe.value.forEach(r => {
                         const it = inventory.value.find(x => x.id === r.id);
-                        if(it) set(ref(db, `inventory/${r.id}/stock`), it.stock - 1);
+                        if(it) db.ref(`inventory/${r.id}/stock`).set(it.stock - 1);
                     });
 
-                    remove(ref(db, `patients/${p.id}`));
+                    db.ref(`patients/${p.id}`).remove();
                     printData.value = report;
                     
-                    // ESPERA 1.5 SEGUNDOS PARA PINTAR DATOS ANTES DE ABRIR DIÁLOGO DE IMPRESIÓN
                     nextTick(() => { setTimeout(() => { window.print(); printData.value = null; }, 1500); });
                     
                     currP[area] = null; selectedPatientId.value = null;
@@ -676,7 +629,7 @@
 
                 const nukeDatabase = () => {
                     if(confirm('PELIGRO: ¿ESTÁ SEGURO DE BORRAR TODA LA INFORMACIÓN? ESTA ACCIÓN NO SE PUEDE DESHACER.')) {
-                        ['patients','staff','inventory','history'].forEach(k => remove(ref(db, k)));
+                        ['patients','staff','inventory','history'].forEach(k => db.ref(k).remove());
                         alert('BASE DE DATOS REINICIADA CORRECTAMENTE');
                     }
                 };
@@ -684,8 +637,8 @@
                 // CARGA DE EJEMPLOS ONLINE
                 const loadExampleData = () => {
                     if(confirm("¿Cargar datos de ejemplo?")) {
-                        push(ref(db, 'staff'), { nombre: "Dr. Juan Pérez", area: "medico", cedula: "11111", escuela: "BUAP" });
-                        push(ref(db, 'staff'), { nombre: "Lic. María Gómez", area: "juridico", cedula: "87654321", escuela: "IBERO" });
+                        db.ref('staff').push({ nombre: "Dr. Juan Pérez", area: "medico", cedula: "11111", escuela: "BUAP" });
+                        db.ref('staff').push({ nombre: "Lic. María Gómez", area: "juridico", cedula: "87654321", escuela: "IBERO" });
                         
                         const meds = [
                             { nombre: "Paracetamol", presentacion: "Caja", stock: 50, caducidad: "2028-01-01" },
@@ -699,13 +652,13 @@
                             { nombre: "Diclofenaco", presentacion: "Gel", stock: 12, caducidad: "2027-08-01" },
                             { nombre: "Complejo B", presentacion: "Iny", stock: 30, caducidad: "2028-03-01" }
                         ];
-                        meds.forEach(m => push(ref(db, 'inventory'), m));
+                        meds.forEach(m => db.ref('inventory').push(m));
                         alert("Datos de ejemplo cargados exitosamente.");
                     }
                 };
 
                 const addStaff = () => { 
-                    push(ref(db,'staff'),{...formS}); 
+                    db.ref('staff').push({...formS}); 
                     formS.nombre=''; formS.cedula=''; formS.escuela=''; 
                 };
 
@@ -724,16 +677,16 @@
                     waitingFor: (a) => patients.value.filter(p => p.servicio === a),
                     pendingVitalsList: computed(() => patients.value.filter(p => !p.vitals)),
                     addStaff,
-                    deleteStaff: (id) => remove(ref(db,`staff/${id}`)),
-                    addInventory: () => { push(ref(db,'inventory'),{...formI}); Object.assign(formI,{nombre:'',stock:null,caducidad:'',presentacion:''}); },
-                    deleteInventory: (id) => remove(ref(db,`inventory/${id}`)),
-                    deleteHistory: (id) => remove(ref(db,`history/${id}`)),
+                    deleteStaff: (id) => db.ref(`staff/${id}`).remove(),
+                    addInventory: () => { db.ref('inventory').push({...formI}); Object.assign(formI,{nombre:'',stock:null,caducidad:'',presentacion:''}); },
+                    deleteInventory: (id) => db.ref(`inventory/${id}`).remove(),
+                    deleteHistory: (id) => db.ref(`history/${id}`).remove(),
                     reprintHistory: (h) => { printData.value = h; nextTick(()=>setTimeout(()=>window.print(),1500)); },
                     nukeDatabase, loadExampleData,
                     exportData: () => { const b=new Blob([JSON.stringify({history:history.value,inventory:inventory.value,staff:staff.value})],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='Respaldo_Sistema.json'; a.click(); },
                     downloadBeneficiariosPDF,
-                    importData: (e) => { const r = new FileReader(); r.onload=ev=>{ const d=JSON.parse(ev.target.result); if(d.history) d.history.forEach(h=>push(ref(db,'history'),h)); alert('Carga Exitosa'); }; r.readAsText(e.target.files[0]); },
-                    deletePatient: (id) => remove(ref(db, `patients/${id}`))
+                    importData: (e) => { const r = new FileReader(); r.onload=ev=>{ const d=JSON.parse(ev.target.result); if(d.history) d.history.forEach(h=>db.ref('history').push(h)); alert('Carga Exitosa'); }; r.readAsText(e.target.files[0]); },
+                    deletePatient: (id) => db.ref(`patients/${id}`).remove()
                 };
             }
         }).mount('#app');
