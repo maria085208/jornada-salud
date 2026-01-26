@@ -43,21 +43,37 @@
         #login-overlay { position: fixed; inset: 0; background-color: #fffbeb; display: flex; align-items: center; justify-content: center; z-index: 1000; flex-direction: column; }
         .login-box { background: transparent; padding: 2rem; width: 100%; max-width: 450px; text-align: center; }
         
-        /* TÍTULOS GRANDES EN LOGIN */
         .brand-title { font-family: 'Inter', sans-serif; font-weight: 900; text-transform: uppercase; color: #000; line-height: 1; letter-spacing: -1px; font-size: 2.5rem; }
         .brand-subtitle { font-family: 'Inter', sans-serif; font-weight: 900; text-transform: uppercase; color: #b45309; line-height: 1; letter-spacing: -0.5px; font-size: 2.5rem; margin-top: 5px; }
 
+        /* ZONA DE IMPRESIÓN (CORREGIDA PARA QUE NO SE CORTE) */
         #print-zone { display: none; }
         @media print {
             #app-container, #login-overlay, header, nav, .no-print { display: none !important; }
             body { background: white; margin: 0; padding: 0; }
-            #print-zone { display: block !important; position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 9999; }
-            .receta-maestra { width: 100%; padding: 40px; border: 2px solid #000; color: #000; min-height: 980px; position: relative; }
-            /* CABECERA DE IMPRESIÓN IGUALADA */
+            #print-zone { 
+                display: block !important; 
+                position: absolute; 
+                top: 0; 
+                left: 0; 
+                width: 100%; 
+                height: 100%; 
+                z-index: 9999;
+                padding: 20px; /* Margen interno para evitar cortes */
+            }
+            .receta-maestra { 
+                width: 100%; 
+                border: 2px solid #000; 
+                color: #000; 
+                min-height: 90vh; /* Altura dinámica en vez de fija */
+                position: relative;
+                padding: 30px;
+                box-sizing: border-box;
+            }
             .receta-header { text-align: center; border-bottom: 4px solid #d97706; padding-bottom: 15px; margin-bottom: 20px; }
-            .print-title { font-size: 24px; font-weight: 900; text-transform: uppercase; margin: 0; color: #000; }
-            .print-subtitle { font-size: 24px; font-weight: 900; text-transform: uppercase; margin: 0; color: #b45309; }
-            @page { size: letter; margin: 0.5cm; }
+            .print-title { font-size: 22px; font-weight: 900; text-transform: uppercase; margin: 0; color: #000; }
+            .print-subtitle { font-size: 22px; font-weight: 900; text-transform: uppercase; margin: 0; color: #b45309; }
+            @page { size: letter; margin: 0.5cm; } /* Márgenes seguros de impresora */
         }
         [v-cloak] { display: none; }
     </style>
@@ -632,9 +648,9 @@
                 };
 
                 const nukeDatabase = () => {
-                    if(confirm('PELIGRO: ¿BORRAR TODA LA INFORMACIÓN?')) {
+                    if(confirm('PELIGRO: ¿ESTÁ SEGURO DE BORRAR TODA LA INFORMACIÓN? ESTA ACCIÓN NO SE PUEDE DESHACER.')) {
                         ['patients','staff','inventory','history'].forEach(k => db.ref(k).remove());
-                        alert('BASE DE DATOS REINICIADA');
+                        alert('BASE DE DATOS REINICIADA CORRECTAMENTE');
                     }
                 };
 
@@ -656,7 +672,7 @@
                             { nombre: "Complejo B", presentacion: "Iny", stock: 30, caducidad: "2028-03-01" }
                         ];
                         meds.forEach(m => db.ref('inventory').push(m));
-                        alert("Datos de ejemplo cargados.");
+                        alert("Datos de ejemplo cargados exitosamente.");
                     }
                 };
 
