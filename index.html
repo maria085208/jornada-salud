@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JORNADAS DE SALUD - CFMM - FUERZA GENERACIONAL</title>
+    <title>SISTEMA INTEGRAL JORNADAS DE SALUD - FUERZA GENERACIONAL</title>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.3.4/vue.global.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -14,7 +14,7 @@
     
     <style>
         /* ========================================= */
-        /* ESTÉTICA Y DISEÑO VISUAL (ONLINE) */
+        /* ESTÉTICA Y DISEÑO VISUAL */
         /* ========================================= */
         :root { --primary: #0f172a; --accent: #2d5a27; --bg: #f8fafc; }
         
@@ -46,7 +46,7 @@
         #login-overlay { position: fixed; inset: 0; background-color: #0f172a; display: flex; align-items: center; justify-content: center; z-index: 1000; }
         .login-box { background: white; padding: 3.5rem; border-radius: 2.5rem; width: 90%; max-width: 420px; text-align: center; box-shadow: 0 25px 50px rgba(0,0,0,0.5); }
 
-        /* FORMATO DE IMPRESIÓN */
+        /* FORMATO DE IMPRESIÓN (RECETA/NOTA) */
         #print-zone { display: none; }
         @media print {
             #app-container, #login-overlay, header, nav, .no-print { display: none !important; }
@@ -69,18 +69,18 @@
                     <i class="fas fa-user-shield"></i>
                 </div>
                 <h2 class="text-3xl font-black uppercase mb-2 tracking-tighter">Acceso Seguro</h2>
-                <p class="text-[11px] text-slate-400 font-bold uppercase tracking-widest mb-10 italic">Conexión Firebase v2.0</p>
+                <p class="text-[11px] text-slate-400 font-bold uppercase tracking-widest mb-10 italic">Panel Online v2.0</p>
                 
                 <form @submit.prevent="performLogin" class="space-y-6">
                     <input v-model="loginData.user" type="text" class="input-std text-center" placeholder="ID DE USUARIO" autocomplete="off">
                     <input v-model="loginData.pass" type="password" class="input-std text-center" placeholder="CONTRASEÑA" autocomplete="off">
                     
                     <div v-if="loginError" class="bg-red-50 text-red-600 p-4 rounded-xl text-[10px] font-black uppercase border border-red-100">
-                        <i class="fas fa-ban mr-2"></i> {{ errorMsg || 'Credenciales Incorrectas' }}
+                        <i class="fas fa-exclamation-circle mr-2"></i> {{ errorMsg }}
                     </div>
                     
                     <button type="submit" class="w-full bg-slate-900 text-white py-6 rounded-2xl font-black uppercase shadow-2xl hover:bg-black transition-all">
-                        INGRESAR AL SISTEMA
+                        INGRESAR
                     </button>
                 </form>
             </div>
@@ -91,9 +91,9 @@
             <header class="bg-white border-b sticky top-0 z-40 shadow-sm">
                 <div class="container mx-auto px-4 py-3 flex justify-between items-center bg-white">
                     <div class="flex items-center gap-4">
-                        <div class="bg-slate-900 text-white p-3 rounded-2xl shadow-lg"><i class="fas fa-cloud text-2xl"></i></div>
+                        <div class="bg-slate-900 text-white p-3 rounded-2xl shadow-lg"><i class="fas fa-hospital-symbol text-2xl"></i></div>
                         <div>
-                            <h1 class="text-xl font-black uppercase tracking-tighter text-slate-900 leading-none">Jornadas Salud (Online)</h1>
+                            <h1 class="text-xl font-black uppercase tracking-tighter text-slate-900 leading-none">Jornadas Salud</h1>
                             <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{{ roleName }} - {{ loginData.user }}</p>
                         </div>
                     </div>
@@ -339,7 +339,8 @@
                                     <p class="font-black text-xs uppercase text-slate-800">{{ s.nombre }}</p>
                                     <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest">
                                         {{ s.area }} | {{ s.cedula }} <br>
-                                        <span class="text-blue-600">{{ s.escuela }}</span> </p>
+                                        <span class="text-blue-600">{{ s.escuela }}</span>
+                                    </p>
                                 </div>
                                 <button @click="deleteStaff(s.id)" class="text-red-300 hover:text-red-500 p-2"><i class="fas fa-trash-alt"></i></button>
                             </div>
@@ -374,7 +375,7 @@
                         <div class="space-y-6">
                             
                             <button @click="loadExampleData" class="w-full bg-slate-800 text-white py-6 rounded-3xl font-black uppercase text-xs shadow-xl flex items-center justify-center gap-3">
-                                <i class="fas fa-vial"></i> CARGAR DATOS DEMO
+                                <i class="fas fa-vial"></i> CARGAR DATOS DEMO (EJEMPLOS)
                             </button>
 
                             <button @click="exportData" class="w-full bg-blue-600 text-white py-6 rounded-3xl font-black uppercase text-xs shadow-xl flex items-center justify-center gap-3">
@@ -498,7 +499,6 @@
                 const patients = vRef([]); const staff = vRef([]); const inventory = vRef([]); const history = vRef([]);
                 const printData = vRef(null);
             
-                // FORMULARIOS (CON ESCUELA)
                 const formP = reactive({ nombre: '', edad: null, sexo: 'MUJER', domicilio: '', telefono: '', servicio: 'medico' });
                 const formS = reactive({ nombre: '', area: 'medico', cedula: '', escuela: '' });
                 const formI = reactive({ nombre: '', stock: null, caducidad: '', presentacion: '' });
@@ -599,7 +599,7 @@
                         domicilio: p.domicilio, telefono: p.telefono,
                         vitals: p.vitals || null, alergias: consGen.alergias, diagnostico: consGen.diagnostico,
                         tratamiento: consGen.tratamiento, medicamentos: [...recipe.value],
-                        medicoNombre: doc.nombre, medicoCedula: doc.cedula, medicoEscuela: doc.escuela, // ESCUELA
+                        medicoNombre: doc.nombre, medicoCedula: doc.cedula, medicoEscuela: doc.escuela, 
                         tipoServicio: area, fecha: new Date().toLocaleString()
                     };
 
@@ -611,10 +611,7 @@
 
                     remove(ref(db, `patients/${p.id}`));
                     printData.value = report;
-                    
-                    // ESPERA A QUE CARGUE EL DOM ANTES DE IMPRIMIR
-                    nextTick(() => { setTimeout(() => { window.print(); printData.value = null; }, 1000); });
-                    
+                    nextTick(() => { setTimeout(() => { window.print(); printData.value = null; }, 1500); }); // TIEMPO EXTRA PARA CARGAR
                     currP[area] = null; selectedPatientId.value = null;
                     consGen.diagnostico = ''; consGen.tratamiento = ''; recipe.value = [];
                 };
@@ -637,30 +634,28 @@
                     }
                 };
 
-                // FUNCIÓN DE CARGA DE EJEMPLOS
                 const loadExampleData = () => {
-                    if(confirm("¿Cargar datos de ejemplo?")) {
-                        push(ref(db, 'staff'), { nombre: "Dr. Juan Pérez", area: "medico", cedula: "11111", escuela: "BUAP" });
+                    if(confirm("¿Cargar datos de ejemplo? (Solo usar al inicio)")) {
+                        push(ref(db, 'staff'), { nombre: "Dr. Juan Pérez", area: "medico", cedula: "12345678", escuela: "BUAP" });
                         push(ref(db, 'staff'), { nombre: "Lic. María Gómez", area: "juridico", cedula: "87654321", escuela: "IBERO" });
                         
                         const meds = [
-                            { nombre: "Paracetamol", presentacion: "Caja", stock: 50, caducidad: "2028-01-01" },
-                            { nombre: "Ibuprofeno", presentacion: "Caja", stock: 5, caducidad: "2027-01-01" }, 
-                            { nombre: "Metformina", presentacion: "Caja", stock: 0, caducidad: "2025-01-01" }, 
-                            { nombre: "Vendas", presentacion: "Paquete", stock: 100, caducidad: "2030-01-01" },
-                            { nombre: "Omeprazol", presentacion: "Frasco", stock: 15, caducidad: "2026-06-01" },
-                            { nombre: "Loratadina", presentacion: "Tabs", stock: 20, caducidad: "2029-01-01" },
-                            { nombre: "Ketorolaco", presentacion: "Iny", stock: 8, caducidad: "2026-02-01" },
-                            { nombre: "Amoxicilina", presentacion: "Susp", stock: 3, caducidad: "2026-01-01" },
-                            { nombre: "Diclofenaco", presentacion: "Gel", stock: 12, caducidad: "2027-08-01" },
-                            { nombre: "Complejo B", presentacion: "Iny", stock: 30, caducidad: "2028-03-01" }
+                            { nombre: "Paracetamol 500mg", presentacion: "Caja 20 tabs", stock: 50, caducidad: "2028-01-01" },
+                            { nombre: "Ibuprofeno 400mg", presentacion: "Caja 10 tabs", stock: 30, caducidad: "2027-05-20" },
+                            { nombre: "Amoxicilina 500mg", presentacion: "Suspension", stock: 15, caducidad: "2026-12-12" },
+                            { nombre: "Omeprazol 20mg", presentacion: "Frasco", stock: 8, caducidad: "2026-10-10" }, 
+                            { nombre: "Loratadina 10mg", presentacion: "Tabletas", stock: 100, caducidad: "2029-01-01" },
+                            { nombre: "Metformina 850mg", presentacion: "Caja", stock: 0, caducidad: "2025-01-01" }, 
+                            { nombre: "Complejo B", presentacion: "Inyectable", stock: 25, caducidad: "2027-03-15" },
+                            { nombre: "Naproxeno", presentacion: "Caja", stock: 40, caducidad: "2028-08-08" },
+                            { nombre: "Ketorolaco", presentacion: "Sublingual", stock: 5, caducidad: "2026-06-01" }, 
+                            { nombre: "Vendas 10cm", presentacion: "Paquete", stock: 60, caducidad: "2030-01-01" }
                         ];
                         meds.forEach(m => push(ref(db, 'inventory'), m));
-                        alert("Datos de ejemplo cargados.");
+                        alert("Datos de ejemplo cargados exitosamente.");
                     }
                 };
 
-                // AGREGAR PERSONAL CON ESCUELA
                 const addStaff = () => { 
                     push(ref(db,'staff'),{...formS}); 
                     formS.nombre=''; formS.cedula=''; formS.escuela=''; 
