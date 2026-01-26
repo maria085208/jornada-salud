@@ -45,7 +45,6 @@
         .brand-title { font-family: 'Inter', sans-serif; font-weight: 900; text-transform: uppercase; color: #000; line-height: 1; letter-spacing: -1px; font-size: 2.5rem; }
         .brand-subtitle { font-family: 'Inter', sans-serif; font-weight: 900; text-transform: uppercase; color: #b45309; line-height: 1; letter-spacing: -0.5px; font-size: 2.5rem; margin-top: 5px; }
 
-        /* AJUSTES DE IMPRESIÓN TAMAÑO CARTA SIN RECORTES */
         #print-zone { display: none; }
         @media print {
             #app-container, #login-overlay, header, nav, .no-print { display: none !important; }
@@ -54,7 +53,7 @@
                 display: block !important; 
                 position: absolute; 
                 top: 0; left: 0; width: 100%; height: 100%;
-                padding: 1.5cm; /* Margen de seguridad */
+                padding: 1cm 1.5cm;
                 box-sizing: border-box;
             }
             .receta-maestra { 
@@ -66,9 +65,10 @@
                 box-sizing: border-box;
                 display: flex;
                 flex-direction: column;
+                background: white;
             }
             .receta-header { text-align: center; border-bottom: 4px solid #d97706; padding-bottom: 15px; margin-bottom: 20px; }
-            @page { size: letter; margin: 0; } 
+            @page { size: letter; margin: 0; }
         }
         [v-cloak] { display: none; }
     </style>
@@ -256,18 +256,38 @@
                         <h3 class="font-black text-xs uppercase mb-6 text-slate-400 border-b pb-2 italic">Nuevo Insumo</h3>
                         <div class="space-y-4">
                             <input v-model="formI.nombre" placeholder="Nombre Comercial" class="input-std">
-                            <input v-model="formI.presentacion" placeholder="Presentación" class="input-std">
+                            <input v-model="formI.presentacion" placeholder="Presentación (Ej. Caja/Tablet)" class="input-std">
                             <input v-model.number="formI.stock" type="number" placeholder="Stock Inicial" class="input-std">
-                            <div><label class="text-[10px] font-black uppercase text-slate-400 ml-2">Vence</label><input v-model="formI.caducidad" type="date" class="input-std"></div>
-                            <button @click="addInventory" class="w-full bg-slate-800 text-white py-4 rounded-xl font-black uppercase text-xs">GUARDAR</button>
+                            <div>
+                                <label class="text-[10px] font-black uppercase text-slate-400 ml-2">Fecha de Caducidad</label>
+                                <input v-model="formI.caducidad" type="date" class="input-std">
+                            </div>
+                            <button @click="addInventory" class="w-full bg-slate-800 text-white py-4 rounded-xl font-black uppercase text-xs">GUARDAR EN SISTEMA</button>
                         </div>
                     </div>
                     <div class="lg:col-span-2 bg-white rounded-[2.5rem] border-2 h-[650px] overflow-hidden flex flex-col shadow-xl">
-                        <div class="bg-slate-800 p-6 text-white font-black uppercase text-xs">Insumos</div>
+                        <div class="bg-slate-800 p-6 text-white font-black uppercase text-xs flex justify-between items-center">
+                            <span>Semaforización de Insumos</span>
+                            <div class="flex gap-4 text-[9px]">
+                                <span class="flex items-center gap-1"><i class="fas fa-circle text-red-500"></i> AGOTADO</span>
+                                <span class="flex items-center gap-1"><i class="fas fa-circle text-yellow-500"></i> BAJO</span>
+                                <span class="flex items-center gap-1"><i class="fas fa-circle text-green-500"></i> ÓPTIMO</span>
+                            </div>
+                        </div>
                         <div class="overflow-y-auto p-5 space-y-3">
-                            <div v-for="m in inventory" :key="m.id" :class="['flex justify-between items-center p-5 border-2 rounded-[2rem]', getStockClass(m.stock)]">
-                                <div><p class="font-black text-sm uppercase">{{m.nombre}}</p><p class="text-[9px] font-bold opacity-60">STOCK: {{m.stock}} | {{m.presentacion}}</p></div>
-                                <button @click="deleteInventory(m.id)" class="text-red-400 p-3"><i class="fas fa-trash-alt text-xl"></i></button>
+                            <div v-for="m in inventory" :key="m.id" 
+                                :class="['flex justify-between items-center p-5 border-2 rounded-[2rem] transition-all shadow-sm', getStockClass(m.stock), isExpired(m.caducidad) ? 'stock-expired' : '']">
+                                <div>
+                                    <p class="font-black text-sm uppercase">
+                                        <i v-if="isExpired(m.caducidad)" class="fas fa-biohazard mr-2"></i>
+                                        {{ m.nombre }} <span class="text-[10px] opacity-60">({{ m.presentacion }})</span>
+                                    </p>
+                                    <div class="flex gap-4 mt-1 text-[9px] font-black uppercase">
+                                        <span>STOCK: {{ m.stock }}</span>
+                                        <span>VENCE: {{ formatDate(m.caducidad) }}</span>
+                                    </div>
+                                </div>
+                                <button @click="deleteInventory(m.id)" class="text-red-400 hover:text-red-600 p-3 transition-colors"><i class="fas fa-trash-alt text-xl"></i></button>
                             </div>
                         </div>
                     </div>
@@ -275,21 +295,33 @@
 
                 <section v-if="activeTab === 'beneficiarios'" class="space-y-6">
                     <div class="flex justify-between items-center bg-white p-6 rounded-3xl shadow-xl border">
-                        <h2 class="text-2xl font-black uppercase italic text-slate-800">Censo Global</h2>
+                        <h2 class="text-2xl font-black uppercase italic text-slate-800">Censo Global de Beneficiarios</h2>
                         <button @click="downloadBeneficiariosPDF" class="bg-green-700 text-white px-8 py-4 rounded-2xl font-black text-xs uppercase shadow-lg hover:bg-green-800 transition-all">
-                            <i class="fas fa-file-pdf mr-2"></i> DESCARGAR REPORTE
+                            <i class="fas fa-file-pdf mr-2"></i> DESCARGAR REPORTE CARTA
                         </button>
                     </div>
                     <div class="bg-white border-2 rounded-[2.5rem] shadow-2xl overflow-hidden">
                         <div class="overflow-x-auto">
                             <table class="excel-table">
                                 <thead>
-                                    <tr><th>Fecha</th><th>Nombre</th><th>Edad</th><th>Sexo</th><th>Domicilio</th><th>Servicio</th></tr>
+                                    <tr>
+                                        <th>Fecha Registro</th>
+                                        <th>Nombre Completo</th>
+                                        <th>Edad</th>
+                                        <th>Sexo</th>
+                                        <th>Domicilio</th>
+                                        <th>Teléfono</th>
+                                        <th>Servicio</th>
+                                    </tr>
                                 </thead>
                                 <tbody>
                                     <tr v-for="h in history" :key="h.id">
-                                        <td>{{ h.fecha }}</td><td class="font-black text-slate-900">{{ h.pacienteNombre }}</td>
-                                        <td>{{ h.edad }}</td><td>{{ h.sexo }}</td><td>{{ h.domicilio }}</td>
+                                        <td>{{ h.fecha }}</td>
+                                        <td class="font-black text-slate-900">{{ h.pacienteNombre }}</td>
+                                        <td>{{ h.edad }}</td>
+                                        <td>{{ h.sexo }}</td>
+                                        <td>{{ h.domicilio || 'N/A' }}</td>
+                                        <td>{{ h.telefono || 'N/A' }}</td>
                                         <td><span class="bg-slate-100 px-3 py-1 rounded-full text-[10px] font-black uppercase">{{ h.tipoServicio }}</span></td>
                                     </tr>
                                 </tbody>
@@ -300,22 +332,29 @@
 
                 <section v-if="activeTab === 'config'" class="max-w-4xl mx-auto">
                     <div class="bg-white p-10 rounded-[3rem] border-2 shadow-2xl">
-                        <h3 class="font-black text-lg uppercase mb-8 text-center italic">Personal</h3>
+                        <h3 class="font-black text-lg uppercase mb-8 text-center border-b pb-4 italic">Registro de Especialistas</h3>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
-                            <input v-model="formS.nombre" placeholder="Nombre" class="input-std">
-                            <input v-model="formS.cedula" placeholder="Cédula" class="input-std">
-                            <input v-model="formS.escuela" placeholder="Escuela" class="input-std col-span-full">
-                            <select v-model="formS.area" class="input-std col-span-full">
+                            <input v-model="formS.nombre" placeholder="Nombre del Especialista" class="input-std">
+                            <input v-model="formS.cedula" placeholder="Cédula Profesional" class="input-std">
+                            <input v-model="formS.escuela" placeholder="Universidad / Escuela" class="input-std col-span-full md:col-span-2">
+                            
+                            <select v-model="formS.area" class="input-std col-span-full bg-slate-100">
                                 <option value="medico">MÉDICO GENERAL</option>
                                 <option value="psicologia">PSICOLOGÍA</option>
                                 <option value="juridico">JURÍDICO</option>
                                 <option value="cosmetologia">COSMETOLOGÍA</option>
                             </select>
-                            <button @click="addStaff" class="col-span-full bg-slate-900 text-white py-4 rounded-xl font-black uppercase">REGISTRAR</button>
+                            <button @click="addStaff" class="col-span-full bg-slate-900 text-white py-4 rounded-xl font-black uppercase active:scale-95 shadow-xl transition-all">REGISTRAR ESPECIALISTA</button>
                         </div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div v-for="s in staff" :key="s.id" class="p-5 border-2 rounded-2xl flex justify-between">
-                                <div><p class="font-black text-xs uppercase">{{ s.nombre }}</p><p class="text-[9px] font-bold opacity-60">{{ s.area }} | {{ s.cedula }}</p></div>
+                            <div v-for="s in staff" :key="s.id" class="p-5 border-2 rounded-2xl flex justify-between bg-slate-50 hover:bg-white transition-all">
+                                <div>
+                                    <p class="font-black text-xs uppercase text-slate-800">{{ s.nombre }}</p>
+                                    <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest">
+                                        {{ s.area }} | {{ s.cedula }} <br>
+                                        <span class="text-blue-600">{{ s.escuela }}</span>
+                                    </p>
+                                </div>
                                 <button @click="deleteStaff(s.id)" class="text-red-300 hover:text-red-500 p-2"><i class="fas fa-trash-alt"></i></button>
                             </div>
                         </div>
@@ -324,11 +363,14 @@
 
                 <section v-if="activeTab === 'historial'" class="space-y-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in">
-                        <div v-for="h in displayHistory" :key="h.id" class="bg-white p-6 rounded-[2rem] border-2 shadow-lg flex justify-between items-center">
-                            <div><p class="font-black uppercase text-sm text-slate-800">{{ h.pacienteNombre }}</p><p class="text-[10px] font-bold text-slate-400 italic">{{ h.fecha }}</p></div>
+                        <div v-for="h in displayHistory" :key="h.id" class="bg-white p-6 rounded-[2rem] border-2 shadow-lg flex justify-between items-center hover:scale-[1.02] transition-all">
+                            <div>
+                                <p class="font-black uppercase text-sm text-slate-800">{{ h.pacienteNombre }}</p>
+                                <p class="text-[10px] font-bold text-slate-400 uppercase italic">{{ h.fecha }}</p>
+                            </div>
                             <div class="flex gap-2">
-                                <button @click="reprintHistory(h)" class="bg-slate-900 text-white w-12 h-12 rounded-2xl flex items-center justify-center"><i class="fas fa-print"></i></button>
-                                <button v-if="userRole === 'SUPER'" @click="deleteHistory(h.id)" class="text-red-300 hover:text-red-500 w-12 h-12 flex items-center justify-center"><i class="fas fa-trash-alt text-xl"></i></button>
+                                <button @click="reprintHistory(h)" class="bg-slate-900 text-white w-12 h-12 rounded-2xl flex items-center justify-center shadow-xl hover:bg-black transition-all"><i class="fas fa-print"></i></button>
+                                <button v-if="userRole === 'SUPER'" @click="deleteHistory(h.id)" class="text-red-300 hover:text-red-500 w-12 h-12 flex items-center justify-center transition-all"><i class="fas fa-trash-alt text-xl"></i></button>
                             </div>
                         </div>
                     </div>
@@ -336,10 +378,15 @@
 
                 <section v-if="activeTab === 'data'" class="max-w-xl mx-auto text-center">
                     <div class="bg-white p-12 rounded-[4rem] border-4 shadow-2xl">
+                        <i class="fas fa-database text-7xl text-slate-100 mb-8"></i>
                         <h3 class="font-black text-2xl uppercase mb-10 text-slate-800">Administración de Datos</h3>
                         <div class="space-y-6">
-                            <button @click="loadExampleData" class="w-full bg-slate-800 text-white py-6 rounded-3xl font-black uppercase text-xs flex items-center justify-center gap-3"><i class="fas fa-vial"></i> CARGAR DATOS DEMO (EJEMPLOS)</button>
-                            <button @click="exportData" class="w-full bg-blue-600 text-white py-6 rounded-3xl font-black uppercase text-xs flex items-center justify-center gap-3"><i class="fas fa-download"></i> RESPALDO GLOBAL (JSON)</button>
+                            <button @click="loadExampleData" class="w-full bg-slate-800 text-white py-6 rounded-3xl font-black uppercase text-xs shadow-xl flex items-center justify-center gap-3">
+                                <i class="fas fa-vial"></i> CARGAR DATOS DEMO (EJEMPLOS)
+                            </button>
+                            <button @click="exportData" class="w-full bg-blue-600 text-white py-6 rounded-3xl font-black uppercase text-xs shadow-xl flex items-center justify-center gap-3">
+                                <i class="fas fa-download"></i> RESPALDO GLOBAL (JSON)
+                            </button>
                         </div>
                     </div>
                 </section>
@@ -350,36 +397,36 @@
         <div id="print-zone" v-if="printData">
             <div class="receta-maestra">
                 <div class="receta-header">
-                    <h1 style="font-size: 26px; font-weight: 900; text-transform: uppercase; margin: 0;">FUERZA GENERACIONAL</h1>
-                    <h2 style="font-size: 24px; font-weight: 900; text-transform: uppercase; margin: 0; color: #b45309;">JORNADAS DE SALUD</h2>
-                    <p style="font-size: 10px; font-weight: bold; letter-spacing: 2px; color: #555;">CFMM | PUEBLA</p>
+                    <h1 style="font-size: 26px; font-weight: 900; margin: 0;">FUERZA GENERACIONAL</h1>
+                    <h2 style="font-size: 24px; font-weight: 900; margin: 0; color: #b45309;">JORNADAS DE SALUD</h2>
+                    <p style="font-size: 9px; font-weight: 900; letter-spacing: 2px;">CFMM | PUEBLA</p>
                 </div>
                 
-                <div style="text-align: center; margin-bottom: 25px;">
-                    <h2 style="font-size: 20px; font-weight: 800; text-transform: uppercase; margin: 0;">{{ printData.medicoNombre }}</h2>
-                    <p style="font-size: 13px; font-weight: bold; margin: 5px 0; text-transform: uppercase;">
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <h2 style="font-size: 20px; font-weight: 900; text-transform: uppercase; margin: 0;">{{ printData.medicoNombre }}</h2>
+                    <p style="font-size: 13px; font-weight: 800; margin: 5px 0; text-transform: uppercase;">
                         {{ printData.tipoServicio === 'juridico' ? 'LICENCIADO EN DERECHO' : printData.tipoServicio }}
                     </p>
-                    <p style="font-size: 10px; font-weight: bold; color: #334155;">CÉDULA PROFESIONAL: {{ printData.medicoCedula }}</p>
-                    <p v-if="printData.medicoEscuela" style="font-size: 9px; font-weight: 700; color: #555; text-transform: uppercase;">{{ printData.medicoEscuela }}</p>
+                    <p style="font-size: 10px; font-weight: 800;">CÉDULA PROFESIONAL: {{ printData.medicoCedula }}</p>
+                    <p v-if="printData.medicoEscuela" style="font-size: 9px; font-weight: 700; text-transform: uppercase;">{{ printData.medicoEscuela }}</p>
                 </div>
 
                 <div style="text-align: right; font-size: 11px; margin-bottom: 15px; font-weight: 900;">FECHA: {{ printData.fecha }}</div>
                 
                 <div style="background-color: #f8fafc; border: 1.5px solid #000; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
                     <p style="font-size: 13px; font-weight: 900; text-transform: uppercase; margin-bottom: 5px;">PACIENTE: {{ printData.pacienteNombre }}</p>
-                    <p style="font-size: 11px; font-weight: 700; margin-bottom: 5px;">EDAD: {{ printData.edad }} AÑOS | SEXO: {{ printData.sexo }}</p>
-                    <p v-if="printData.tipoServicio !== 'juridico'" style="font-size: 11px; font-weight: 900; color: #d32f2f; text-transform: uppercase; margin-top: 5px;">ALERGIAS: {{ printData.alergias || 'NEGADAS' }}</p>
+                    <p style="font-size: 11px; font-weight: 700;">EDAD: {{ printData.edad }} AÑOS | SEXO: {{ printData.sexo }}</p>
+                    <p v-if="printData.tipoServicio !== 'juridico'" style="font-size: 11px; font-weight: 900; color: #d32f2f; margin-top: 5px;">ALERGIAS: {{ printData.alergias || 'NEGADAS' }}</p>
                 </div>
 
-                <table v-if="printData.vitals && printData.tipoServicio !== 'juridico'" class="excel-table" style="margin-bottom: 20px; text-align: center;">
+                <table v-if="printData.vitals && printData.tipoServicio !== 'juridico'" class="excel-table" style="margin-bottom: 20px; text-align: center; border: 1px solid #000;">
                     <thead>
                         <tr style="background: #000; color: #fff;">
                             <th>PESO (kg)</th><th>TALLA (m)</th><th>IMC</th><th>P.A.</th><th>F.C.</th><th>TEMP</th><th>GLU</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr style="border: 1px solid #000;">
+                        <tr>
                             <td>{{ printData.vitals.peso }}</td><td>{{ printData.vitals.talla }}</td><td>{{ printData.vitals.imc }}</td>
                             <td>{{ printData.vitals.ta }}</td><td>{{ printData.vitals.fc }}</td><td>{{ printData.vitals.temp }}°</td><td>{{ printData.vitals.glucosa }}</td>
                         </tr>
@@ -387,13 +434,13 @@
                 </table>
 
                 <div style="flex-grow: 1; font-size: 13px; line-height: 1.6; text-transform: uppercase;">
-                    <h3 style="font-size: 11px; font-weight: 900; background: #000; color: white; padding: 5px 15px; display: inline-block; margin-bottom: 10px; border-radius: 4px;">
+                    <h3 style="font-size: 11px; font-weight: 900; background: #000; color: white; padding: 4px 10px; display: inline-block; margin-bottom: 8px;">
                         {{ printData.tipoServicio === 'juridico' ? 'MOTIVO / HECHOS:' : 'DIAGNÓSTICO:' }}
                     </h3>
                     <p style="font-weight: 700; border-bottom: 1px dashed #ccc; padding-bottom: 10px; margin-bottom: 20px;">{{ printData.diagnostico }}</p>
                     
-                    <h3 style="font-size: 11px; font-weight: 900; background: #000; color: white; padding: 5px 15px; display: inline-block; margin-bottom: 10px; border-radius: 4px;">
-                        {{ printData.tipoServicio === 'juridico' ? 'ASESORÍA LEGAL:' : 'TRATAMIENTO:' }}
+                    <h3 style="font-size: 11px; font-weight: 900; background: #000; color: white; padding: 4px 10px; display: inline-block; margin-bottom: 8px;">
+                        {{ printData.tipoServicio === 'juridico' ? 'ASESORÍA:' : 'TRATAMIENTO:' }}
                     </h3>
                     
                     <table v-if="printData.medicamentos && printData.medicamentos.length > 0" style="width: 100%; border-collapse: collapse; margin-bottom: 15px; border: 1.5px solid #000;">
@@ -409,7 +456,7 @@
                 <div style="margin-top: 30px; text-align: center;">
                     <div style="border-top: 2px solid #000; width: 280px; margin: 0 auto; padding-top: 10px;">
                         <p style="font-size: 15px; font-weight: 900; text-transform: uppercase;">{{ printData.medicoNombre }}</p>
-                        <p style="font-size: 9px; font-weight: bold; color: #475569;">FIRMA Y SELLO AUTORIZADO</p>
+                        <p style="font-size: 9px; font-weight: 900; color: #475569;">FIRMA Y SELLO AUTORIZADO</p>
                     </div>
                 </div>
                 
@@ -433,21 +480,14 @@
 
         createApp({
             setup() {
-                const isLoggedIn = ref(false); 
-                const userRole = ref(''); 
-                const loginData = reactive({ user: '', pass: '' }); 
-                const loginError = ref(false);
-                const errorMsg = ref('');
-                const activeTab = ref('nosotros'); 
-                const historyLimit = ref(50);
-                
+                const isLoggedIn = ref(false); const userRole = ref(''); 
+                const loginData = reactive({ user: '', pass: '' }); const loginError = ref(false); const errorMsg = ref('');
+                const activeTab = ref('nosotros'); const historyLimit = ref(50);
                 const patients = ref([]); const staff = ref([]); const inventory = ref([]); const history = ref([]);
                 const printData = ref(null);
-            
                 const formP = reactive({ nombre: '', edad: null, sexo: 'MUJER', domicilio: '', telefono: '', servicio: 'medico' });
                 const formS = reactive({ nombre: '', area: 'medico', cedula: '', escuela: '' });
                 const formI = reactive({ nombre: '', stock: null, caducidad: '', presentacion: '' });
-
                 const selectedPatientId = ref(null);
                 const currP = reactive({ enfermeria: null, medico: null, juridico: null, psicologia: null, cosmetologia: null });
                 const vitalsForm = reactive({ peso: '', talla: '', ta: '', temp: '', fc: '', glucosa: '' });
@@ -462,25 +502,18 @@
                     db.ref('history').on('value', s => { history.value = s.exists() ? Object.entries(s.val()).map(([id,v])=>({id,...v})) : []; });
                 });
 
-                const displayHistory = computed(() => [...history.value].reverse().slice(0, historyLimit.value));
-
                 const performLogin = () => {
-                    const u = loginData.user.toUpperCase().trim();
-                    const p = loginData.pass.trim();
+                    const u = loginData.user.toUpperCase().trim(); const p = loginData.pass.trim();
                     let email = u === 'MARIA0852' ? 'jornadasdesaludfg@gmail.com' : (u === 'JORJE0852' ? 'jorjev0852@gmail.com' : (u === 'ESPECIALISTA0852' ? 'especialistasfg@gmail.com' : ''));
-
-                    if (!email) { loginError.value = true; errorMsg.value = 'USUARIO NO VÁLIDO'; return; }
-
-                    auth.signInWithEmailAndPassword(email, p)
-                        .then(() => {
-                            userRole.value = email.includes('jornadas') ? 'SUPER' : (email.includes('jorjev') ? 'ADMIN' : 'DOC');
-                            isLoggedIn.value = true; loginError.value = false;
-                        }).catch(() => { loginError.value = true; errorMsg.value = 'ERROR DE ACCESO'; });
+                    if (!email) { loginError.value = true; errorMsg.value = 'USUARIO INVÁLIDO'; return; }
+                    auth.signInWithEmailAndPassword(email, p).then(() => {
+                        userRole.value = email.includes('jornadas') ? 'SUPER' : (email.includes('jorjev') ? 'ADMIN' : 'DOC');
+                        isLoggedIn.value = true;
+                    }).catch(() => { loginError.value = true; errorMsg.value = 'ERROR DE ACCESO'; });
                 };
 
                 const loadExampleData = () => {
                     if(confirm("¿Cargar especialistas y 10 medicamentos de ejemplo?")) {
-                        // Especialistas
                         const especialistas = [
                             { nombre: "Dr. Roberto García", area: "medico", cedula: "8827361", escuela: "BUAP" },
                             { nombre: "Lic. Elena Castillo", area: "juridico", cedula: "9928374", escuela: "UNAM" },
@@ -488,8 +521,6 @@
                             { nombre: "Cosm. Diana Vega", area: "cosmetologia", cedula: "5544667", escuela: "CLEU" }
                         ];
                         especialistas.forEach(s => db.ref('staff').push(s));
-                        
-                        // Medicamentos
                         const meds = [
                             { nombre: "Paracetamol 500mg", presentacion: "Caja", stock: 100, caducidad: "2028-01-01" },
                             { nombre: "Ibuprofeno 400mg", presentacion: "Caja", stock: 50, caducidad: "2027-06-01" },
@@ -503,14 +534,14 @@
                             { nombre: "Vendas Elásticas", presentacion: "Pieza", stock: 200, caducidad: "2030-01-01" }
                         ];
                         meds.forEach(m => db.ref('inventory').push(m));
-                        alert("Datos cargados exitosamente.");
+                        alert("Datos cargados.");
                     }
                 };
 
                 const printRecipe = (area) => {
                     const p = currP[area]; const doc = staff.value.find(s => s.id === selStaffId[area]);
                     const report = {
-                        pacienteNombre: p.nombre, edad: p.edad, sexo: p.sexo, domicilio: p.domicilio,
+                        pacienteNombre: p.nombre, edad: p.edad, sexo: p.sexo, domicilio: p.domicilio, telefono: p.telefono,
                         vitals: p.vitals || null, alergias: consGen.alergias, diagnostico: consGen.diagnostico,
                         tratamiento: consGen.tratamiento, medicamentos: [...recipe.value],
                         medicoNombre: doc.nombre, medicoCedula: doc.cedula, medicoEscuela: doc.escuela, 
@@ -523,7 +554,7 @@
                     });
                     db.ref(`patients/${p.id}`).remove();
                     printData.value = report;
-                    nextTick(() => { setTimeout(() => { window.print(); printData.value = null; }, 1200); });
+                    nextTick(() => { setTimeout(() => { window.print(); printData.value = null; }, 1000); });
                     currP[area] = null; selectedPatientId.value = null;
                     consGen.diagnostico = ''; consGen.tratamiento = ''; recipe.value = [];
                 };
@@ -551,7 +582,7 @@
                     roleName: computed(() => userRole.value),
                     patients, staff, inventory, history, formP, formS, formI,
                     currP, vitalsForm, consGen, selectedPatientId, selStaffId, recipe, tempMed, tempDosis, printData,
-                    historyLimit, displayHistory,
+                    displayHistory: computed(() => [...history.value].reverse().slice(0, 50)),
                     registerPatient: () => { db.ref('patients').push({...formP, fecha: new Date().toLocaleString()}); Object.assign(formP, {nombre:'', edad:null, domicilio:'', telefono:''}); },
                     saveVitals: () => { 
                         const p = patients.value.find(x => x.id === selectedPatientId.value);
@@ -560,6 +591,7 @@
                         selectedPatientId.value = null; currP.enfermeria = null;
                     },
                     printRecipe, getStockClass: (s) => s <= 0 ? 'stock-red' : (s <= 10 ? 'stock-yellow' : 'stock-green'),
+                    isExpired: (d) => d && new Date(d) < new Date(),
                     formatDate: (d) => d ? new Date(d).toLocaleDateString() : 'SIN FECHA',
                     changeTab: (id) => { activeTab.value = id; selectedPatientId.value = null; },
                     loadPatientForVitals: () => currP.enfermeria = patients.value.find(x=>x.id===selectedPatientId.value),
@@ -573,18 +605,14 @@
                     addInventory: () => { db.ref('inventory').push({...formI}); Object.assign(formI,{nombre:'',stock:null,caducidad:'',presentacion:''}); },
                     deleteInventory: (id) => db.ref(`inventory/${id}`).remove(),
                     deleteHistory: (id) => db.ref(`history/${id}`).remove(),
-                    reprintHistory: (h) => { printData.value = h; nextTick(()=>setTimeout(()=>window.print(),1200)); },
+                    reprintHistory: (h) => { printData.value = h; nextTick(()=>setTimeout(()=>window.print(),1000)); },
                     loadExampleData,
                     exportData: () => { const b=new Blob([JSON.stringify({history:history.value,inventory:inventory.value,staff:staff.value})],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='Respaldo.json'; a.click(); },
                     deletePatient: (id) => db.ref(`patients/${id}`).remove(),
                     downloadBeneficiariosPDF: () => {
                         const { jsPDF } = window.jspdf; const doc = new jsPDF('l');
                         doc.text("CENSO GLOBAL DE BENEFICIARIOS", 14, 15);
-                        doc.autoTable({ 
-                            startY: 20, 
-                            head: [['Fecha', 'Nombre', 'Edad', 'Sexo', 'Domicilio', 'Servicio']], 
-                            body: history.value.map(h => [h.fecha, h.pacienteNombre, h.edad, h.sexo, h.domicilio, h.tipoServicio]) 
-                        });
+                        doc.autoTable({ startY: 20, head: [['Fecha', 'Nombre', 'Edad', 'Sexo', 'Domicilio', 'Servicio']], body: history.value.map(h => [h.fecha, h.pacienteNombre, h.edad, h.sexo, h.domicilio, h.tipoServicio]) });
                         doc.save("Reporte.pdf");
                     }
                 };
