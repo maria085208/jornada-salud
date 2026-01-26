@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SISTEMA INTEGRAL JORNADAS DE SALUD - FUERZA GENERACIONAL</title>
+    <title>JORNADAS DE SALUD - FUERZA GENERACIONAL</title>
     
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -24,7 +24,7 @@
             --bg-color: #fffbeb; 
             --text-main: #1e293b; 
             --accent-main: #b45309; 
-            --primary-dark: #451a03;
+            --primary-dark: #0f172a;
         }
         
         body { 
@@ -54,6 +54,7 @@
             box-shadow: 0 0 0 4px rgba(180, 83, 9, 0.1); 
         }
 
+        /* NAVEGACIÓN */
         .tab-active { 
             background-color: var(--primary-dark) !important; 
             color: white !important; 
@@ -66,16 +67,18 @@
             border-bottom: 2px solid #fed7aa; 
         }
 
+        /* SEMÁFORO DE FARMACIA */
         .stock-red { background: #fee2e2; border-left: 8px solid #ef4444; color: #991b1b; }
         .stock-yellow { background: #fefce8; border-left: 8px solid #eab308; color: #854d0e; }
         .stock-green { background: #f0fdf4; border-left: 8px solid #22c55e; color: #166534; }
         .stock-expired { background: #450a0a !important; color: white !important; border-left: 8px solid black; }
 
+        /* TABLAS ESTILO EXCEL */
         .excel-table { width: 100%; border-collapse: collapse; font-size: 11px; background: white; }
         .excel-table th { background: #ffedd5; border: 1px solid #fdba74; padding: 12px; text-transform: uppercase; font-weight: 900; text-align: left; color: #7c2d12; }
         .excel-table td { border: 1px solid #fed7aa; padding: 12px; font-weight: 600; }
 
-        /* LOGIN (ESTILO IMAGEN) */
+        /* LOGIN (PANTALLA COMPLETA) */
         #login-overlay { 
             position: fixed; inset: 0; 
             background-color: #fffbeb; 
@@ -87,7 +90,7 @@
         .brand-subtitle { font-weight: 900; text-transform: uppercase; color: #b45309; line-height: 1; letter-spacing: -1px; font-size: 3rem; margin-top: 8px; }
 
         /* ========================================= */
-        /* ZONA DE IMPRESIÓN MAESTRA (CARTA EXACTA) */
+        /* DISEÑO DE IMPRESIÓN ADAPTATIVO (CARTA) */
         /* ========================================= */
         #print-zone { display: none; }
         @media print {
@@ -96,32 +99,32 @@
             #print-zone { 
                 display: block !important; 
                 position: absolute; top: 0; left: 0; 
-                width: 21.59cm; height: 27.94cm; /* Tamaño Carta */
-                z-index: 9999; box-sizing: border-box;
+                width: 21.59cm; height: 27.94cm; /* Tamaño Carta 8.5x11 */
+                z-index: 9999; padding: 1.2cm; box-sizing: border-box;
                 overflow: hidden;
             }
             .receta-maestra { 
                 width: 100%; height: 100%; 
-                border: 4px solid #000; color: #000; 
-                padding: 1.5cm; position: relative;
+                border: 3px solid #000; color: #000; 
+                padding: 35px; position: relative;
                 box-sizing: border-box;
                 display: flex; flex-direction: column;
             }
             .receta-header { text-align: center; border-bottom: 5px solid #d97706; padding-bottom: 15px; margin-bottom: 20px; }
-            .print-brand-1 { font-size: 28px; font-weight: 900; color: #000; margin: 0; line-height: 1; }
-            .print-brand-2 { font-size: 28px; font-weight: 900; color: #d97706; margin: 5px 0 0 0; line-height: 1; }
+            .print-brand-1 { font-size: 26px; font-weight: 900; color: #000; margin: 0; line-height: 1; }
+            .print-brand-2 { font-size: 26px; font-weight: 900; color: #d97706; margin: 5px 0 0 0; line-height: 1; }
             
             /* LÍNEA DE FIRMA CENTRAL */
             .firma-container {
-                margin-top: auto; /* Empuja hacia abajo pero dentro de la página */
-                margin-bottom: 40px;
+                margin-top: auto; 
+                margin-bottom: 30px;
                 text-align: center;
                 width: 100%;
             }
             .firma-linea {
-                width: 300px;
-                border-top: 3px solid #000;
-                margin: 0 auto 10px auto;
+                width: 350px;
+                border-top: 2px solid #000;
+                margin: 0 auto 8px auto;
             }
             @page { size: letter; margin: 0; }
         }
@@ -145,10 +148,14 @@
                 </div>
                 
                 <form @submit.prevent="performLogin" class="space-y-6">
-                    <input v-model="loginData.user" type="text" class="input-std text-center" placeholder="ID USUARIO" style="border: 3px solid #000;">
-                    <input v-model="loginData.pass" type="password" class="input-std text-center" placeholder="CONTRASEÑA" style="border: 3px solid #000;">
+                    <div class="relative">
+                        <input v-model="loginData.user" type="text" class="input-std text-center" placeholder="ID USUARIO" style="border: 3px solid #000;">
+                    </div>
+                    <div class="relative">
+                        <input v-model="loginData.pass" type="password" class="input-std text-center" placeholder="CONTRASEÑA" style="border: 3px solid #000;">
+                    </div>
                     
-                    <div v-if="loginError" class="bg-red-50 text-red-700 p-4 rounded-xl text-xs font-black uppercase border-2 border-red-200">
+                    <div v-if="loginError" class="bg-red-50 text-red-700 p-4 rounded-xl text-xs font-black uppercase border-2 border-red-200 animate-pulse">
                         <i class="fas fa-shield-alt mr-2"></i> {{ errorMsg }}
                     </div>
                     
@@ -164,17 +171,17 @@
             <header class="bg-white border-b-4 border-amber-600 sticky top-0 z-40 shadow-xl no-print">
                 <div class="container mx-auto px-6 py-4 flex justify-between items-center">
                     <div class="flex items-center gap-5">
-                        <div class="bg-amber-700 text-white p-4 rounded-3xl shadow-lg"><i class="fas fa-satellite-dish text-2xl"></i></div>
+                        <div class="bg-amber-700 text-white p-4 rounded-3xl shadow-lg"><i class="fas fa-hospital-user text-2xl"></i></div>
                         <div>
                             <h1 class="text-xl font-black uppercase text-slate-900 leading-none">FUERZA GENERACIONAL</h1>
                             <h2 class="text-xl font-black uppercase text-amber-700 leading-none mt-1">JORNADAS DE SALUD</h2>
                             <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1 italic">CFMM | SESIÓN: {{ roleName }}</p>
                         </div>
                     </div>
-                    <button @click="logout" class="bg-red-600 text-white px-8 py-3 rounded-2xl font-black uppercase text-[10px] shadow-lg">CERRAR</button>
+                    <button @click="logout" class="bg-red-600 text-white px-8 py-3 rounded-2xl font-black uppercase text-[10px] shadow-lg hover:bg-red-700 transition-all">CERRAR</button>
                 </div>
                 
-                <nav class="flex overflow-x-auto bg-white border-t no-scrollbar">
+                <nav class="flex overflow-x-auto bg-white border-t no-scrollbar shadow-inner">
                     <button v-for="t in filteredTabs" :key="t.id" @click="changeTab(t.id)" 
                         :class="['px-8 py-5 text-[10px] font-black uppercase border-r flex items-center gap-3 transition-all whitespace-nowrap', activeTab === t.id ? 'tab-active' : 'tab-inactive']">
                         <i :class="t.icon"></i> {{ t.name }}
@@ -184,22 +191,24 @@
 
             <main class="container mx-auto px-6 py-10 no-print">
                 
-                <section v-if="activeTab === 'nosotros'" class="max-w-5xl mx-auto space-y-10">
+                <section v-if="activeTab === 'nosotros'" class="max-w-5xl mx-auto space-y-10 animate-fade-in">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
-                        <div class="bg-white p-12 rounded-[3.5rem] border shadow-2xl">
+                        <div class="bg-white p-12 rounded-[3.5rem] border shadow-2xl relative overflow-hidden">
+                            <div class="absolute top-0 left-0 w-2 h-full bg-amber-600"></div>
                             <h2 class="text-4xl font-black text-amber-800 uppercase mb-8 italic">Nosotros</h2>
-                            <p class="text-lg font-bold text-slate-600 leading-relaxed uppercase">Somos una plataforma ciudadana que busca convertirse en un referente en la ejecución de proyectos de ciudadanía activa y organizada.</p>
+                            <p class="text-lg font-bold text-slate-600 leading-relaxed uppercase text-justify">Somos una plataforma ciudadana que busca convertirse en un referente en la ejecución de proyectos de ciudadanía activa y organizada.</p>
                         </div>
-                        <div class="bg-slate-900 p-12 rounded-[3.5rem] text-white shadow-2xl">
+                        <div class="bg-slate-900 p-12 rounded-[3.5rem] text-white shadow-2xl relative overflow-hidden">
+                            <div class="absolute top-0 right-0 w-2 h-full bg-red-600"></div>
                             <h2 class="text-4xl font-black uppercase mb-8 italic">Visión</h2>
-                            <p class="text-lg font-bold leading-relaxed uppercase">Convertirnos en un referente de participación ciudadana activa y organizada para generar cambios sostenibles y positivos en Puebla.</p>
+                            <p class="text-lg font-bold leading-relaxed uppercase text-justify">Convertirnos en un referente de participación ciudadana activa y organizada para generar cambios sostenibles y positivos en Puebla.</p>
                         </div>
                     </div>
                 </section>
 
-                <section v-if="activeTab === 'recepcion'" class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+                <section v-if="activeTab === 'recepcion'" class="grid grid-cols-1 lg:grid-cols-3 gap-10 animate-fade-in">
                     <div class="bg-white p-10 rounded-[3rem] border-4 border-amber-100 shadow-2xl h-fit">
-                        <h3 class="font-black text-sm uppercase mb-8 text-slate-400 border-b-2 pb-2">Registro Beneficiario</h3>
+                        <h3 class="font-black text-sm uppercase mb-8 text-slate-400 border-b-2 pb-2 italic">Registro Beneficiario</h3>
                         <div class="space-y-5">
                             <input v-model="formP.nombre" placeholder="Nombre Completo" class="input-std">
                             <div class="grid grid-cols-2 gap-5">
@@ -207,19 +216,19 @@
                                 <select v-model="formP.sexo" class="input-std"><option value="HOMBRE">HOMBRE</option><option value="MUJER">MUJER</option></select>
                             </div>
                             <input v-model="formP.domicilio" placeholder="Domicilio Completo" class="input-std">
-                            <input v-model="formP.telefono" placeholder="Teléfono" class="input-std">
+                            <input v-model="formP.telefono" placeholder="Teléfono de Contacto" class="input-std">
                             <select v-model="formP.servicio" class="input-std bg-slate-900 text-white font-black">
                                 <option value="medico">MÉDICO GENERAL</option>
                                 <option value="psicologia">PSICOLOGÍA</option>
                                 <option value="juridico">JURÍDICO</option>
                                 <option value="cosmetologia">COSMETOLOGÍA</option>
                             </select>
-                            <button @click="registerPatient" class="w-full bg-amber-600 text-white py-6 rounded-2xl font-black uppercase shadow-xl hover:bg-amber-700 active:scale-95 transition-all">GUARDAR REGISTRO</button>
+                            <button @click="registerPatient" class="w-full bg-amber-600 text-white py-6 rounded-2xl font-black uppercase text-xs shadow-xl hover:bg-amber-700 active:scale-95 transition-all">GUARDAR REGISTRO</button>
                         </div>
                     </div>
-                    <div class="lg:col-span-2 bg-white rounded-[3rem] border-2 h-[700px] flex flex-col shadow-2xl overflow-hidden">
+                    <div class="lg:col-span-2 bg-white rounded-[3rem] border-2 h-[750px] flex flex-col shadow-2xl overflow-hidden">
                         <div class="bg-slate-900 p-8 text-white font-black uppercase text-xs flex justify-between items-center">
-                            <span>Lista de Espera Actual</span>
+                            <span>Fila de Espera Global</span>
                             <span class="bg-amber-600 px-5 py-2 rounded-full">{{patients.length}} Pacientes</span>
                         </div>
                         <div class="overflow-y-auto p-6 space-y-4">
@@ -234,11 +243,11 @@
                     </div>
                 </section>
 
-                <section v-if="activeTab === 'signos'" class="max-w-4xl mx-auto">
+                <section v-if="activeTab === 'signos'" class="max-w-4xl mx-auto animate-fade-in">
                     <div class="bg-white p-12 rounded-[4rem] border-4 shadow-2xl text-center border-amber-50">
-                        <h3 class="font-black text-2xl uppercase mb-10 text-slate-800">Enfermería / Triaje</h3>
+                        <h3 class="font-black text-2xl uppercase mb-10 text-slate-800">Enfermería y Triage</h3>
                         <select v-model="selectedPatientId" @change="loadPatientForVitals" class="input-std h-20 text-xl mb-10 shadow-lg border-slate-300">
-                            <option :value="null">-- SELECCIONAR PACIENTE --</option>
+                            <option :value="null">-- SELECCIONAR PACIENTE DE LA FILA --</option>
                             <option v-for="p in pendingVitalsList" :key="p.id" :value="p.id">{{ p.nombre }} ({{p.servicio}})</option>
                         </select>
                         <div v-if="currP.enfermeria" class="bg-slate-50 p-12 rounded-[4rem] border-2 text-left space-y-8 shadow-inner">
@@ -254,7 +263,7 @@
                     </div>
                 </section>
 
-                <section v-if="['medico', 'psicologia', 'cosmetologia', 'juridico'].includes(activeTab)" class="max-w-6xl mx-auto space-y-8">
+                <section v-if="['medico', 'psicologia', 'cosmetologia', 'juridico'].includes(activeTab)" class="max-w-6xl mx-auto space-y-8 animate-fade-in">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <div class="bg-white p-8 border-2 rounded-[2.5rem] shadow-xl">
                             <label class="text-[11px] font-black text-slate-400 uppercase ml-3 block mb-2">Beneficiario en Turno</label>
@@ -274,31 +283,32 @@
 
                     <div v-if="currP[activeTab]" class="bg-white p-12 rounded-[4rem] border-t-8 border-slate-900 shadow-2xl space-y-10">
                         <div v-if="activeTab !== 'juridico'">
-                            <label class="text-[11px] font-black text-red-500 uppercase ml-3 block mb-2">Alergias Detectadas</label>
-                            <input v-model="consGen.alergias" class="input-std border-red-100 font-black text-red-600 h-20 text-xl" placeholder="NEGADAS O ESPECIFICAR">
+                            <label class="text-[11px] font-black text-red-500 uppercase ml-3 block mb-2 italic">Alergias Detectadas</label>
+                            <input v-model="consGen.alergias" class="input-std border-red-100 font-black text-red-600 h-20 text-xl shadow-inner" placeholder="ESCRIBIR: NEGADAS O ALERGIA ESPECÍFICA">
                         </div>
                         
                         <div class="space-y-6">
-                            <label class="text-[11px] font-black uppercase text-slate-400 ml-3 block">{{ activeTab === 'juridico' ? 'Hechos / Motivo' : 'Diagnóstico Clínico' }}</label>
+                            <label class="text-[11px] font-black uppercase text-slate-400 ml-3 block">{{ activeTab === 'juridico' ? 'Descripción de Hechos' : 'Diagnóstico Clínico' }}</label>
                             <textarea v-model="consGen.diagnostico" class="input-std h-40 normal-case" placeholder="Escriba aquí los detalles..."></textarea>
-                            <label class="text-[11px] font-black uppercase text-slate-400 ml-3 block">{{ activeTab === 'juridico' ? 'Asesoría Jurídica' : 'Tratamiento e Indicaciones' }}</label>
-                            <textarea v-model="consGen.tratamiento" class="input-std h-40 normal-case" placeholder="Escriba el plan de acción..."></textarea>
+                            
+                            <label class="text-[11px] font-black uppercase text-slate-400 ml-3 block">{{ activeTab === 'juridico' ? 'Asesoría Brindada' : 'Plan de Tratamiento' }}</label>
+                            <textarea v-model="consGen.tratamiento" class="input-std h-40 normal-case" placeholder="Escriba las indicaciones..."></textarea>
                         </div>
 
-                        <div v-if="['medico', 'cosmetologia'].includes(activeTab)" class="bg-slate-900 p-10 rounded-[3rem] shadow-inner">
-                            <p class="text-white font-black text-xs uppercase mb-8 tracking-[0.2em] text-center">Suministro de Medicamentos</p>
+                        <div v-if="['medico', 'cosmetologia'].includes(activeTab)" class="bg-slate-900 p-10 rounded-[3rem] shadow-2xl">
+                            <p class="text-white font-black text-xs uppercase mb-8 tracking-widest text-center">Suministro de Insumos Médicos</p>
                             <div class="flex flex-col md:flex-row gap-5 mb-8">
                                 <select v-model="tempMed" class="input-std flex-1 h-16">
-                                    <option :value="null">-- Buscar en Inventario --</option>
+                                    <option :value="null">-- Seleccionar de Almacén --</option>
                                     <option v-for="m in inventory" :key="m.id" :value="m">{{m.nombre}} (Stock: {{m.stock}})</option>
                                 </select>
-                                <input v-model="tempDosis" class="input-std flex-1 h-16" placeholder="Dosis / Indicación">
-                                <button @click="addToRecipe" class="bg-amber-600 text-white px-10 rounded-2xl font-black uppercase text-xs hover:bg-amber-700">AÑADIR</button>
+                                <input v-model="tempDosis" class="input-std flex-1 h-16" placeholder="Indicación de uso">
+                                <button @click="addToRecipe" class="bg-amber-600 text-white px-10 rounded-2xl font-black uppercase text-xs hover:bg-amber-700 transition-all">AÑADIR</button>
                             </div>
                             <div class="space-y-3">
-                                <div v-for="(m, i) in recipe" :key="i" class="bg-white/10 p-4 text-white rounded-2xl flex justify-between items-center text-sm font-bold uppercase border border-white/5">
+                                <div v-for="(m, i) in recipe" :key="i" class="bg-white/10 p-4 text-white rounded-2xl flex justify-between items-center text-sm font-bold uppercase border border-white/10 shadow-sm">
                                     <span>{{ m.nombre }} - <span class="text-amber-400 italic">{{ m.indicacion }}</span></span>
-                                    <i @click="recipe.splice(i,1)" class="fas fa-times cursor-pointer text-red-400 text-xl p-2 hover:bg-white/5 rounded-full"></i>
+                                    <i @click="recipe.splice(i,1)" class="fas fa-times cursor-pointer text-red-400 text-xl p-2 hover:bg-white/5 rounded-full transition-all"></i>
                                 </div>
                             </div>
                         </div>
@@ -309,15 +319,15 @@
                     </div>
                 </section>
 
-                <section v-if="activeTab === 'farmacia'" class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+                <section v-if="activeTab === 'farmacia'" class="grid grid-cols-1 lg:grid-cols-3 gap-10 animate-fade-in">
                     <div class="bg-white p-10 rounded-[3rem] border-2 shadow-2xl h-fit">
-                        <h3 class="font-black text-xs uppercase mb-8 text-slate-400 border-b-2 pb-2 italic">Control de Stock</h3>
+                        <h3 class="font-black text-xs uppercase mb-8 text-slate-400 border-b-2 pb-2 italic">Entrada de Insumos</h3>
                         <div class="space-y-5">
-                            <input v-model="formI.nombre" placeholder="Nombre Medicamento" class="input-std">
+                            <input v-model="formI.nombre" placeholder="Nombre Comercial" class="input-std">
                             <input v-model="formI.presentacion" placeholder="Presentación" class="input-std">
-                            <input v-model.number="formI.stock" type="number" placeholder="Existencia" class="input-std">
+                            <input v-model.number="formI.stock" type="number" placeholder="Cantidad Inicial" class="input-std">
                             <div>
-                                <label class="text-[10px] font-black uppercase text-slate-400 ml-3">Caducidad</label>
+                                <label class="text-[10px] font-black uppercase text-slate-400 ml-3">Fecha de Vencimiento</label>
                                 <input v-model="formI.caducidad" type="date" class="input-std">
                             </div>
                             <button @click="addInventory" class="w-full bg-slate-900 text-white py-5 rounded-2xl font-black uppercase text-xs hover:bg-black transition-all shadow-xl">REGISTRAR EN ALMACÉN</button>
@@ -325,7 +335,7 @@
                     </div>
                     <div class="lg:col-span-2 bg-white rounded-[3rem] border-2 h-[750px] overflow-hidden flex flex-col shadow-2xl">
                         <div class="bg-slate-900 p-8 text-white font-black uppercase text-xs flex justify-between items-center">
-                            <span>Inventario de Insumos</span>
+                            <span>Semaforización de Stock</span>
                             <div class="flex gap-5 text-[9px] tracking-widest">
                                 <span class="flex items-center gap-2"><i class="fas fa-circle text-red-500"></i> AGOTADO</span>
                                 <span class="flex items-center gap-2"><i class="fas fa-circle text-yellow-500"></i> BAJO</span>
@@ -338,8 +348,8 @@
                                 <div>
                                     <p class="font-black text-base uppercase">{{ m.nombre }} <span class="text-[11px] opacity-60">({{ m.presentacion }})</span></p>
                                     <div class="flex gap-6 mt-2 text-[10px] font-black uppercase tracking-widest">
-                                        <span>STOCK: {{ m.stock }}</span>
-                                        <span>VENCE: {{ formatDate(m.caducidad) }}</span>
+                                        <span>CANTIDAD: {{ m.stock }}</span>
+                                        <span>VENCIMIENTO: {{ formatDate(m.caducidad) }}</span>
                                     </div>
                                 </div>
                                 <button @click="deleteInventory(m.id)" class="text-red-400 hover:text-red-600 p-4 transition-colors"><i class="fas fa-trash-alt text-2xl"></i></button>
@@ -348,7 +358,7 @@
                     </div>
                 </section>
 
-                <section v-if="activeTab === 'beneficiarios'" class="space-y-8">
+                <section v-if="activeTab === 'beneficiarios'" class="space-y-8 animate-fade-in">
                     <div class="flex justify-between items-center bg-white p-8 rounded-[2.5rem] shadow-2xl border-2 border-amber-50">
                         <h2 class="text-3xl font-black uppercase italic text-slate-900">Censo Global</h2>
                         <button @click="downloadBeneficiariosPDF" class="bg-green-700 text-white px-10 py-5 rounded-2xl font-black text-xs uppercase shadow-xl hover:bg-green-800 transition-all flex items-center gap-3">
@@ -385,13 +395,13 @@
                     </div>
                 </section>
 
-                <section v-if="activeTab === 'config'" class="max-w-5xl mx-auto">
+                <section v-if="activeTab === 'config'" class="max-w-5xl mx-auto animate-fade-in">
                     <div class="bg-white p-12 rounded-[4rem] border-2 shadow-2xl">
-                        <h3 class="font-black text-xl uppercase mb-10 text-center border-b pb-4 italic">Gestión de Especialistas</h3>
+                        <h3 class="font-black text-xl uppercase mb-10 text-center border-b pb-4 italic">Censo de Especialistas</h3>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
-                            <input v-model="formS.nombre" placeholder="Nombre del Especialista" class="input-std">
+                            <input v-model="formS.nombre" placeholder="Nombre Completo" class="input-std">
                             <input v-model="formS.cedula" placeholder="Cédula Profesional" class="input-std">
-                            <input v-model="formS.escuela" placeholder="Universidad de Procedencia" class="input-std col-span-full md:col-span-2">
+                            <input v-model="formS.escuela" placeholder="Universidad de Egreso" class="input-std col-span-full md:col-span-2">
                             
                             <select v-model="formS.area" class="input-std col-span-full bg-slate-50">
                                 <option value="medico">MEDICINA GENERAL</option>
@@ -407,18 +417,18 @@
                                     <p class="font-black text-sm uppercase text-slate-800">{{ s.nombre }}</p>
                                     <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">
                                         {{ s.area }} | CÉD: {{ s.cedula }} <br>
-                                        <span class="text-amber-700 italic">{{ s.escuela }}</span>
+                                        <span class="text-amber-700 italic font-bold">{{ s.escuela }}</span>
                                     </p>
                                 </div>
-                                <button @click="deleteStaff(s.id)" class="text-red-300 hover:text-red-500 p-3"><i class="fas fa-trash-alt text-xl"></i></button>
+                                <button @click="deleteStaff(s.id)" class="text-red-300 hover:text-red-600 p-3 transition-colors"><i class="fas fa-trash-alt text-2xl"></i></button>
                             </div>
                         </div>
                     </div>
                 </section>
 
-                <section v-if="activeTab === 'historial'" class="space-y-8">
+                <section v-if="activeTab === 'historial'" class="space-y-8 animate-fade-in">
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 animate-fade-in">
-                        <div v-for="h in displayHistory" :key="h.id" class="bg-white p-8 rounded-[2.5rem] border-2 shadow-xl flex justify-between items-center hover:scale-[1.03] transition-all border-amber-50">
+                        <div v-for="h in displayHistory" :key="h.id" class="bg-white p-8 rounded-[2.5rem] border-2 shadow-xl flex justify-between items-center hover:scale-[1.03] transition-all border-amber-50 shadow-amber-900/5">
                             <div>
                                 <p class="font-black uppercase text-base text-slate-800">{{ h.pacienteNombre }}</p>
                                 <p class="text-[11px] font-bold text-slate-400 uppercase italic mt-1">{{ h.fecha }}</p>
@@ -430,15 +440,16 @@
                         </div>
                     </div>
                     <div v-if="history.length > historyLimit" class="text-center mt-12 pb-10">
-                        <button @click="historyLimit = history.length" class="bg-slate-900 text-white px-12 py-6 rounded-[3rem] font-black uppercase text-xs shadow-2xl hover:scale-105 transition-all">VER TODO EL ARCHIVO HISTÓRICO</button>
+                        <button @click="historyLimit = history.length" class="bg-slate-900 text-white px-12 py-6 rounded-[3rem] font-black uppercase text-xs shadow-2xl hover:scale-105 transition-all">CARGAR TODO EL ARCHIVO HISTÓRICO</button>
                     </div>
                 </section>
 
-                <section v-if="activeTab === 'data'" class="max-w-xl mx-auto text-center">
+                <section v-if="activeTab === 'data'" class="max-w-xl mx-auto text-center animate-fade-in">
                     <div class="bg-white p-12 rounded-[4.5rem] border-4 shadow-2xl border-amber-100">
                         <i class="fas fa-database text-8xl text-slate-100 mb-10"></i>
-                        <h3 class="font-black text-3xl uppercase mb-12 text-slate-800 italic">Mantenimiento</h3>
+                        <h3 class="font-black text-3xl uppercase mb-12 text-slate-800 italic">Mantenimiento Global</h3>
                         <div class="space-y-8">
+                            
                             <button @click="loadExampleData" class="w-full bg-slate-800 text-white py-7 rounded-3xl font-black uppercase text-xs shadow-2xl flex items-center justify-center gap-4 hover:bg-slate-900 transition-all">
                                 <i class="fas fa-flask"></i> INYECTAR DATOS DEMOSTRATIVOS
                             </button>
@@ -447,12 +458,12 @@
                                 <i class="fas fa-download"></i> GENERAR BACKUP TOTAL (JSON)
                             </button>
                             
-                            <button v-if="roleName === 'SUPER'" @click="nukeDatabase" class="w-full bg-red-600 text-white py-7 rounded-3xl font-black uppercase text-xs hover:bg-red-800 transition-all active:scale-95 shadow-lg">
-                                <i class="fas fa-skull-crossbones mr-3"></i> BORRAR TODA LA BASE DE DATOS
+                            <button v-if="roleName === 'SUPER'" @click="nukeDatabase" class="w-full bg-red-600 text-white py-7 rounded-3xl font-black uppercase text-xs hover:bg-red-800 transition-all active:scale-95 shadow-lg shadow-red-900/20">
+                                <i class="fas fa-trash-alt mr-3 text-lg"></i> BORRAR TODOS LOS DATOS DEL SISTEMA
                             </button>
                             
                             <div class="mt-12 pt-12 border-t-4 border-slate-50">
-                                <p class="text-[10px] font-black text-slate-300 mb-6 uppercase tracking-[0.3em]">Importar desde Respaldo</p>
+                                <p class="text-[10px] font-black text-slate-300 mb-6 uppercase tracking-[0.3em]">Restaurar desde Respaldo Externo</p>
                                 <input type="file" @change="importData" class="text-xs file:mr-4 file:py-3 file:px-6 file:rounded-full file:border-0 file:text-xs file:font-black file:bg-slate-900 file:text-white cursor-pointer">
                             </div>
                         </div>
@@ -481,34 +492,55 @@
 
                 <div style="text-align: right; font-size: 12px; margin-bottom: 20px; font-weight: 900;">FECHA: {{ printData.fecha }}</div>
                 
-                <div style="background-color: #f8fafc; border: 3px solid #000; padding: 15px; border-radius: 12px; margin-bottom: 20px;">
-                    <p style="font-size: 14px; font-weight: 900; text-transform: uppercase; margin-bottom: 5px;">PACIENTE: {{ printData.pacienteNombre }}</p>
+                <div style="background-color: #f8fafc; border: 3px solid #000; padding: 20px; border-radius: 15px; margin-bottom: 20px;">
+                    <p style="font-size: 14px; font-weight: 900; text-transform: uppercase; margin-bottom: 8px;">DATOS DEL BENEFICIARIO:</p>
+                    <p style="font-size: 13px; font-weight: 900; text-transform: uppercase;">PACIENTE: {{ printData.pacienteNombre }}</p>
                     <p style="font-size: 12px; font-weight: 700;">EDAD: {{ printData.edad }} AÑOS | SEXO: {{ printData.sexo }}</p>
                     <p style="font-size: 12px; font-weight: 700;">DOMICILIO: {{ printData.domicilio }} | TELÉFONO: {{ printData.telefono }}</p>
-                    <p v-if="printData.tipoServicio !== 'juridico'" style="font-size: 12px; font-weight: 900; color: #d32f2f; text-transform: uppercase; margin-top: 5px;">ALERGIAS: {{ printData.alergias || 'NEGADAS' }}</p>
+                    <p v-if="printData.tipoServicio !== 'juridico'" style="font-size: 12px; font-weight: 900; color: #d32f2f; text-transform: uppercase; margin-top: 8px;">ALERGIAS: {{ printData.alergias || 'NEGADAS' }}</p>
                 </div>
 
-                <table v-if="printData.vitals && printData.tipoServicio !== 'juridico'" class="excel-table" style="margin-bottom: 25px; text-align: center; border: 2px solid #000;">
-                    <thead><tr style="background: #000; color: #fff;"><th>PESO (kg)</th><th>TALLA (m)</th><th>IMC</th><th>P.A. (TA)</th><th>F.C.</th><th>TEMP</th><th>GLU</th></tr></thead>
-                    <tbody><tr><td>{{ printData.vitals.peso }}</td><td>{{ printData.vitals.talla }}</td><td style="font-weight: 900; color: #b45309;">{{ printData.vitals.imc }}</td><td>{{ printData.vitals.ta }}</td><td>{{ printData.vitals.fc }}</td><td>{{ printData.vitals.temp }}°C</td><td>{{ printData.vitals.glucosa }} mg/dl</td></tr></tbody>
+                <table v-if="printData.vitals && printData.tipoServicio !== 'juridico'" class="excel-table" style="margin-bottom: 30px; text-align: center; border: 2.5px solid #000;">
+                    <thead>
+                        <tr style="background: #000; color: #fff;">
+                            <th>PESO (kg)</th><th>TALLA (m)</th><th>IMC</th><th>P.A. (TA)</th><th>F.C.</th><th>TEMP</th><th>GLU</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>{{ printData.vitals.peso }}</td><td>{{ printData.vitals.talla }}</td><td style="font-weight: 900; color: #b45309;">{{ printData.vitals.imc }}</td>
+                            <td>{{ printData.vitals.ta }}</td><td>{{ printData.vitals.fc }}</td><td>{{ printData.vitals.temp }}°C</td><td>{{ printData.vitals.glucosa }} mg/dl</td>
+                        </tr>
+                    </tbody>
                 </table>
 
-                <div style="flex-grow: 1; font-size: 14px; line-height: 1.6; text-transform: uppercase; margin-bottom: 30px;">
-                    <h3 style="font-size: 12px; font-weight: 900; background: #2d5a27; color: white; padding: 6px 15px; display: inline-block; margin-bottom: 10px; border-radius: 5px;">{{ printData.tipoServicio === 'juridico' ? 'MOTIVO / HECHOS:' : 'DIAGNÓSTICO:' }}</h3>
-                    <p style="font-weight: 700; border-bottom: 1px dashed #ccc; padding-bottom: 15px; margin-bottom: 20px;">{{ printData.diagnostico }}</p>
+                <div style="flex-grow: 1; font-size: 14px; line-height: 1.8; text-transform: uppercase;">
+                    <h3 style="font-size: 12px; font-weight: 900; background: #2d5a27; color: white; padding: 6px 20px; display: inline-block; margin-bottom: 15px; border-radius: 6px;">
+                        {{ printData.tipoServicio === 'juridico' ? 'MOTIVO / HECHOS:' : 'DIAGNÓSTICO:' }}
+                    </h3>
+                    <p style="font-weight: 700; border-bottom: 2px dashed #e2e8f0; padding-bottom: 20px; margin-bottom: 30px; text-align: justify;">{{ printData.diagnostico }}</p>
                     
-                    <h3 style="font-size: 12px; font-weight: 900; background: #2d5a27; color: white; padding: 6px 15px; display: inline-block; margin-bottom: 10px; border-radius: 5px;">{{ printData.tipoServicio === 'juridico' ? 'ASESORÍA LEGAL:' : 'TRATAMIENTO:' }}</h3>
-                    <table v-if="printData.medicamentos && printData.medicamentos.length > 0" style="width: 100%; border-collapse: collapse; margin-bottom: 15px; border: 2px solid #000;"><tr v-for="m in printData.medicamentos"><td style="border: 1px solid #000; padding: 10px; font-weight: 900; width: 45%; background: #f8fafc;">{{ m.nombre }}</td><td style="border: 1px solid #000; padding: 10px; font-weight: 700;">{{ m.indicacion }}</td></tr></table>
-                    <p style="font-weight: 700; white-space: pre-wrap;">{{ printData.tratamiento }}</p>
+                    <h3 style="font-size: 12px; font-weight: 900; background: #2d5a27; color: white; padding: 6px 20px; display: inline-block; margin-bottom: 15px; border-radius: 6px;">
+                        {{ printData.tipoServicio === 'juridico' ? 'ASESORÍA Y RECOMENDACIONES LEGALES:' : 'TRATAMIENTO E INDICACIONES:' }}
+                    </h3>
+                    
+                    <table v-if="printData.medicamentos && printData.medicamentos.length > 0" style="width: 100%; border-collapse: collapse; margin-bottom: 25px; border: 2px solid #000;">
+                        <tr v-for="m in printData.medicamentos">
+                            <td style="border: 1px solid #000; padding: 12px; font-weight: 900; width: 45%; background: #f8fafc;">{{ m.nombre }}</td>
+                            <td style="border: 1px solid #000; padding: 12px; font-weight: 700;">{{ m.indicacion }}</td>
+                        </tr>
+                    </table>
+                    
+                    <p style="font-weight: 700; white-space: pre-wrap; text-align: justify;">{{ printData.tratamiento }}</p>
                 </div>
 
                 <div class="firma-container">
                     <div class="firma-linea"></div>
-                    <p style="font-size: 16px; font-weight: 900; text-transform: uppercase; margin: 0;">{{ printData.medicoNombre }}</p>
-                    <p style="font-size: 10px; font-weight: bold; color: #475569;">FIRMA Y SELLO PROFESIONAL</p>
+                    <p style="font-size: 18px; font-weight: 900; text-transform: uppercase; margin: 0;">{{ printData.medicoNombre }}</p>
+                    <p style="font-size: 10px; font-weight: bold; color: #475569;">FIRMA Y SELLO PROFESIONAL AUTORIZADO</p>
                 </div>
                 
-                <div style="border-top: 1px solid #ccc; padding-top: 10px; display: flex; justify-content: space-between; font-size: 9px; font-weight: 900; text-transform: uppercase; color: #64748b;">
+                <div style="border-top: 1px solid #ccc; padding-top: 15px; display: flex; justify-content: space-between; font-size: 9px; font-weight: 900; text-transform: uppercase; color: #64748b;">
                     <div>TEL: 2212683055</div>
                     <div>Diag. Benito Juárez 28, Col. Nueva Antequera, Puebla</div>
                     <div>presidenciafuerzageneracional@gmail.com</div>
@@ -520,6 +552,7 @@
 
     <script>
         const firebaseConfig = { apiKey: "AIzaSyCK6A7G6IvAJyYPCEspvvHg6qjDZdhuQuY", authDomain: "jornada-de-salud1.firebaseapp.com", projectId: "jornada-de-salud1", storageBucket: "jornada-de-salud1.firebasestorage.app", messagingSenderId: "947161304402", appId: "1:947161304402:web:906da7370cc343300cbe8b", measurementId: "G-W945F157DC" };
+        
         if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
         const db = firebase.database();
         const auth = firebase.auth();
@@ -535,11 +568,15 @@
                 const errorMsg = ref('');
                 const activeTab = ref('nosotros'); 
                 const historyLimit = ref(50);
+                
                 const patients = ref([]); const staff = ref([]); const inventory = ref([]); const history = ref([]);
                 const printData = ref(null);
+            
+                // FORMULARIOS
                 const formP = reactive({ nombre: '', edad: null, sexo: 'MUJER', domicilio: '', telefono: '', servicio: 'medico' });
                 const formS = reactive({ nombre: '', area: 'medico', cedula: '', escuela: '' });
                 const formI = reactive({ nombre: '', stock: null, caducidad: '', presentacion: '' });
+
                 const selectedPatientId = ref(null);
                 const currP = reactive({ enfermeria: null, medico: null, juridico: null, psicologia: null, cosmetologia: null });
                 const vitalsForm = reactive({ peso: '', talla: '', ta: '', temp: '', fc: '', glucosa: '' });
@@ -564,7 +601,7 @@
                     else if (u === 'JORJE0852') email = 'jorjev0852@gmail.com';
                     else if (u === 'ESPECIALISTA0852') email = 'especialistasfg@gmail.com';
 
-                    if (!email) { loginError.value = true; errorMsg.value = 'ID NO VÁLIDO'; return; }
+                    if (!email) { loginError.value = true; errorMsg.value = 'USUARIO NO VÁLIDO'; return; }
 
                     auth.signInWithEmailAndPassword(email, p).then(res => {
                         if (email.includes('jornadas')) userRole.value = 'SUPER';
@@ -605,6 +642,7 @@
                     const p = patients.value.find(x => x.id === selectedPatientId.value);
                     let hVal = parseFloat(vitalsForm.talla);
                     let wVal = parseFloat(vitalsForm.peso);
+                    if (!hVal || !wVal) return alert("PESO Y TALLA REQUERIDOS");
                     if (hVal > 3) hVal = hVal / 100;
                     const imcCalc = (wVal / (hVal * hVal)).toFixed(1);
                     db.ref(`patients/${p.id}`).update({ vitals: { ...vitalsForm, imc: imcCalc } });
@@ -613,6 +651,8 @@
 
                 const printRecipe = (area) => {
                     const p = currP[area]; const doc = staff.value.find(s => s.id === selStaffId[area]);
+                    if(!p || !doc) return alert("FALTA PACIENTE O ESPECIALISTA");
+
                     const report = {
                         pacienteNombre: p.nombre, edad: p.edad, sexo: p.sexo, domicilio: p.domicilio, telefono: p.telefono,
                         vitals: p.vitals || null, alergias: consGen.alergias, diagnostico: consGen.diagnostico,
@@ -620,14 +660,16 @@
                         medicoNombre: doc.nombre, medicoCedula: doc.cedula, medicoEscuela: doc.escuela, 
                         tipoServicio: area, fecha: new Date().toLocaleString()
                     };
+
                     db.ref('history').push(report);
                     recipe.value.forEach(r => {
                         const it = inventory.value.find(x => x.id === r.id);
                         if(it) db.ref(`inventory/${r.id}/stock`).set(it.stock - 1);
                     });
+
                     db.ref(`patients/${p.id}`).remove();
                     printData.value = report;
-                    nextTick(() => { setTimeout(() => { window.print(); printData.value = null; }, 1500); });
+                    nextTick(() => { setTimeout(() => { window.print(); printData.value = null; }, 1200); });
                     currP[area] = null; selectedPatientId.value = null;
                     consGen.diagnostico = ''; consGen.tratamiento = ''; recipe.value = [];
                 };
@@ -639,26 +681,30 @@
                     doc.save("Reporte_Censo.pdf");
                 };
 
-                const nukeDatabase = () => { if(confirm('¿BORRAR TODA LA BASE DE DATOS?')) { ['patients','staff','inventory','history'].forEach(k => db.ref(k).remove()); } };
+                // FUNCIÓN BORRAR TODO (SOLO PARA MARIA)
+                const nukeDatabase = () => { 
+                    if(confirm('¿ESTÁ SEGURO DE ELIMINAR TODA LA BASE DE DATOS? ESTA ACCIÓN ES PERMANENTE.')) { 
+                        ['patients','staff','inventory','history'].forEach(k => db.ref(k).remove()); 
+                        alert('SISTEMA REINICIADO.');
+                    } 
+                };
 
                 const loadExampleData = () => {
                     if(confirm("¿Cargar ejemplos?")) {
-                        db.ref('staff').push({ nombre: "Dr. Ejemplo", area: "medico", cedula: "11111", escuela: "BUAP" });
-                        db.ref('staff').push({ nombre: "Lic. Ejemplo", area: "juridico", cedula: "22222", escuela: "IBERO" });
-                        const meds = [{nombre:"Paracetamol",stock:50},{nombre:"Ibuprofeno",stock:5},{nombre:"Vendas",stock:100},{nombre:"Ketorolaco",stock:12},{nombre:"Naproxeno",stock:40},{nombre:"Amoxicilina",stock:15},{nombre:"Omeprazol",stock:20},{nombre:"Loratadina",stock:30},{nombre:"Complejo B",stock:25},{nombre:"Metformina",stock:0}];
-                        meds.forEach(m => db.ref('inventory').push({...m, presentacion:"Caja", caducidad:"2028-01-01"}));
-                        alert("DATOS CARGADOS");
+                        db.ref('staff').push({ nombre: "Dr. Juan Pérez", area: "medico", cedula: "11111", escuela: "BUAP" });
+                        db.ref('staff').push({ nombre: "Lic. María Gómez", area: "juridico", cedula: "87654", escuela: "IBERO" });
+                        const meds = [{nombre:"Paracetamol",stock:50},{nombre:"Ibuprofeno",stock:5},{nombre:"Vendas",stock:100},{nombre:"Loratadina",stock:30},{nombre:"Metformina",stock:10}];
+                        meds.forEach(m => db.ref('inventory').push({...m, presentacion: "Caja", caducidad: "2028-01-01"}));
+                        alert("DATOS CARGADOS.");
                     }
                 };
-
-                const getStockClass = (stock) => { if (stock <= 0) return 'stock-red'; if (stock <= 10) return 'stock-yellow'; return 'stock-green'; };
-                const isExpired = (date) => date && new Date(date) < new Date();
-                const formatDate = (date) => date ? date : 'S/F';
 
                 return { 
                     isLoggedIn, loginData, loginError, errorMsg, performLogin, logout, activeTab, filteredTabs, roleName: computed(() => userRole.value),
                     patients, staff, inventory, history, formP, formS, formI, currP, vitalsForm, consGen, selectedPatientId, selStaffId, recipe, tempMed, tempDosis, printData, historyLimit, displayHistory,
-                    registerPatient, saveVitals, printRecipe, nukeDatabase, loadExampleData, downloadBeneficiariosPDF, getStockClass, isExpired, formatDate,
+                    registerPatient, saveVitals, printRecipe, nukeDatabase, loadExampleData, downloadBeneficiariosPDF,
+                    getStockClass: (s) => (s <= 0 ? 'stock-red' : (s <= 10 ? 'stock-yellow' : 'stock-green')),
+                    isExpired: (d) => d && new Date(d) < new Date(), formatDate: (d) => d || 'S/F',
                     changeTab: (id) => { activeTab.value = id; selectedPatientId.value = null; },
                     loadPatientForVitals: () => currP.enfermeria = patients.value.find(x=>x.id===selectedPatientId.value),
                     loadSelectedPatient: (area) => currP[area] = patients.value.find(x=>x.id===selectedPatientId.value),
@@ -666,9 +712,9 @@
                     staffByArea: (a) => staff.value.filter(s => s.area === a), waitingFor: (a) => patients.value.filter(p => p.servicio === a), pendingVitalsList: computed(() => patients.value.filter(p => !p.vitals)),
                     addStaff: () => { db.ref('staff').push({...formS}); Object.assign(formS,{nombre:'',cedula:'',escuela:''}); }, deleteStaff: (id) => db.ref(`staff/${id}`).remove(),
                     addInventory: () => { db.ref('inventory').push({...formI}); Object.assign(formI,{nombre:'',stock:null,caducidad:'',presentacion:''}); }, deleteInventory: (id) => db.ref(`inventory/${id}`).remove(),
-                    deleteHistory: (id) => db.ref(`history/${id}`).remove(), reprintHistory: (h) => { printData.value = h; nextTick(()=>setTimeout(()=>window.print(),1500)); },
+                    deleteHistory: (id) => db.ref(`history/${id}`).remove(), reprintHistory: (h) => { printData.value = h; nextTick(()=>setTimeout(()=>window.print(),1200)); },
                     exportData: () => { const b=new Blob([JSON.stringify({history:history.value,inventory:inventory.value,staff:staff.value})],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='Backup.json'; a.click(); },
-                    importData: (e) => { const r = new FileReader(); r.onload=ev=>{ const d=JSON.parse(ev.target.result); if(d.history) d.history.forEach(h=>db.ref('history').push(h)); alert('Carga Exitosa'); }; r.readAsText(e.target.files[0]); },
+                    importData: (e) => { const r = new FileReader(); r.onload=ev=>{ const d=JSON.parse(ev.target.result); if(d.history) d.history.forEach(h=>db.ref('history').push(h)); alert('CARGA EXITOSA'); }; r.readAsText(e.target.files[0]); },
                     deletePatient: (id) => db.ref(`patients/${id}`).remove()
                 };
             }
