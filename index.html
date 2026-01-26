@@ -39,6 +39,14 @@
         .excel-table th { background: #ffedd5; border: 1px solid #fdba74; padding: 10px; text-transform: uppercase; font-weight: 900; text-align: left; color: #7c2d12; }
         .excel-table td { border: 1px solid #fed7aa; padding: 10px; font-weight: 600; }
 
+        /* ANIMACIÓN DE PULSO PARA MONITOREO */
+        @keyframes pulse-dot {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(34, 197, 94, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+        }
+        .monitor-dot { animation: pulse-dot 2s infinite; }
+
         #login-overlay { position: fixed; inset: 0; background-color: #fffbeb; display: flex; align-items: center; justify-content: center; z-index: 1000; flex-direction: column; }
         .login-box { background: transparent; padding: 2rem; width: 100%; max-width: 450px; text-align: center; }
         
@@ -378,14 +386,39 @@
 
                 <section v-if="activeTab === 'data'" class="max-w-xl mx-auto text-center">
                     <div class="bg-white p-12 rounded-[4rem] border-4 shadow-2xl">
-                        <i class="fas fa-database text-7xl text-slate-100 mb-8"></i>
-                        <h3 class="font-black text-2xl uppercase mb-10 text-slate-800">Administración de Datos</h3>
-                        <div class="space-y-6">
-                            <button @click="loadExampleData" class="w-full bg-slate-800 text-white py-6 rounded-3xl font-black uppercase text-xs shadow-xl flex items-center justify-center gap-3">
+                        <i class="fas fa-database text-6xl text-slate-200 mb-6"></i>
+                        <h3 class="font-black text-2xl uppercase mb-8 text-slate-800">Administración de Datos</h3>
+                        
+                        <div class="mb-8 flex justify-center items-center gap-3 bg-slate-50 p-4 rounded-xl border">
+                            <span class="relative flex h-3 w-3">
+                              <span v-if="isConnected" class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                              <span :class="isConnected ? 'bg-green-500' : 'bg-red-500'" class="relative inline-flex rounded-full h-3 w-3 monitor-dot"></span>
+                            </span>
+                            <p class="text-[10px] font-black uppercase text-slate-500 tracking-widest">
+                                {{ isConnected ? 'CONEXIÓN ESTABLECIDA - MONITOREO EN VIVO' : 'DESCONECTADO' }}
+                            </p>
+                        </div>
+
+                        <div class="space-y-4">
+                            <button @click="loadExampleData" class="w-full bg-slate-800 text-white py-6 rounded-3xl font-black uppercase text-xs shadow-xl flex items-center justify-center gap-3 active:scale-95 transition-all">
                                 <i class="fas fa-vial"></i> CARGAR DATOS DEMO (EJEMPLOS)
                             </button>
-                            <button @click="exportData" class="w-full bg-blue-600 text-white py-6 rounded-3xl font-black uppercase text-xs shadow-xl flex items-center justify-center gap-3">
-                                <i class="fas fa-download"></i> RESPALDO GLOBAL (JSON)
+                            
+                            <button @click="exportData" class="w-full bg-blue-600 text-white py-6 rounded-3xl font-black uppercase text-xs shadow-xl flex items-center justify-center gap-3 active:scale-95 transition-all">
+                                <i class="fas fa-download"></i> EXPORTAR COPIA JSON (RESPALDO)
+                            </button>
+                            
+                            <div class="relative w-full">
+                                <input type="file" @change="importData" class="hidden" id="fileUpload" accept=".json">
+                                <label for="fileUpload" class="w-full bg-green-600 text-white py-6 rounded-3xl font-black uppercase text-xs shadow-xl flex items-center justify-center gap-3 cursor-pointer hover:bg-green-700 active:scale-95 transition-all">
+                                    <i class="fas fa-file-upload"></i> IMPORTAR COPIA JSON (RESTAURAR)
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="mt-8 border-t pt-8">
+                            <button v-if="userRole === 'SUPER'" @click="nukeDatabase" class="text-red-300 text-[9px] font-black hover:text-red-500 uppercase tracking-widest">
+                                <i class="fas fa-trash mr-1"></i> BORRAR TODO (RESET)
                             </button>
                         </div>
                     </div>
@@ -483,6 +516,7 @@
                 const isLoggedIn = ref(false); const userRole = ref(''); 
                 const loginData = reactive({ user: '', pass: '' }); const loginError = ref(false); const errorMsg = ref('');
                 const activeTab = ref('nosotros'); const historyLimit = ref(50);
+                const isConnected = ref(false); // VARIABLE PARA EL MONITOR
                 const patients = ref([]); const staff = ref([]); const inventory = ref([]); const history = ref([]);
                 const printData = ref(null);
                 const formP = reactive({ nombre: '', edad: null, sexo: 'MUJER', domicilio: '', telefono: '', servicio: 'medico' });
@@ -496,6 +530,9 @@
                 const recipe = ref([]); const tempMed = ref(null); const tempDosis = ref('');
 
                 onMounted(() => {
+                    // MONITOR DE CONEXIÓN
+                    db.ref('.info/connected').on('value', snap => { isConnected.value = snap.val(); });
+
                     db.ref('patients').on('value', s => { patients.value = s.exists() ? Object.entries(s.val()).map(([id,v])=>({id,...v})) : []; });
                     db.ref('staff').on('value', s => { staff.value = s.exists() ? Object.entries(s.val()).map(([id,v])=>({id,...v})) : []; });
                     db.ref('inventory').on('value', s => { inventory.value = s.exists() ? Object.entries(s.val()).map(([id,v])=>({id,...v})) : []; });
@@ -537,6 +574,23 @@
                         alert("Datos cargados.");
                     }
                 };
+                
+                // FUNCIÓN PARA IMPORTAR DATOS (RESTAURAR)
+                const importData = (e) => {
+                    const file = e.target.files[0];
+                    if(!file) return;
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        try {
+                            const d = JSON.parse(e.target.result);
+                            if(d.history) d.history.forEach(x => db.ref('history').push(x));
+                            if(d.inventory) d.inventory.forEach(x => db.ref('inventory').push(x));
+                            if(d.staff) d.staff.forEach(x => db.ref('staff').push(x));
+                            alert('Base de datos restaurada correctamente desde el archivo.');
+                        } catch(err) { alert('Error al leer el archivo. Asegúrate de que sea un JSON válido.'); }
+                    };
+                    reader.readAsText(file);
+                };
 
                 const printRecipe = (area) => {
                     const p = currP[area]; const doc = staff.value.find(s => s.id === selStaffId[area]);
@@ -557,6 +611,12 @@
                     nextTick(() => { setTimeout(() => { window.print(); printData.value = null; }, 1000); });
                     currP[area] = null; selectedPatientId.value = null;
                     consGen.diagnostico = ''; consGen.tratamiento = ''; recipe.value = [];
+                };
+                
+                const nukeDatabase = () => {
+                    if(confirm('PELIGRO: ESTO BORRARÁ TODO. ¿CONTINUAR?')) {
+                        ['patients','staff','inventory','history'].forEach(k => db.ref(k).remove());
+                    }
                 };
 
                 return { 
@@ -580,7 +640,7 @@
                         return all;
                     }),
                     roleName: computed(() => userRole.value),
-                    patients, staff, inventory, history, formP, formS, formI,
+                    patients, staff, inventory, history, formP, formS, formI, isConnected,
                     currP, vitalsForm, consGen, selectedPatientId, selStaffId, recipe, tempMed, tempDosis, printData,
                     displayHistory: computed(() => [...history.value].reverse().slice(0, 50)),
                     registerPatient: () => { db.ref('patients').push({...formP, fecha: new Date().toLocaleString()}); Object.assign(formP, {nombre:'', edad:null, domicilio:'', telefono:''}); },
@@ -606,7 +666,7 @@
                     deleteInventory: (id) => db.ref(`inventory/${id}`).remove(),
                     deleteHistory: (id) => db.ref(`history/${id}`).remove(),
                     reprintHistory: (h) => { printData.value = h; nextTick(()=>setTimeout(()=>window.print(),1000)); },
-                    loadExampleData,
+                    loadExampleData, nukeDatabase, importData,
                     exportData: () => { const b=new Blob([JSON.stringify({history:history.value,inventory:inventory.value,staff:staff.value})],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='Respaldo.json'; a.click(); },
                     deletePatient: (id) => db.ref(`patients/${id}`).remove(),
                     downloadBeneficiariosPDF: () => {
