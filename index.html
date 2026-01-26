@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SISTEMA INTEGRAL JORNADAS DE SALUD - FUERZA GENERACIONAL</title>
+    <title>JORNADAS DE SALUD - FUERZA GENERACIONAL</title>
     
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.3.4/vue.global.prod.min.js"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.6.0/jspdf.plugin.autotable.min.js"></script>
@@ -17,9 +17,7 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     
     <style>
-        /* ========================================= */
-        /* DISEÑO VISUAL BEIGE (ORIGINAL) */
-        /* ========================================= */
+        /* ESTÉTICA BEIGE (ORIGINAL) */
         :root { --bg-color: #fffbeb; --text-color: #1e293b; --accent-color: #b45309; }
         
         body { 
@@ -43,8 +41,11 @@
         .excel-table td { border: 1px solid #fed7aa; padding: 10px; font-weight: 600; }
 
         #login-overlay { position: fixed; inset: 0; background-color: #fffbeb; display: flex; align-items: center; justify-content: center; z-index: 1000; flex-direction: column; }
-        .login-box { background: transparent; padding: 2rem; width: 100%; max-width: 400px; text-align: center; }
-        .logo-text { font-family: 'Inter', sans-serif; font-weight: 900; text-transform: uppercase; color: #000; line-height: 0.9; letter-spacing: -1px; }
+        .login-box { background: transparent; padding: 2rem; width: 100%; max-width: 450px; text-align: center; }
+        
+        /* TÍTULOS GRANDES EN LOGIN */
+        .brand-title { font-family: 'Inter', sans-serif; font-weight: 900; text-transform: uppercase; color: #000; line-height: 1; letter-spacing: -1px; font-size: 2.5rem; }
+        .brand-subtitle { font-family: 'Inter', sans-serif; font-weight: 900; text-transform: uppercase; color: #b45309; line-height: 1; letter-spacing: -0.5px; font-size: 2.5rem; margin-top: 5px; }
 
         #print-zone { display: none; }
         @media print {
@@ -52,7 +53,10 @@
             body { background: white; margin: 0; padding: 0; }
             #print-zone { display: block !important; position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 9999; }
             .receta-maestra { width: 100%; padding: 40px; border: 2px solid #000; color: #000; min-height: 980px; position: relative; }
+            /* CABECERA DE IMPRESIÓN IGUALADA */
             .receta-header { text-align: center; border-bottom: 4px solid #d97706; padding-bottom: 15px; margin-bottom: 20px; }
+            .print-title { font-size: 24px; font-weight: 900; text-transform: uppercase; margin: 0; color: #000; }
+            .print-subtitle { font-size: 24px; font-weight: 900; text-transform: uppercase; margin: 0; color: #b45309; }
             @page { size: letter; margin: 0.5cm; }
         }
         [v-cloak] { display: none; }
@@ -65,9 +69,10 @@
         <div id="login-overlay" v-if="!isLoggedIn">
             <div class="login-box">
                 <div class="mb-10">
-                    <i class="fas fa-users text-6xl text-red-800 mb-4" style="opacity: 0.8;"></i>
-                    <div class="logo-text text-4xl mb-1">FUERZA</div>
-                    <div class="logo-text text-5xl">GENERACIONAL</div>
+                    <i class="fas fa-users text-6xl text-amber-800 mb-6" style="opacity: 0.9;"></i>
+                    <div class="brand-title">FUERZA GENERACIONAL</div>
+                    <div class="brand-subtitle">JORNADAS DE SALUD</div>
+                    <p class="text-[10px] font-bold mt-2 text-gray-500 tracking-widest">CFMM - SISTEMA ONLINE</p>
                 </div>
                 
                 <form @submit.prevent="performLogin" class="space-y-6">
@@ -92,8 +97,9 @@
                     <div class="flex items-center gap-4">
                         <div class="bg-amber-700 text-white p-3 rounded-2xl shadow"><i class="fas fa-cloud text-2xl"></i></div>
                         <div>
-                            <h1 class="text-xl font-black uppercase tracking-tighter text-slate-900 leading-none">Jornadas Salud</h1>
-                            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{{ roleName }} (ONLINE)</p>
+                            <h1 class="text-lg font-black uppercase tracking-tighter text-slate-900 leading-none">FUERZA GENERACIONAL</h1>
+                            <h2 class="text-lg font-black uppercase tracking-tighter text-amber-700 leading-none">JORNADAS DE SALUD</h2>
+                            <p class="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-1">CFMM | {{ roleName }}</p>
                         </div>
                     </div>
                     <button @click="logout" class="bg-slate-100 text-slate-600 border-2 border-slate-200 px-6 py-2 rounded-xl font-black uppercase text-[10px] hover:bg-slate-200">SALIR</button>
@@ -396,8 +402,9 @@
         <div id="print-zone" v-if="printData">
             <div class="receta-maestra">
                 <div class="receta-header">
-                    <h1 style="font-size: 28px; font-weight: 900; color: #d97706; margin: 0; text-transform: uppercase;">JORNADAS DE SALUD FUERZA GENERACIONAL</h1>
-                    <p style="font-size: 12px; font-weight: 900; letter-spacing: 3px; color: #000; margin-top: 5px;">CFMM | PUEBLA</p>
+                    <h1 class="print-title">FUERZA GENERACIONAL</h1>
+                    <h2 class="print-subtitle">JORNADAS DE SALUD</h2>
+                    <p style="font-size: 10px; font-weight: bold; letter-spacing: 2px; color: #555;">CFMM | PUEBLA</p>
                 </div>
                 
                 <div style="text-align: center; margin-bottom: 25px;">
@@ -469,14 +476,14 @@
 
     </div>
 
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-
     <script>
-        // CONFIGURACIÓN DE TU FIREBASE (NO TOCAR)
+        // CONFIGURACIÓN (NO TOCAR)
         const firebaseConfig = { apiKey: "AIzaSyCK6A7G6IvAJyYPCEspvvHg6qjDZdhuQuY", authDomain: "jornada-de-salud1.firebaseapp.com", projectId: "jornada-de-salud1", storageBucket: "jornada-de-salud1.firebasestorage.app", messagingSenderId: "947161304402", appId: "1:947161304402:web:906da7370cc343300cbe8b", measurementId: "G-W945F157DC" };
-        firebase.initializeApp(firebaseConfig);
+        
+        // INICIALIZACIÓN
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
         const db = firebase.database();
         const auth = firebase.auth();
 
@@ -537,7 +544,7 @@
 
                     if (!email) {
                         loginError.value = true;
-                        errorMsg.value = 'USUARIO NO ENCONTRADO EN SISTEMA';
+                        errorMsg.value = 'USUARIO NO VÁLIDO O NO EXISTE';
                         return;
                     }
 
@@ -550,8 +557,7 @@
                         }).catch((err) => {
                             loginError.value = true;
                             if(err.code === 'auth/wrong-password') errorMsg.value = 'CONTRASEÑA INCORRECTA';
-                            else if(err.code === 'auth/network-request-failed') errorMsg.value = 'SIN CONEXIÓN A INTERNET';
-                            else if(err.code === 'auth/too-many-requests') errorMsg.value = 'DEMASIADOS INTENTOS (ESPERE)';
+                            else if(err.code === 'auth/network-request-failed') errorMsg.value = 'SIN INTERNET';
                             else errorMsg.value = 'ERROR: ' + err.code;
                         });
                 };
@@ -597,7 +603,7 @@
                         domicilio: p.domicilio, telefono: p.telefono,
                         vitals: p.vitals || null, alergias: consGen.alergias, diagnostico: consGen.diagnostico,
                         tratamiento: consGen.tratamiento, medicamentos: [...recipe.value],
-                        medicoNombre: doc.nombre, medicoCedula: doc.cedula, medicoEscuela: doc.escuela, // ESCUELA
+                        medicoNombre: doc.nombre, medicoCedula: doc.cedula, medicoEscuela: doc.escuela, 
                         tipoServicio: area, fecha: new Date().toLocaleString()
                     };
 
@@ -609,9 +615,7 @@
 
                     db.ref(`patients/${p.id}`).remove();
                     printData.value = report;
-                    
                     nextTick(() => { setTimeout(() => { window.print(); printData.value = null; }, 1500); });
-                    
                     currP[area] = null; selectedPatientId.value = null;
                     consGen.diagnostico = ''; consGen.tratamiento = ''; recipe.value = [];
                 };
@@ -628,13 +632,12 @@
                 };
 
                 const nukeDatabase = () => {
-                    if(confirm('PELIGRO: ¿ESTÁ SEGURO DE BORRAR TODA LA INFORMACIÓN? ESTA ACCIÓN NO SE PUEDE DESHACER.')) {
+                    if(confirm('PELIGRO: ¿BORRAR TODA LA INFORMACIÓN?')) {
                         ['patients','staff','inventory','history'].forEach(k => db.ref(k).remove());
-                        alert('BASE DE DATOS REINICIADA CORRECTAMENTE');
+                        alert('BASE DE DATOS REINICIADA');
                     }
                 };
 
-                // CARGA DE EJEMPLOS ONLINE
                 const loadExampleData = () => {
                     if(confirm("¿Cargar datos de ejemplo?")) {
                         db.ref('staff').push({ nombre: "Dr. Juan Pérez", area: "medico", cedula: "11111", escuela: "BUAP" });
@@ -653,7 +656,7 @@
                             { nombre: "Complejo B", presentacion: "Iny", stock: 30, caducidad: "2028-03-01" }
                         ];
                         meds.forEach(m => db.ref('inventory').push(m));
-                        alert("Datos de ejemplo cargados exitosamente.");
+                        alert("Datos de ejemplo cargados.");
                     }
                 };
 
@@ -666,7 +669,7 @@
                     isLoggedIn, loginData, loginError, errorMsg, performLogin, logout, 
                     activeTab, filteredTabs, roleName: computed(() => userRole.value),
                     patients, staff, inventory, history, formP, formS, formI,
-                    currP, vitalsForm, consGen, selectedPatientIndex, selStaffId, recipe, tempMed, tempDosis, printData,
+                    currP, vitalsForm, consGen, selectedPatientId, selStaffId, recipe, tempMed, tempDosis, printData,
                     historyLimit, displayHistory,
                     registerPatient, saveVitals, printRecipe, getStockClass, isExpired, formatDate,
                     changeTab: (id) => { activeTab.value = id; selectedPatientId.value = null; historyLimit.value = 50; },
