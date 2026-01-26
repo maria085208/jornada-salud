@@ -13,8 +13,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     
     <style>
-        /* ESTILOS GENERALES */
+        /* ========================================= */
+        /* ESTILOS PERSONALIZADOS (LO QUE NO HACE TAILWIND) */
+        /* ========================================= */
         :root { --primary: #0f172a; --accent: #2d5a27; --bg: #f8fafc; }
+        
         body { 
             background-image: url('./logo-fuerza.png'); 
             background-size: cover; background-position: center; background-attachment: fixed;
@@ -22,28 +25,30 @@
             margin: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact;
         }
 
-        /* UTILIDADES UI */
+        /* Campos de texto estandarizados */
         .input-std { width: 100%; padding: 14px; border: 2px solid #cbd5e1; border-radius: 12px; font-weight: 700; text-transform: uppercase; outline: none; background: #fff; font-size: 13px; transition: all 0.3s; }
         .input-std:focus { border-color: #334155; box-shadow: 0 0 0 4px rgba(51, 65, 85, 0.15); }
+        
+        /* Pestañas de Navegación */
         .tab-active { background-color: #334155 !important; color: white !important; font-weight: 900; box-shadow: inset 0 -3px 0 #000; }
         .tab-inactive { color: #64748b; background-color: white; font-weight: 600; }
 
-        /* SEMÁFORO DE INVENTARIO */
-        .stock-red { background: #fee2e2; border-left: 8px solid #ef4444; color: #991b1b; }
-        .stock-yellow { background: #fefce8; border-left: 8px solid #eab308; color: #854d0e; }
-        .stock-green { background: #f0fdf4; border-left: 8px solid #22c55e; color: #166534; }
-        .stock-expired { background: #450a0a !important; color: #ffffff !important; border-left: 8px solid #000000; }
+        /* SEMÁFORO DE INVENTARIO (IMPORTANTE) */
+        .stock-red { background: #fee2e2; border-left: 8px solid #ef4444; color: #991b1b; } /* 0 Existencias */
+        .stock-yellow { background: #fefce8; border-left: 8px solid #eab308; color: #854d0e; } /* 1-10 Existencias */
+        .stock-green { background: #f0fdf4; border-left: 8px solid #22c55e; color: #166534; } /* +10 Existencias */
+        .stock-expired { background: #450a0a !important; color: #ffffff !important; border-left: 8px solid #000000; } /* Caducado */
 
-        /* TABLA TIPO EXCEL */
+        /* Tablas de Datos */
         .excel-table { width: 100%; border-collapse: collapse; font-size: 11px; background: white; }
         .excel-table th { background: #f1f5f9; border: 1px solid #cbd5e1; padding: 10px; text-transform: uppercase; font-weight: 900; text-align: left; }
         .excel-table td { border: 1px solid #e2e8f0; padding: 10px; font-weight: 600; }
 
-        /* PANTALLA LOGIN */
+        /* Pantalla de Login */
         #login-overlay { position: fixed; inset: 0; background-color: #0f172a; display: flex; align-items: center; justify-content: center; z-index: 1000; }
         .login-box { background: white; padding: 3.5rem; border-radius: 2.5rem; width: 90%; max-width: 420px; text-align: center; box-shadow: 0 25px 50px rgba(0,0,0,0.5); }
 
-        /* ZONA DE IMPRESIÓN */
+        /* CONFIGURACIÓN DE IMPRESIÓN (RECETA) */
         #print-zone { display: none; }
         @media print {
             #app-container, #login-overlay, header, nav, .no-print { display: none !important; }
@@ -75,7 +80,7 @@
                         <i class="fas fa-ban mr-2"></i> Credenciales Incorrectas
                     </div>
                     <button type="submit" class="w-full bg-slate-900 text-white py-6 rounded-2xl font-black uppercase shadow-2xl hover:bg-black transition-all">
-                        INGRESAR
+                        INGRESAR AL SISTEMA
                     </button>
                 </form>
             </div>
@@ -89,11 +94,11 @@
                         <div class="bg-slate-900 text-white p-3 rounded-2xl shadow-lg"><i class="fas fa-hospital-symbol text-2xl"></i></div>
                         <div>
                             <h1 class="text-xl font-black uppercase tracking-tighter text-slate-900 leading-none">Jornadas Salud</h1>
-                            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{{ roleName }} - {{ loginData.user }}</p>
+                            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">USUARIO: {{ roleName }} ({{ loginData.user }})</p>
                         </div>
                     </div>
                     <button @click="logout" class="bg-red-50 text-red-600 border-2 border-red-100 px-6 py-2 rounded-xl font-black uppercase text-[10px]">
-                        SALIR <i class="fas fa-sign-out-alt ml-1"></i>
+                        CERRAR SESIÓN <i class="fas fa-sign-out-alt ml-1"></i>
                     </button>
                 </div>
                 
@@ -122,7 +127,7 @@
 
                 <section v-if="activeTab === 'recepcion'" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     <div class="bg-white p-8 rounded-[2.5rem] border-2 shadow-xl h-fit">
-                        <h3 class="font-black text-xs uppercase mb-6 text-slate-400 border-b pb-2 italic">Registro Beneficiario</h3>
+                        <h3 class="font-black text-xs uppercase mb-6 text-slate-400 border-b pb-2 italic">Registro de Paciente</h3>
                         <div class="space-y-4">
                             <input v-model="formP.nombre" placeholder="Nombre Completo" class="input-std">
                             <div class="grid grid-cols-2 gap-4">
@@ -217,7 +222,7 @@
                                     <option v-for="m in inventory" :key="m.id" :value="m">{{m.nombre}} (Stock: {{m.stock}})</option>
                                 </select>
                                 <input v-model="tempDosis" class="input-std flex-1 h-14" placeholder="Dosis / Indicación">
-                                <button @click="addToRecipe" class="bg-white text-slate-900 px-10 rounded-xl font-black uppercase text-xs hover:bg-slate-200">AÑADIR</button>
+                                <button @click="addToRecipe" class="bg-white text-slate-900 px-10 rounded-xl font-black uppercase text-xs hover:bg-slate-200">AÑADIR A RECETA</button>
                             </div>
                             <div class="space-y-2">
                                 <div v-for="(m, i) in recipe" :key="i" class="bg-white/10 p-3 text-white rounded-xl flex justify-between items-center text-[11px] font-bold uppercase border border-white/10">
@@ -244,7 +249,7 @@
                                 <label class="text-[10px] font-black uppercase text-slate-400 ml-2">Fecha de Caducidad</label>
                                 <input v-model="formI.caducidad" type="date" class="input-std">
                             </div>
-                            <button @click="addInventory" class="w-full bg-slate-900 text-white py-4 rounded-xl font-black uppercase text-xs">GUARDAR STOCK</button>
+                            <button @click="addInventory" class="w-full bg-slate-900 text-white py-4 rounded-xl font-black uppercase text-xs">GUARDAR EN SISTEMA</button>
                         </div>
                     </div>
                     <div class="lg:col-span-2 bg-white rounded-[2.5rem] border-2 h-[650px] overflow-hidden flex flex-col shadow-xl">
@@ -347,13 +352,15 @@
                             </div>
                             <div class="flex gap-2">
                                 <button @click="reprintHistory(h)" class="bg-slate-900 text-white w-12 h-12 rounded-2xl flex items-center justify-center shadow-xl hover:bg-black transition-all"><i class="fas fa-print"></i></button>
+                                
                                 <button v-if="userRole === 'SUPER'" @click="deleteHistory(h.id)" class="text-red-300 hover:text-red-500 w-12 h-12 flex items-center justify-center transition-all"><i class="fas fa-trash-alt text-xl"></i></button>
                             </div>
                         </div>
                     </div>
+                    
                     <div v-if="history.length > historyLimit" class="text-center mt-12 pb-10">
                         <button @click="historyLimit = history.length" class="bg-slate-900 text-white px-10 py-5 rounded-[2rem] font-black uppercase text-xs shadow-2xl hover:scale-105 transition-all">
-                            <i class="fas fa-eye mr-2"></i> VER TODOS LOS EXPEDIENTES ({{ history.length - historyLimit }} MÁS)
+                            <i class="fas fa-eye mr-2"></i> VER TODOS LOS REGISTROS ANTERIORES ({{ history.length - historyLimit }} MÁS)
                         </button>
                     </div>
                 </section>
@@ -366,9 +373,11 @@
                             <button @click="exportData" class="w-full bg-blue-600 text-white py-6 rounded-3xl font-black uppercase text-xs shadow-xl flex items-center justify-center gap-3">
                                 <i class="fas fa-download"></i> RESPALDO GLOBAL (JSON)
                             </button>
+                            
                             <button v-if="userRole === 'SUPER'" @click="nukeDatabase" class="w-full bg-white text-red-600 border-4 border-red-100 py-6 rounded-3xl font-black uppercase text-xs hover:bg-red-50 transition-all">
-                                <i class="fas fa-skull-crossbones mr-2"></i> BORRAR TODA LA INFORMACIÓN
+                                <i class="fas fa-skull-crossbones mr-2"></i> BORRAR TODA LA BASE DE DATOS
                             </button>
+                            
                             <div class="mt-10 pt-10 border-t-4 border-slate-50">
                                 <p class="text-[9px] font-black text-slate-300 mb-4 uppercase tracking-tighter">RESTAURAR DESDE RESPALDO</p>
                                 <input type="file" @change="importData" class="text-xs file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-black file:bg-slate-900 file:text-white cursor-pointer">
@@ -376,6 +385,7 @@
                         </div>
                     </div>
                 </section>
+
             </main>
         </div>
 
@@ -444,6 +454,7 @@
                 </div>
             </div>
         </div>
+
     </div>
 
     <script type="module">
@@ -451,6 +462,7 @@
         import { getDatabase, ref, push, onValue, remove, set, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
         import { getAuth, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
+        // CREDENCIALES DE FIREBASE
         const firebaseConfig = { apiKey: "AIzaSyCK6A7G6IvAJyYPCEspvvHg6qjDZdhuQuY", authDomain: "jornada-de-salud1.firebaseapp.com", projectId: "jornada-de-salud1", storageBucket: "jornada-de-salud1.firebasestorage.app", messagingSenderId: "947161304402", appId: "1:947161304402:web:906da7370cc343300cbe8b", measurementId: "G-W945F157DC" };
         
         const fbApp = initializeApp(firebaseConfig);
@@ -461,22 +473,26 @@
 
         createApp({
             setup() {
+                // VARIABLES DE ESTADO
                 const isLoggedIn = vRef(false); 
                 const userRole = vRef(''); 
                 const loginData = reactive({ user: '', pass: '' }); 
                 const loginError = vRef(false);
                 const activeTab = vRef('nosotros'); 
                 
-                // OPTIMIZACIÓN DE HISTORIAL
+                // LÍMITE DE HISTORIAL (OPTIMIZACIÓN)
                 const historyLimit = vRef(50);
                 
+                // BASES DE DATOS LOCALES
                 const patients = vRef([]); const staff = vRef([]); const inventory = vRef([]); const history = vRef([]);
                 const printData = vRef(null);
             
+                // FORMULARIOS REACTIVOS
                 const formP = reactive({ nombre: '', edad: null, sexo: 'MUJER', domicilio: '', telefono: '', servicio: 'medico' });
                 const formS = reactive({ nombre: '', area: 'medico', cedula: '' });
                 const formI = reactive({ nombre: '', stock: null, caducidad: '', presentacion: '' });
 
+                // DATOS DE CONSULTA ACTUAL
                 const selectedPatientId = vRef(null);
                 const currP = reactive({ enfermeria: null, medico: null, juridico: null, psicologia: null, cosmetologia: null });
                 const vitalsForm = reactive({ peso: '', talla: '', ta: '', temp: '', fc: '', glucosa: '' });
@@ -484,6 +500,7 @@
                 const selStaffId = reactive({ medico: null, juridico: null, psicologia: null, cosmetologia: null });
                 const recipe = vRef([]); const tempMed = vRef(null); const tempDosis = vRef('');
 
+                // SINCRONIZACIÓN EN TIEMPO REAL
                 onMounted(() => {
                     onValue(ref(db, 'patients'), s => { patients.value = s.exists() ? Object.entries(s.val()).map(([id,v])=>({id,...v})) : []; });
                     onValue(ref(db, 'staff'), s => { staff.value = s.exists() ? Object.entries(s.val()).map(([id,v])=>({id,...v})) : []; });
@@ -491,21 +508,21 @@
                     onValue(ref(db, 'history'), s => { history.value = s.exists() ? Object.entries(s.val()).map(([id,v])=>({id,...v})) : []; });
                 });
 
-                // PROPIEDAD COMPUTADA PARA OPTIMIZAR LA VISTA DE HISTORIAL
+                // PROPIEDAD COMPUTADA: HISTORIAL INVERTIDO Y LIMITADO
                 const displayHistory = computed(() => {
-                    // Muestra los últimos 50 registros. Si se pulsa "Ver Todos", historyLimit aumenta.
                     return [...history.value].reverse().slice(0, historyLimit.value);
                 });
 
-                // LÓGICA DEL SEMÁFORO Y CADUCIDAD
+                // SEMÁFORO DE INVENTARIO
                 const getStockClass = (stock) => {
                     if (stock <= 0) return 'stock-red';
                     if (stock <= 10) return 'stock-yellow';
                     return 'stock-green';
                 };
                 const isExpired = (date) => date && new Date(date) < new Date();
-                const formatDate = (date) => date ? new Date(date).toLocaleDateString('es-MX', { year: 'numeric', month: 'short', day: 'numeric' }) : 'SIN FECHA';
+                const formatDate = (date) => date ? new Date(date).toLocaleDateString('es-MX') : 'SIN FECHA';
 
+                // SISTEMA DE LOGIN Y ROLES
                 const performLogin = () => {
                     const u = loginData.user.toUpperCase();
                     let email = '';
@@ -515,15 +532,16 @@
 
                     signInWithEmailAndPassword(auth, email, loginData.pass)
                         .then(res => {
-                            if (email.includes('jornadas')) userRole.value = 'SUPER';
-                            else if (email.includes('jorjev')) userRole.value = 'ADMIN';
-                            else userRole.value = 'DOC';
+                            if (email.includes('jornadas')) userRole.value = 'SUPER'; // MARIA
+                            else if (email.includes('jorjev')) userRole.value = 'ADMIN'; // JORGE
+                            else userRole.value = 'DOC'; // ESPECIALISTAS
                             isLoggedIn.value = true; loginError.value = false;
                         }).catch(() => loginError.value = true);
                 };
 
                 const logout = () => signOut(auth).then(() => { isLoggedIn.value = false; userRole.value = ''; });
 
+                // FILTRADO DE PESTAÑAS POR ROL
                 const filteredTabs = computed(() => {
                     const all = [
                         { id: 'nosotros', name: 'Nosotros', icon: 'fas fa-info-circle' },
@@ -544,6 +562,7 @@
                     return all;
                 });
 
+                // FUNCIONES DE REGISTRO
                 const registerPatient = () => {
                     push(ref(db, 'patients'), { ...formP, fecha: new Date().toLocaleString() });
                     Object.assign(formP, { nombre: '', edad: null, domicilio: '', telefono: '' });
@@ -585,12 +604,20 @@
                     doc.save("Reporte_Beneficiarios.pdf");
                 };
 
+                // FUNCIÓN NUCLEAR: BORRADO TOTAL (SOLO PARA MARIA)
+                const nukeDatabase = () => {
+                    if(confirm('PELIGRO: ¿ESTÁ SEGURO DE BORRAR TODA LA INFORMACIÓN? ESTA ACCIÓN NO SE PUEDE DESHACER.')) {
+                        ['patients','staff','inventory','history'].forEach(k => remove(ref(db, k)));
+                        alert('BASE DE DATOS REINICIADA CORRECTAMENTE');
+                    }
+                };
+
                 return { 
                     isLoggedIn, loginData, loginError, performLogin, logout, 
                     activeTab, filteredTabs, roleName: computed(() => userRole.value),
                     patients, staff, inventory, history, formP, formS, formI,
                     currP, vitalsForm, consGen, selectedPatientId, selStaffId, recipe, tempMed, tempDosis, printData,
-                    historyLimit, displayHistory, // VARIABLES DE OPTIMIZACIÓN
+                    historyLimit, displayHistory,
                     registerPatient, saveVitals, printRecipe, getStockClass, isExpired, formatDate,
                     changeTab: (id) => { activeTab.value = id; selectedPatientId.value = null; historyLimit.value = 50; },
                     loadPatientForVitals: () => currP.enfermeria = patients.value.find(x=>x.id===selectedPatientId.value),
@@ -605,7 +632,7 @@
                     deleteInventory: (id) => remove(ref(db,`inventory/${id}`)),
                     deleteHistory: (id) => remove(ref(db,`history/${id}`)),
                     reprintHistory: (h) => { printData.value = h; nextTick(()=>setTimeout(()=>window.print(),500)); },
-                    nukeDatabase: () => confirm('¿BORRAR TODO?') && ['patients','staff','inventory','history'].forEach(k=>remove(ref(db,k))),
+                    nukeDatabase, // FUNCIÓN EXPORTADA PARA EL BOTÓN
                     exportData: () => { const b=new Blob([JSON.stringify({history:history.value,inventory:inventory.value,staff:staff.value})],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='Respaldo_Sistema.json'; a.click(); },
                     downloadBeneficiariosPDF,
                     importData: (e) => { const r = new FileReader(); r.onload=ev=>{ const d=JSON.parse(ev.target.result); if(d.history) d.history.forEach(h=>push(ref(db,'history'),h)); alert('Carga Exitosa'); }; r.readAsText(e.target.files[0]); },
