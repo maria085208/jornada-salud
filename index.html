@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JORNADA DE SALUD - CFMM - FUERZA GENERACIONAL</title>
+    <title>SISTEMA JORNADAS DE SALUD - FUERZA GENERACIONAL</title>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.3.4/vue.global.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -18,7 +18,7 @@
             background-image: url('./logo-fuerza.png'); 
             background-size: cover; background-position: center; background-attachment: fixed;
             font-family: 'Inter', sans-serif; background-color: var(--bg); color: #1e293b;
-            margin: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact;
+            -webkit-print-color-adjust: exact; print-color-adjust: exact;
         }
 
         /* Utilidades UI */
@@ -34,7 +34,7 @@
         .stock-expired { background: #450a0a !important; color: #ffffff !important; border-left: 8px solid #000000; }
 
         /* Pantallas */
-        #login-overlay { position: fixed; inset: 0; background-color: #0f172a; display: flex; align-items: center; justify-content: center; z-index: 100; }
+        #login-overlay { position: fixed; inset: 0; background-color: #0f172a; display: flex; align-items: center; justify-content: center; z-index: 1000; }
         .login-box { background: white; padding: 3.5rem; border-radius: 2.5rem; width: 90%; max-width: 420px; text-align: center; box-shadow: 0 25px 50px rgba(0,0,0,0.5); }
         
         .excel-table { width: 100%; border-collapse: collapse; font-size: 11px; background: white; }
@@ -48,7 +48,6 @@
             body { background: white; margin: 0; padding: 0; }
             #print-zone { display: block !important; position: absolute; top: 0; left: 0; width: 100%; }
             .receta-maestra { width: 100%; padding: 40px; border: 2px solid #000; color: #000; }
-            .receta-header { text-align: center; border-bottom: 4px solid #2d5a27; padding-bottom: 15px; margin-bottom: 20px; }
             @page { size: letter; margin: 0.5cm; }
         }
         [v-cloak] { display: none; }
@@ -60,21 +59,15 @@
 
         <div id="login-overlay" v-if="!isLoggedIn">
             <div class="login-box">
-                <div class="bg-slate-900 w-24 h-24 rounded-3xl flex items-center justify-center mx-auto mb-8 text-white text-4xl shadow-2xl">
+                <div class="bg-slate-900 w-24 h-24 rounded-3xl flex items-center justify-center mx-auto mb-8 text-white text-4xl">
                     <i class="fas fa-user-shield"></i>
                 </div>
-                <h2 class="text-3xl font-black uppercase mb-2 tracking-tighter">Acceso Autorizado</h2>
-                <p class="text-[11px] text-slate-400 font-bold uppercase tracking-widest mb-10 italic">Panel de Seguridad Jornadas</p>
-                
+                <h2 class="text-3xl font-black uppercase mb-2 tracking-tighter">Acceso de Seguridad</h2>
                 <form @submit.prevent="performLogin" class="space-y-6">
-                    <input v-model="loginData.user" type="text" class="input-std text-center" placeholder="ID DE USUARIO" autocomplete="off">
-                    <input v-model="loginData.pass" type="password" class="input-std text-center" placeholder="CONTRASEÑA" autocomplete="off">
-                    <div v-if="loginError" class="bg-red-50 text-red-600 p-4 rounded-xl text-[10px] font-black uppercase border border-red-100">
-                        <i class="fas fa-ban mr-2"></i> Datos de Acceso Incorrectos
-                    </div>
-                    <button type="submit" class="w-full bg-slate-900 text-white py-6 rounded-2xl font-black uppercase shadow-2xl hover:bg-black transition-all">
-                        INGRESAR AL SISTEMA
-                    </button>
+                    <input v-model="loginData.user" type="text" class="input-std text-center" placeholder="ID DE USUARIO">
+                    <input v-model="loginData.pass" type="password" class="input-std text-center" placeholder="CONTRASEÑA">
+                    <div v-if="loginError" class="text-red-600 text-[10px] font-black uppercase">Credenciales Incorrectas</div>
+                    <button type="submit" class="w-full bg-slate-900 text-white py-6 rounded-2xl font-black uppercase shadow-2xl">INGRESAR</button>
                 </form>
             </div>
         </div>
@@ -86,18 +79,15 @@
                     <div class="flex items-center gap-4">
                         <div class="bg-slate-900 text-white p-3 rounded-2xl shadow-lg"><i class="fas fa-hospital-symbol text-2xl"></i></div>
                         <div>
-                            <h1 class="text-xl font-black uppercase tracking-tighter text-slate-900 leading-none">Jornadas Salud</h1>
+                            <h1 class="text-xl font-black uppercase tracking-tighter">Fuerza Generacional</h1>
                             <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{{ roleName }} - {{ loginData.user }}</p>
                         </div>
                     </div>
-                    <button @click="logout" class="bg-red-50 text-red-600 border-2 border-red-100 px-6 py-2 rounded-xl font-black uppercase text-[10px]">
-                        SALIR <i class="fas fa-sign-out-alt ml-1"></i>
-                    </button>
+                    <button @click="logout" class="bg-red-50 text-red-600 border-2 border-red-100 px-6 py-2 rounded-xl font-black uppercase text-[10px]">SALIR</button>
                 </div>
-                
                 <nav class="flex overflow-x-auto bg-white border-t no-scrollbar shadow-inner">
                     <button v-for="t in filteredTabs" :key="t.id" @click="changeTab(t.id)" 
-                        :class="['px-6 py-4 text-[9px] font-black uppercase border-r flex items-center gap-2 transition-all whitespace-nowrap', activeTab === t.id ? 'tab-active' : 'tab-inactive']">
+                        :class="['px-6 py-4 text-[9px] font-black uppercase border-r flex items-center gap-2 whitespace-nowrap', activeTab === t.id ? 'tab-active' : 'tab-inactive']">
                         <i :class="t.icon"></i> {{ t.name }}
                     </button>
                 </nav>
@@ -105,22 +95,22 @@
 
             <main class="container mx-auto px-4 py-8">
                 
-                <section v-if="activeTab === 'nosotros'" class="max-w-6xl mx-auto space-y-12 animate-fade-in">
+                <section v-if="activeTab === 'nosotros'" class="max-w-6xl mx-auto space-y-12">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
                         <div class="bg-white p-10 rounded-[3rem] border shadow-xl">
                             <h2 class="text-3xl font-black text-red-600 uppercase mb-6 italic underline">¿Quiénes somos?</h2>
-                            <p class="text-lg font-medium text-slate-700 leading-relaxed uppercase text-justify">Somos una plataforma ciudadana que busca convertirse en un referente en la ejecución de proyectos de ciudadanía activa y organizada a través de la innovación social.</p>
+                            <p class="text-lg font-bold text-slate-700 leading-relaxed uppercase text-justify">Somos una plataforma ciudadana que busca convertirse en un referente en la ejecución de proyectos de ciudadanía activa y organizada.</p>
                         </div>
                         <div class="bg-slate-900 p-10 rounded-[3rem] text-white shadow-2xl">
-                            <h2 class="text-3xl font-black uppercase mb-6 italic underline underline-offset-8">Nuestra Visión</h2>
-                            <p class="text-lg font-bold leading-relaxed uppercase text-justify">Convertirnos en un referente de participación ciudadana activa y organizada para generar cambios sostenibles y positivos en Puebla.</p>
+                            <h2 class="text-3xl font-black uppercase mb-6 italic underline">Nuestra Visión</h2>
+                            <p class="text-lg font-bold leading-relaxed uppercase text-justify">Generar cambios sostenibles y positivos en Puebla a través de la innovación social.</p>
                         </div>
                     </div>
                 </section>
 
                 <section v-if="activeTab === 'recepcion'" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     <div class="bg-white p-8 rounded-[2.5rem] border-2 shadow-xl h-fit">
-                        <h3 class="font-black text-xs uppercase mb-6 text-slate-400 border-b pb-2">Registro Beneficiario</h3>
+                        <h3 class="font-black text-xs uppercase mb-6 text-slate-400 border-b pb-2 italic">Registro Beneficiario</h3>
                         <div class="space-y-4">
                             <input v-model="formP.nombre" placeholder="Nombre Completo" class="input-std">
                             <div class="grid grid-cols-2 gap-4">
@@ -145,10 +135,7 @@
                         </div>
                         <div class="overflow-y-auto p-4 space-y-3">
                             <div v-for="p in patients" :key="p.id" class="flex justify-between items-center p-5 border-2 rounded-[2rem] hover:bg-slate-50 transition-all">
-                                <div>
-                                    <p class="font-black text-sm uppercase text-slate-900">{{ p.nombre }}</p>
-                                    <span class="text-[8px] font-black bg-blue-100 text-blue-600 px-2 py-0.5 rounded-full uppercase">{{ p.servicio }}</span>
-                                </div>
+                                <div><p class="font-black text-sm uppercase text-slate-900">{{ p.nombre }}</p><span class="text-[8px] font-black bg-blue-100 text-blue-600 px-2 py-0.5 rounded-full uppercase">{{ p.servicio }}</span></div>
                                 <button @click="deletePatient(p.id)" class="text-red-300 hover:text-red-500 p-2"><i class="fas fa-trash-alt text-xl"></i></button>
                             </div>
                         </div>
@@ -157,20 +144,17 @@
 
                 <section v-if="activeTab === 'signos'" class="max-w-4xl mx-auto">
                     <div class="bg-white p-10 rounded-[3rem] border-4 shadow-2xl text-center">
-                        <h3 class="font-black text-xl uppercase mb-8 text-slate-800">Enfermería / Triaje</h3>
+                        <h3 class="font-black text-xl uppercase mb-8">Enfermería / Triaje</h3>
                         <select v-model="selectedPatientId" @change="loadPatientForVitals" class="input-std h-16 text-lg mb-8 shadow-md">
-                            <option :value="null">-- SELECCIONAR PACIENTE DE LISTA --</option>
-                            <option v-for="p in pendingVitalsList" :key="p.id" :value="p.id">{{ p.nombre }} ({{p.servicio}})</option>
+                            <option :value="null">-- SELECCIONAR PACIENTE --</option>
+                            <option v-for="p in pendingVitalsList" :key="p.id" :value="p.id">{{ p.nombre }}</option>
                         </select>
-                        <div v-if="currP.enfermeria" class="bg-slate-50 p-10 rounded-[3rem] border-2 text-left space-y-6">
-                            <p class="text-center font-black text-xl uppercase text-slate-700 underline">{{ currP.enfermeria.nombre }}</p>
-                            <div class="grid grid-cols-2 md:grid-cols-3 gap-6">
-                                <div v-for="(label, key) in {peso:'Peso (kg)', talla:'Talla (m)', ta:'Presión (TA)', temp:'Temp (°C)', fc:'Frec. Card.', glucosa:'Glucosa'}" :key="key">
-                                    <label class="text-[10px] font-black uppercase text-slate-400 block mb-1 ml-2">{{ label }}</label>
-                                    <input v-model="vitalsForm[key]" class="input-std text-center text-xl shadow-inner">
-                                </div>
+                        <div v-if="currP.enfermeria" class="grid grid-cols-2 md:grid-cols-3 gap-6 bg-slate-50 p-8 rounded-3xl">
+                            <div v-for="(label, key) in {peso:'Peso (kg)', talla:'Talla (m)', ta:'P.A.', temp:'Temp °C', fc:'F.C.', glucosa:'Glucosa'}" :key="key">
+                                <label class="text-[10px] font-black uppercase text-slate-400 block mb-1">{{label}}</label>
+                                <input v-model="vitalsForm[key]" class="input-std text-center text-xl">
                             </div>
-                            <button @click="saveVitals" class="w-full bg-slate-900 text-white py-6 rounded-2xl font-black uppercase text-xs mt-6 shadow-xl active:scale-95 transition-all">GUARDAR VALORACIÓN</button>
+                            <button @click="saveVitals" class="col-span-full bg-slate-900 text-white py-5 rounded-xl font-black mt-4 shadow-lg">GUARDAR VALORACIÓN</button>
                         </div>
                     </div>
                 </section>
@@ -178,56 +162,40 @@
                 <section v-if="['medico', 'psicologia', 'cosmetologia', 'juridico'].includes(activeTab)" class="max-w-5xl mx-auto space-y-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div class="bg-white p-6 border-2 rounded-3xl shadow-lg">
-                            <label class="text-[10px] font-black text-slate-400 uppercase ml-2">1. Beneficiario en Turno</label>
+                            <label class="text-[10px] font-black text-slate-400 uppercase">Beneficiario</label>
                             <select v-model="selectedPatientId" @change="loadSelectedPatient(activeTab)" class="input-std">
-                                <option :value="null">-- SELECCIONAR PACIENTE --</option>
                                 <option v-for="p in waitingFor(activeTab)" :key="p.id" :value="p.id">{{ p.nombre }}</option>
                             </select>
                         </div>
                         <div class="bg-white p-6 border-2 rounded-3xl shadow-lg">
-                            <label class="text-[10px] font-black text-slate-400 uppercase ml-2">2. Especialista Atendiendo</label>
+                            <label class="text-[10px] font-black text-slate-400 uppercase">Especialista</label>
                             <select v-model="selStaffId[activeTab]" class="input-std">
-                                <option :value="null">-- SELECCIONAR MÉDICO --</option>
                                 <option v-for="s in staffByArea(activeTab)" :key="s.id" :value="s.id">{{ s.nombre }}</option>
                             </select>
                         </div>
                     </div>
 
-                    <div v-if="currP[activeTab]" class="bg-white p-12 rounded-[4rem] border-t-8 border-slate-900 shadow-2xl space-y-8">
-                        <div v-if="activeTab !== 'juridico'">
-                            <label class="text-[10px] font-black text-red-500 uppercase ml-2 italic">Alergias Detectadas</label>
-                            <input v-model="consGen.alergias" class="input-std border-red-100 font-black text-red-600 h-16 text-lg shadow-inner" placeholder="ESCRIBIR: NEGADAS O ALERGIA ESPECÍFICA">
-                        </div>
+                    <div v-if="currP[activeTab]" class="bg-white p-12 rounded-[4rem] border-t-8 border-slate-900 shadow-2xl space-y-6">
+                        <textarea v-model="consGen.diagnostico" class="input-std h-32" placeholder="DIAGNÓSTICO"></textarea>
+                        <textarea v-model="consGen.tratamiento" class="input-std h-32" placeholder="TRATAMIENTO"></textarea>
                         
-                        <div class="space-y-4">
-                            <label class="text-[10px] font-black uppercase text-slate-400 ml-2">Diagnóstico / Motivo</label>
-                            <textarea v-model="consGen.diagnostico" class="input-std h-32" :placeholder="activeTab === 'juridico' ? 'Descripción de Hechos...' : 'Diagnóstico Clínico...'"></textarea>
-                            
-                            <label class="text-[10px] font-black uppercase text-slate-400 ml-2">Tratamiento / Asesoría</label>
-                            <textarea v-model="consGen.tratamiento" class="input-std h-32" :placeholder="activeTab === 'juridico' ? 'Asesoría Jurídica brindada...' : 'Tratamiento e Indicaciones...'"></textarea>
-                        </div>
-
-                        <div v-if="['medico', 'cosmetologia'].includes(activeTab)" class="bg-slate-900 p-8 rounded-[2.5rem] shadow-2xl">
-                            <p class="text-white font-black text-[10px] uppercase mb-6 tracking-widest text-center">Suministro de Insumos Médicos</p>
-                            <div class="flex flex-col md:flex-row gap-4 mb-6">
-                                <select v-model="tempMed" class="input-std flex-1 h-14">
-                                    <option :value="null">-- Seleccionar de Farmacia --</option>
-                                    <option v-for="m in inventory" :key="m.id" :value="m">{{m.nombre}} (Stock: {{m.stock}})</option>
+                        <div v-if="['medico', 'cosmetologia'].includes(activeTab)" class="bg-slate-900 p-8 rounded-3xl">
+                            <div class="flex gap-4">
+                                <select v-model="tempMed" class="input-std flex-1">
+                                    <option v-for="m in inventory" :key="m.id" :value="m">{{m.nombre}} ({{m.stock}})</option>
                                 </select>
-                                <input v-model="tempDosis" class="input-std flex-1 h-14" placeholder="Dosis / Indicación">
-                                <button @click="addToRecipe" class="bg-white text-slate-900 px-10 rounded-xl font-black uppercase text-xs hover:bg-slate-200">AÑADIR</button>
+                                <input v-model="tempDosis" class="input-std flex-1" placeholder="DOSIS">
+                                <button @click="addToRecipe" class="bg-white text-slate-900 px-8 rounded-xl font-black">AÑADIR</button>
                             </div>
-                            <div class="space-y-2">
-                                <div v-for="(m, i) in recipe" :key="i" class="bg-white/10 p-3 text-white rounded-xl flex justify-between items-center text-[11px] font-bold uppercase border border-white/10">
-                                    <span>{{ m.nombre }} - <span class="text-blue-300">{{ m.indicacion }}</span></span>
-                                    <i @click="recipe.splice(i,1)" class="fas fa-times cursor-pointer hover:text-red-400 text-lg"></i>
+                            <div class="mt-4 space-y-2">
+                                <div v-for="(m, i) in recipe" class="bg-white/10 p-2 text-white rounded flex justify-between">
+                                    <span>{{ m.nombre }} - {{ m.indicacion }}</span>
+                                    <i @click="recipe.splice(i,1)" class="fas fa-times cursor-pointer"></i>
                                 </div>
                             </div>
                         </div>
 
-                        <button @click="printRecipe(activeTab)" class="w-full bg-slate-900 text-white py-8 rounded-[2rem] font-black uppercase text-sm shadow-xl hover:bg-black active:scale-95 transition-all">
-                            <i class="fas fa-print mr-2"></i> GUARDAR E IMPRIMIR RECETA
-                        </button>
+                        <button @click="printRecipe(activeTab)" class="w-full bg-slate-900 text-white py-6 rounded-2xl font-black uppercase shadow-xl">GUARDAR E IMPRIMIR RECETA</button>
                     </div>
                 </section>
 
@@ -235,20 +203,17 @@
                     <div class="bg-white p-8 rounded-[2.5rem] border-2 shadow-xl h-fit">
                         <h3 class="font-black text-xs uppercase mb-6 text-slate-400 border-b pb-2 italic">Nuevo Insumo</h3>
                         <div class="space-y-4">
-                            <input v-model="formI.nombre" placeholder="Nombre Comercial" class="input-std">
-                            <input v-model="formI.presentacion" placeholder="Presentación (Ej. Caja/Tablet)" class="input-std">
-                            <input v-model.number="formI.stock" type="number" placeholder="Stock Inicial" class="input-std">
-                            <div>
-                                <label class="text-[10px] font-black uppercase text-slate-400 ml-2">Fecha de Caducidad</label>
-                                <input v-model="formI.caducidad" type="date" class="input-std">
-                            </div>
-                            <button @click="addInventory" class="w-full bg-slate-900 text-white py-4 rounded-xl font-black uppercase text-xs">GUARDAR STOCK</button>
+                            <input v-model="formI.nombre" placeholder="Nombre" class="input-std">
+                            <input v-model="formI.presentacion" placeholder="Presentación" class="input-std">
+                            <input v-model.number="formI.stock" type="number" placeholder="Stock" class="input-std">
+                            <input v-model="formI.caducidad" type="date" class="input-std">
+                            <button @click="addInventory" class="w-full bg-slate-900 text-white py-4 rounded-xl font-black uppercase">GUARDAR STOCK</button>
                         </div>
                     </div>
                     <div class="lg:col-span-2 bg-white rounded-[2.5rem] border-2 h-[650px] overflow-hidden flex flex-col shadow-xl">
-                        <div class="bg-slate-900 p-6 text-white font-black uppercase text-xs flex justify-between items-center">
-                            <span>Semaforización de Insumos</span>
-                            <div class="flex gap-4 text-[9px]">
+                        <div class="bg-slate-900 p-6 text-white font-black flex justify-between items-center uppercase text-xs">
+                            <span>Inventario Global (Semáforo de Seguridad)</span>
+                            <div class="flex gap-4">
                                 <span class="flex items-center gap-1"><i class="fas fa-circle text-red-500"></i> AGOTADO</span>
                                 <span class="flex items-center gap-1"><i class="fas fa-circle text-yellow-500"></i> BAJO</span>
                                 <span class="flex items-center gap-1"><i class="fas fa-circle text-green-500"></i> ÓPTIMO</span>
@@ -256,18 +221,12 @@
                         </div>
                         <div class="overflow-y-auto p-5 space-y-3">
                             <div v-for="m in inventory" :key="m.id" 
-                                :class="['flex justify-between items-center p-5 border-2 rounded-[2rem] transition-all shadow-sm', getStockClass(m.stock), isExpired(m.caducidad) ? 'stock-expired' : '']">
+                                :class="['flex justify-between items-center p-5 border-2 rounded-[2rem] shadow-sm', getStockClass(m.stock), isExpired(m.caducidad) ? 'stock-expired' : '']">
                                 <div>
-                                    <p class="font-black text-sm uppercase">
-                                        <i v-if="isExpired(m.caducidad)" class="fas fa-biohazard mr-2"></i>
-                                        {{ m.nombre }} <span class="text-[10px] opacity-60">({{ m.presentacion }})</span>
-                                    </p>
-                                    <div class="flex gap-4 mt-1 text-[9px] font-black uppercase">
-                                        <span>STOCK: {{ m.stock }}</span>
-                                        <span :class="isExpired(m.caducidad) ? 'underline' : ''">VENCE: {{ formatDate(m.caducidad) }}</span>
-                                    </div>
+                                    <p class="font-black text-sm uppercase">{{ m.nombre }} <span class="opacity-60">({{ m.presentacion }})</span></p>
+                                    <p class="text-[9px] font-black uppercase">STOCK: {{ m.stock }} | VENCE: {{ formatDate(m.caducidad) }}</p>
                                 </div>
-                                <button @click="deleteInventory(m.id)" class="text-red-400 hover:text-red-600 p-3 transition-colors"><i class="fas fa-trash-alt text-xl"></i></button>
+                                <button @click="deleteInventory(m.id)" class="text-red-400 p-3"><i class="fas fa-trash-alt"></i></button>
                             </div>
                         </div>
                     </div>
@@ -275,77 +234,61 @@
 
                 <section v-if="activeTab === 'beneficiarios'" class="space-y-6">
                     <div class="flex justify-between items-center bg-white p-6 rounded-3xl shadow-xl border">
-                        <h2 class="text-2xl font-black uppercase italic text-slate-800">Censo Global de Beneficiarios</h2>
-                        <button @click="downloadBeneficiariosPDF" class="bg-green-700 text-white px-8 py-4 rounded-2xl font-black text-xs uppercase shadow-lg hover:bg-green-800 transition-all">
-                            <i class="fas fa-file-pdf mr-2"></i> DESCARGAR REPORTE CARTA
-                        </button>
+                        <h2 class="text-2xl font-black uppercase italic">Censo de Beneficiarios</h2>
+                        <button @click="downloadBeneficiariosPDF" class="bg-green-700 text-white px-8 py-4 rounded-2xl font-black text-xs uppercase shadow-lg">DESCARGAR REPORTE CARTA</button>
                     </div>
                     <div class="bg-white border-2 rounded-[2.5rem] shadow-2xl overflow-hidden">
-                        <div class="overflow-x-auto">
-                            <table class="excel-table">
-                                <thead>
-                                    <tr>
-                                        <th>Fecha Registro</th>
-                                        <th>Nombre Completo</th>
-                                        <th>Edad</th>
-                                        <th>Sexo</th>
-                                        <th>Servicio</th>
-                                        <th>Domicilio</th>
-                                        <th>Teléfono</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr v-for="h in history" :key="h.id">
-                                        <td>{{ h.fecha }}</td>
-                                        <td class="font-black text-slate-900">{{ h.pacienteNombre }}</td>
-                                        <td>{{ h.edad }}</td>
-                                        <td>{{ h.sexo }}</td>
-                                        <td><span class="bg-slate-100 px-3 py-1 rounded-full text-[10px] font-black">{{ h.tipoServicio }}</span></td>
-                                        <td>{{ h.domicilio || 'N/A' }}</td>
-                                        <td>{{ h.telefono || 'N/A' }}</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
+                        <table class="excel-table">
+                            <thead>
+                                <tr><th>Fecha</th><th>Nombre</th><th>Edad</th><th>Sexo</th><th>Servicio</th><th>Teléfono</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="h in history" :key="h.id">
+                                    <td>{{ h.fecha }}</td><td class="font-black">{{ h.pacienteNombre }}</td>
+                                    <td>{{ h.edad }}</td><td>{{ h.sexo }}</td><td>{{ h.tipoServicio }}</td><td>{{ h.telefono }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </section>
 
                 <section v-if="activeTab === 'config'" class="max-w-4xl mx-auto">
                     <div class="bg-white p-10 rounded-[3rem] border-2 shadow-2xl">
-                        <h3 class="font-black text-lg uppercase mb-8 text-center border-b pb-4 italic">Registro de Especialistas</h3>
+                        <h3 class="font-black text-lg uppercase mb-8 text-center border-b pb-4">Registro Especialistas</h3>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
-                            <input v-model="formS.nombre" placeholder="Nombre del Especialista" class="input-std">
-                            <input v-model="formS.cedula" placeholder="Cédula Profesional" class="input-std">
-                            <select v-model="formS.area" class="input-std col-span-full bg-slate-100">
+                            <input v-model="formS.nombre" placeholder="Nombre" class="input-std">
+                            <input v-model="formS.cedula" placeholder="Cédula" class="input-std">
+                            <select v-model="formS.area" class="input-std col-span-full">
                                 <option value="medico">MÉDICO GENERAL</option>
                                 <option value="psicologia">PSICOLOGÍA</option>
                                 <option value="juridico">JURÍDICO</option>
                                 <option value="cosmetologia">COSMETOLOGÍA</option>
                             </select>
-                            <button @click="addStaff" class="col-span-full bg-slate-900 text-white py-4 rounded-xl font-black uppercase active:scale-95 shadow-xl transition-all">REGISTRAR ESPECIALISTA</button>
+                            <button @click="addStaff" class="col-span-full bg-slate-900 text-white py-4 rounded-xl font-black">REGISTRAR</button>
                         </div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div v-for="s in staff" :key="s.id" class="p-5 border-2 rounded-2xl flex justify-between bg-slate-50 hover:bg-white transition-all">
-                                <div>
-                                    <p class="font-black text-xs uppercase text-slate-800">{{ s.nombre }}</p>
-                                    <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest">{{ s.area }} | {{ s.cedula }}</p>
-                                </div>
-                                <button @click="deleteStaff(s.id)" class="text-red-300 hover:text-red-500 p-2"><i class="fas fa-trash-alt"></i></button>
+                            <div v-for="s in staff" :key="s.id" class="p-4 border-2 rounded-2xl flex justify-between bg-slate-50">
+                                <div><p class="font-black text-xs uppercase">{{s.nombre}}</p><p class="text-[9px] font-black text-slate-400 uppercase">{{s.area}}</p></div>
+                                <button @click="deleteStaff(s.id)" class="text-red-300"><i class="fas fa-trash-alt"></i></button>
                             </div>
                         </div>
                     </div>
                 </section>
 
-                <section v-if="activeTab === 'historial'" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in">
-                    <div v-for="h in history" :key="h.id" class="bg-white p-6 rounded-[2rem] border-2 shadow-lg flex justify-between items-center hover:scale-[1.02] transition-all">
-                        <div>
-                            <p class="font-black uppercase text-sm text-slate-800">{{ h.pacienteNombre }}</p>
-                            <p class="text-[10px] font-bold text-slate-400 uppercase italic">{{ h.fecha }}</p>
+                <section v-if="activeTab === 'historial'" class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in">
+                        <div v-for="h in displayHistory" :key="h.id" class="bg-white p-6 rounded-[2rem] border-2 shadow-lg flex justify-between items-center">
+                            <div><p class="font-black uppercase text-sm">{{ h.pacienteNombre }}</p><p class="text-[9px] font-bold text-slate-400 uppercase italic">{{ h.fecha }}</p></div>
+                            <div class="flex gap-2">
+                                <button @click="reprintHistory(h)" class="bg-slate-900 text-white w-12 h-12 rounded-2xl flex items-center justify-center shadow-xl"><i class="fas fa-print"></i></button>
+                                <button v-if="userRole === 'SUPER'" @click="deleteHistory(h.id)" class="text-red-300 w-12 h-12 flex items-center justify-center"><i class="fas fa-trash-alt"></i></button>
+                            </div>
                         </div>
-                        <div class="flex gap-2">
-                            <button @click="reprintHistory(h)" class="bg-slate-900 text-white w-12 h-12 rounded-2xl flex items-center justify-center shadow-xl hover:bg-black transition-all"><i class="fas fa-print"></i></button>
-                            <button v-if="userRole === 'SUPER'" @click="deleteHistory(h.id)" class="text-red-300 hover:text-red-500 w-12 h-12 flex items-center justify-center transition-all"><i class="fas fa-trash-alt text-xl"></i></button>
-                        </div>
+                    </div>
+                    <div v-if="history.length > historyLimit" class="text-center mt-12 pb-10">
+                        <button @click="historyLimit = history.length" class="bg-slate-900 text-white px-10 py-5 rounded-[2rem] font-black uppercase text-xs shadow-2xl hover:scale-105 transition-all">
+                            <i class="fas fa-eye mr-2"></i> VER TODOS LOS ANTERIORES ({{ history.length - historyLimit }} más)
+                        </button>
                     </div>
                 </section>
 
@@ -354,15 +297,11 @@
                         <i class="fas fa-database text-7xl text-slate-100 mb-8"></i>
                         <h3 class="font-black text-2xl uppercase mb-10 text-slate-800">Administración de Datos</h3>
                         <div class="space-y-6">
-                            <button @click="exportData" class="w-full bg-blue-600 text-white py-6 rounded-3xl font-black uppercase text-xs shadow-xl flex items-center justify-center gap-3">
-                                <i class="fas fa-download"></i> RESPALDO GLOBAL (JSON)
-                            </button>
-                            <button v-if="userRole === 'SUPER'" @click="nukeDatabase" class="w-full bg-white text-red-600 border-4 border-red-100 py-6 rounded-3xl font-black uppercase text-xs hover:bg-red-50 transition-all">
-                                <i class="fas fa-skull-crossbones mr-2"></i> BORRAR TODA LA INFORMACIÓN
-                            </button>
+                            <button @click="exportData" class="w-full bg-blue-600 text-white py-6 rounded-3xl font-black uppercase text-xs shadow-xl flex items-center justify-center gap-3"><i class="fas fa-download"></i> RESPALDO GLOBAL (JSON)</button>
+                            <button v-if="userRole === 'SUPER'" @click="nukeDatabase" class="w-full bg-white text-red-600 border-4 border-red-100 py-6 rounded-3xl font-black uppercase text-xs hover:bg-red-50"><i class="fas fa-skull-crossbones mr-2"></i> BORRAR TODA LA INFORMACIÓN</button>
                             <div class="mt-10 pt-10 border-t-4 border-slate-50">
-                                <p class="text-[9px] font-black text-slate-300 mb-4 uppercase tracking-tighter">RESTAURAR DESDE RESPALDO</p>
-                                <input type="file" @change="importData" class="text-xs file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-black file:bg-slate-900 file:text-white cursor-pointer">
+                                <p class="text-[9px] font-black text-slate-300 mb-4 uppercase">Restaurar Base de Datos</p>
+                                <input type="file" @change="importData" class="text-xs">
                             </div>
                         </div>
                     </div>
@@ -380,59 +319,30 @@
                 
                 <div style="text-align: center; margin-bottom: 25px;">
                     <h2 style="font-size: 22px; font-weight: 800; text-transform: uppercase; margin: 0;">{{ printData.medicoNombre }}</h2>
-                    <p style="font-size: 13px; font-weight: bold; margin: 5px 0; text-transform: uppercase;">{{ printData.tipoServicio }}</p>
+                    <p style="font-size: 13px; font-weight: bold; margin: 5px 0;">{{ printData.tipoServicio }}</p>
                     <p style="font-size: 10px; font-weight: bold; color: #334155;">CÉDULA PROFESIONAL: {{ printData.medicoCedula }}</p>
                 </div>
 
                 <div style="text-align: right; font-size: 11px; margin-bottom: 20px; font-weight: 900;">FECHA: {{ printData.fecha }}</div>
                 
                 <div style="background-color: #f8fafc; border: 2px solid #000; padding: 15px; border-radius: 12px; margin-bottom: 20px;">
-                    <p style="font-size: 13px; font-weight: 900; text-transform: uppercase; margin-bottom: 5px;">PACIENTE: {{ printData.pacienteNombre }}</p>
-                    <p style="font-size: 11px; font-weight: 700; margin-bottom: 5px;">EDAD: {{ printData.edad }} AÑOS | SEXO: {{ printData.sexo }}</p>
-                    <p v-if="printData.tipoServicio !== 'juridico'" style="font-size: 11px; font-weight: 900; color: #d32f2f; text-transform: uppercase;">ALERGIAS: {{ printData.alergias || 'NEGADAS' }}</p>
+                    <p style="font-size: 13px; font-weight: 900; text-transform: uppercase;">PACIENTE: {{ printData.pacienteNombre }}</p>
+                    <p style="font-size: 11px; font-weight: 700;">EDAD: {{ printData.edad }} AÑOS | SEXO: {{ printData.sexo }}</p>
                 </div>
 
-                <table v-if="printData.vitals" class="excel-table" style="margin-bottom: 25px; text-align: center;">
-                    <thead>
-                        <tr style="background: #000; color: #fff;">
-                            <th>PESO (kg)</th><th>TALLA (m)</th><th>IMC</th><th>P.A. (TA)</th><th>F.C.</th><th>TEMP</th><th>GLU</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>{{ printData.vitals.peso }}</td><td>{{ printData.vitals.talla }}</td><td>{{ printData.vitals.imc }}</td>
-                            <td>{{ printData.vitals.ta }}</td><td>{{ printData.vitals.fc }}</td><td>{{ printData.vitals.temp }}°</td><td>{{ printData.vitals.glucosa }}</td>
-                        </tr>
-                    </tbody>
-                </table>
-
                 <div style="min-height: 420px; font-size: 13px; line-height: 1.6; text-transform: uppercase;">
-                    <h3 style="font-size: 11px; font-weight: 900; background: #2d5a27; color: white; padding: 5px 15px; display: inline-block; margin-bottom: 10px; border-radius: 4px;">DIAGNÓSTICO:</h3>
+                    <h3 style="font-size: 11px; font-weight: 900; background: #2d5a27; color: white; padding: 5px 15px; display: inline-block; margin-bottom: 10px;">DIAGNÓSTICO:</h3>
                     <p style="font-weight: 700; border-bottom: 1px dashed #ccc; padding-bottom: 15px; margin-bottom: 25px;">{{ printData.diagnostico }}</p>
                     
-                    <h3 style="font-size: 11px; font-weight: 900; background: #2d5a27; color: white; padding: 5px 15px; display: inline-block; margin-bottom: 10px; border-radius: 4px;">TRATAMIENTO E INDICACIONES:</h3>
-                    
-                    <table v-if="printData.medicamentos && printData.medicamentos.length" style="width: 100%; border-collapse: collapse; margin-bottom: 20px; border: 1.5px solid #000;">
-                        <tr v-for="m in printData.medicamentos">
-                            <td style="border: 1px solid #000; padding: 10px; font-weight: 900; width: 40%;">{{ m.nombre }}</td>
-                            <td style="border: 1px solid #000; padding: 10px; font-weight: 700;">{{ m.indicacion }}</td>
-                        </tr>
-                    </table>
-                    
+                    <h3 style="font-size: 11px; font-weight: 900; background: #2d5a27; color: white; padding: 5px 15px; display: inline-block; margin-bottom: 10px;">TRATAMIENTO:</h3>
                     <p style="font-weight: 700; white-space: pre-wrap;">{{ printData.tratamiento }}</p>
                 </div>
 
                 <div style="margin-top: 80px; text-align: center;">
                     <div style="border-top: 2px solid #000; width: 300px; margin: 0 auto; padding-top: 10px;">
-                        <p style="font-size: 16px; font-weight: 900; text-transform: uppercase;">{{ printData.medicoNombre }}</p>
+                        <p style="font-size: 16px; font-weight: 900;">{{ printData.medicoNombre }}</p>
                         <p style="font-size: 10px; font-weight: bold; color: #475569;">FIRMA Y SELLO AUTORIZADO</p>
                     </div>
-                </div>
-                
-                <div style="margin-top: 50px; border-top: 1px solid #ccc; padding-top: 15px; display: flex; justify-content: space-between; font-size: 9px; font-weight: 900; text-transform: uppercase; color: #64748b;">
-                    <div>TEL: 2212683055</div>
-                    <div>Diag. Benito Juárez 28, Col. Nueva Antequera, Puebla</div>
-                    <div>presidenciafuerzageneracional@gmail.com</div>
                 </div>
             </div>
         </div>
@@ -460,6 +370,9 @@
                 const loginError = vRef(false);
                 const activeTab = vRef('nosotros'); 
                 
+                // LÍMITES DE HISTORIAL
+                const historyLimit = vRef(50);
+                
                 const patients = vRef([]); const staff = vRef([]); const inventory = vRef([]); const history = vRef([]);
                 const printData = vRef(null);
             
@@ -481,14 +394,18 @@
                     onValue(ref(db, 'history'), s => { history.value = s.exists() ? Object.entries(s.val()).map(([id,v])=>({id,...v})) : []; });
                 });
 
-                // SEMAFORO Y SEGURIDAD
+                // COMPUTADOS PARA HISTORIAL LIMITADO (MÁS RECIENTES PRIMERO)
+                const displayHistory = computed(() => {
+                    return [...history.value].reverse().slice(0, historyLimit.value);
+                });
+
                 const getStockClass = (stock) => {
                     if (stock <= 0) return 'stock-red';
                     if (stock <= 10) return 'stock-yellow';
                     return 'stock-green';
                 };
                 const isExpired = (date) => date && new Date(date) < new Date();
-                const formatDate = (date) => date ? new Date(date).toLocaleDateString('es-MX', { year: 'numeric', month: 'short', day: 'numeric' }) : 'SIN FECHA';
+                const formatDate = (date) => date ? new Date(date).toLocaleDateString('es-MX') : 'SIN FECHA';
 
                 const performLogin = () => {
                     const u = loginData.user.toUpperCase();
@@ -529,47 +446,28 @@
                 });
 
                 const registerPatient = () => {
-                    if(!formP.nombre) return;
-                    push(ref(db, 'patients'), { ...formP, fechaRegistro: new Date().toLocaleString() });
+                    push(ref(db, 'patients'), { ...formP, fecha: new Date().toLocaleString() });
                     Object.assign(formP, { nombre: '', edad: null, domicilio: '', telefono: '' });
                 };
 
                 const saveVitals = () => {
                     const p = patients.value.find(x => x.id === selectedPatientId.value);
-                    const imc = (vitalsForm.peso / (vitalsForm.talla * vitalsForm.talla)).toFixed(1);
-                    update(ref(db, `patients/${p.id}`), { vitals: { ...vitalsForm, imc } });
+                    update(ref(db, `patients/${p.id}`), { vitals: { ...vitalsForm } });
                     selectedPatientId.value = null; currP.enfermeria = null;
                 };
 
                 const printRecipe = (area) => {
                     const p = currP[area]; const doc = staff.value.find(s => s.id === selStaffId[area]);
-                    if(!doc) return alert('Seleccione Especialista');
-                    
                     const report = {
-                        pacienteNombre: p.nombre, edad: p.edad, sexo: p.sexo, domicilio: p.domicilio, telefono: p.telefono,
-                        vitals: p.vitals || null, alergias: consGen.alergias, diagnostico: consGen.diagnostico,
-                        tratamiento: consGen.tratamiento, medicamentos: [...recipe.value],
+                        pacienteNombre: p.nombre, edad: p.edad, sexo: p.sexo, 
+                        diagnostico: consGen.diagnostico, tratamiento: consGen.tratamiento,
                         medicoNombre: doc.nombre, medicoCedula: doc.cedula, tipoServicio: area, fecha: new Date().toLocaleString()
                     };
-
                     push(ref(db, 'history'), report);
-                    recipe.value.forEach(r => {
-                        const it = inventory.value.find(x => x.id === r.id);
-                        if(it) set(ref(db, `inventory/${r.id}/stock`), it.stock - 1);
-                    });
-
                     remove(ref(db, `patients/${p.id}`));
                     printData.value = report;
                     nextTick(() => { setTimeout(() => { window.print(); printData.value = null; }, 500); });
                     currP[area] = null; selectedPatientId.value = null;
-                    consGen.diagnostico = ''; consGen.tratamiento = ''; recipe.value = [];
-                };
-
-                const downloadBeneficiariosPDF = () => {
-                    const { jsPDF } = window.jspdf; const doc = new jsPDF('l');
-                    doc.text("CENSO GLOBAL DE BENEFICIARIOS - FUERZA GENERACIONAL", 14, 15);
-                    doc.autoTable({ startY: 20, head: [['Fecha', 'Nombre', 'Edad', 'Sexo', 'Servicio', 'Teléfono']], body: history.value.map(h => [h.fecha, h.pacienteNombre, h.edad, h.sexo, h.tipoServicio, h.telefono]) });
-                    doc.save("Reporte_Beneficiarios.pdf");
                 };
 
                 return { 
@@ -577,24 +475,23 @@
                     activeTab, filteredTabs, roleName: computed(() => userRole.value),
                     patients, staff, inventory, history, formP, formS, formI,
                     currP, vitalsForm, consGen, selectedPatientId, selStaffId, recipe, tempMed, tempDosis, printData,
+                    historyLimit, displayHistory,
                     registerPatient, saveVitals, printRecipe, getStockClass, isExpired, formatDate,
-                    changeTab: (id) => { activeTab.value = id; selectedPatientId.value = null; },
+                    changeTab: (id) => { activeTab.value = id; selectedPatientId.value = null; historyLimit.value = 50; },
                     loadPatientForVitals: () => currP.enfermeria = patients.value.find(x=>x.id===selectedPatientId.value),
                     loadSelectedPatient: (area) => currP[area] = patients.value.find(x=>x.id===selectedPatientId.value),
-                    addToRecipe: () => { if(tempMed.value){ recipe.value.push({id:tempMed.value.id, nombre:tempMed.value.nombre, indicacion:tempDosis.value}); tempMed.value=null; tempDosis.value=''; } },
+                    addToRecipe: () => { recipe.value.push({id:tempMed.value.id, nombre:tempMed.value.nombre, indicacion:tempDosis.value}); },
                     staffByArea: (a) => staff.value.filter(s => s.area === a),
                     waitingFor: (a) => patients.value.filter(p => p.servicio === a),
                     pendingVitalsList: computed(() => patients.value.filter(p => !p.vitals)),
-                    addStaff: () => { push(ref(db,'staff'),{...formS}); formS.nombre=''; formS.cedula=''; },
+                    addStaff: () => { push(ref(db,'staff'),{...formS}); },
                     deleteStaff: (id) => remove(ref(db,`staff/${id}`)),
-                    addInventory: () => { push(ref(db,'inventory'),{...formI}); Object.assign(formI,{nombre:'',stock:null,caducidad:'',presentacion:''}); },
+                    addInventory: () => { push(ref(db,'inventory'),{...formI}); },
                     deleteInventory: (id) => remove(ref(db,`inventory/${id}`)),
                     deleteHistory: (id) => remove(ref(db,`history/${id}`)),
                     reprintHistory: (h) => { printData.value = h; nextTick(()=>setTimeout(()=>window.print(),500)); },
-                    nukeDatabase: () => confirm('¿BORRAR TODO?') && ['patients','staff','inventory','history'].forEach(k=>remove(ref(db,k))),
-                    exportData: () => { const b=new Blob([JSON.stringify({history:history.value,inventory:inventory.value,staff:staff.value})],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='Respaldo_Sistema.json'; a.click(); },
-                    downloadBeneficiariosPDF,
-                    importData: (e) => { const r = new FileReader(); r.onload=ev=>{ const d=JSON.parse(ev.target.result); if(d.history) d.history.forEach(h=>push(ref(db,'history'),h)); alert('Carga Exitosa'); }; r.readAsText(e.target.files[0]); },
+                    nukeDatabase: () => confirm('BORRAR?') && ['patients','staff','inventory','history'].forEach(k=>remove(ref(db,k))),
+                    exportData: () => { const b=new Blob([JSON.stringify(history.value)]); const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='backup.json'; a.click(); },
                     deletePatient: (id) => remove(ref(db, `patients/${id}`))
                 };
             }
