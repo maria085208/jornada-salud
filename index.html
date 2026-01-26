@@ -22,7 +22,7 @@
         }
 
         body { 
-            background-image: url('./logo-fuerza.png'); 
+            background-image: url('./logo-fuerza.png');
             background-size: cover; 
             background-position: center; 
             background-attachment: fixed;
@@ -38,7 +38,7 @@
         /* CLASES DE UTILIDAD PARA LA INTERFAZ */
         /* ================================================================================= */
         .input-std { 
-            width: 100%; 
+            width: 100%;
             padding: 16px; 
             border: 2px solid #cbd5e1; 
             border-radius: 12px; 
@@ -46,24 +46,24 @@
             text-transform: uppercase; 
             outline: none; 
             background: #fff; 
-            font-size: 14px; 
+            font-size: 14px;
             transition: all 0.3s ease; 
         }
         
         .input-std:focus { 
-            border-color: #334155; 
+            border-color: #334155;
             box-shadow: 0 0 0 4px rgba(51, 65, 85, 0.15); 
         }
 
         .tab-active { 
-            background-color: #334155 !important; 
+            background-color: #334155 !important;
             color: white !important; 
             font-weight: 900; 
-            box-shadow: inset 0 -3px 0 #000; 
+            box-shadow: inset 0 -3px 0 #000;
         }
         
         .tab-inactive { 
-            color: #64748b; 
+            color: #64748b;
             background-color: white; 
             font-weight: 600; 
         }
@@ -72,30 +72,30 @@
         /* PANTALLA DE LOGIN */
         /* ================================================================================= */
         #login-overlay { 
-            position: fixed; 
+            position: fixed;
             inset: 0; 
             background-color: #0f172a; 
             display: flex; 
             align-items: center; 
             justify-content: center; 
-            z-index: 50; 
+            z-index: 50;
         }
         
         .login-box { 
-            background: white; 
+            background: white;
             padding: 4rem; 
             border-radius: 2.5rem; 
             width: 90%; 
             max-width: 450px; 
             text-align: center; 
-            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.8); 
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.8);
         }
 
         /* ================================================================================= */
         /* DISEÑO DE RECETA PARA IMPRESIÓN */
         /* ================================================================================= */
         .receta-maestra { 
-            background: white; 
+            background: white;
             border: 2px solid #000; 
             padding: 45px; 
             color: black; 
@@ -107,14 +107,14 @@
         }
         
         .receta-header { 
-            text-align: center; 
+            text-align: center;
             border-bottom: 4px solid var(--accent-green); 
             padding-bottom: 20px; 
             margin-bottom: 20px; 
         }
         
         .vitals-grid-table { 
-            width: 100%; 
+            width: 100%;
             border-collapse: collapse; 
             margin-bottom: 20px; 
             border: 1.5px solid #000; 
@@ -122,53 +122,53 @@
         }
         
         .vitals-grid-table th { 
-            background: #f1f5f9; 
+            background: #f1f5f9;
             border: 1px solid #000; 
             padding: 6px; 
             font-size: 10px; 
             font-weight: 900; 
             text-transform: uppercase; 
             color: #000; 
-            text-align: center; 
+            text-align: center;
         }
         
         .vitals-grid-table td { 
-            border: 1px solid #000; 
+            border: 1px solid #000;
             padding: 10px; 
             font-size: 14px; 
             font-weight: 800; 
             text-align: center; 
-            color: #000; 
+            color: #000;
         }
         
         .tabla-meds { 
-            width: 100%; 
+            width: 100%;
             border-collapse: collapse; 
             margin: 20px 0; 
             border: 2px solid #000; 
         }
         
         .tabla-meds th { 
-            background: #f8fafc; 
+            background: #f8fafc;
             border: 1.5px solid #000; 
             padding: 10px; 
             font-size: 11px; 
             font-weight: 900; 
             text-align: center; 
-            color: #000; 
+            color: #000;
         }
         
         .tabla-meds td { 
-            border: 1px solid #000; 
+            border: 1px solid #000;
             padding: 12px; 
             font-size: 13px; 
             font-weight: 700; 
             text-transform: uppercase; 
-            color: #000; 
+            color: #000;
         }
         
         .receta-footer { 
-            margin-top: 40px; 
+            margin-top: 40px;
             border-top: 1px solid #ccc; 
             padding-top: 15px; 
             display: flex; 
@@ -176,30 +176,33 @@
             font-size: 9px; 
             font-weight: 800; 
             color: #000; 
-            text-align: center; 
+            text-align: center;
         }
         
         .firma-box { 
-            margin-top: 80px; 
+            margin-top: 80px;
             text-align: center; 
             width: 300px; 
             margin-left: auto; 
             margin-right: auto; 
             border-top: 2px solid #000; 
-            padding-top: 10px; 
+            padding-top: 10px;
         }
 
         /* ================================================================================= */
         /* ZONA DE IMPRESIÓN (CONTROL DE VISIBILIDAD) */
         /* ================================================================================= */
-        #print-zone { display: none; }
+        #print-zone { display: none;
+        }
 
         @media print {
-            #app-container, #login-overlay, header, nav, .no-print { display: none !important; }
-            body { background: white; margin: 0; padding: 0; }
+            #app-container, #login-overlay, header, nav, .no-print { display: none !important;
+            }
+            body { background: white; margin: 0; padding: 0;
+            }
             
             #print-zone { 
-                display: block !important; 
+                display: block !important;
                 position: absolute; 
                 top: 0; 
                 left: 0; 
@@ -208,7 +211,7 @@
             }
             
             .receta-maestra {
-                width: 100% !important; 
+                width: 100% !important;
                 max-width: 100% !important;
                 margin: 0 !important; 
                 padding: 15px 30px !important;
@@ -218,11 +221,14 @@
                 transform-origin: top center;
             }
 
-            @page { size: letter; margin: 0.5cm; }
-            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            @page { size: letter;
+            margin: 0.5cm; }
+            * { -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important; }
         }
 
-        [v-cloak] { display: none; }
+        [v-cloak] { display: none;
+        }
     </style>
 </head>
 <body class="text-slate-800">
@@ -289,14 +295,16 @@
                         <div class="bg-white p-10 rounded-[3rem] border shadow-xl">
                             <h2 class="text-3xl font-black text-red-600 uppercase mb-6 italic">¿Quiénes somos?</h2>
                             <p class="text-lg font-medium text-slate-700 leading-relaxed uppercase text-justify">
-                                Somos una plataforma ciudadana que busca convertirse en un referente en la ejecución de proyectos de ciudadanía activa y organizada. A través del trabajo conjunto de la comunidad y la innovación social para responder de manera efectiva a las necesidades reales de las personas.
+                                Somos una plataforma ciudadana que busca convertirse en un referente en la ejecución de proyectos de ciudadanía activa y organizada.
+                                A través del trabajo conjunto de la comunidad y la innovación social para responder de manera efectiva a las necesidades reales de las personas.
                             </p>
                             <p class="mt-4 text-sm font-bold text-slate-500 uppercase">Liderado por Jorge Zúñiga.</p>
                         </div>
                         <div class="bg-slate-900 p-10 rounded-[3rem] text-white shadow-2xl">
                             <h2 class="text-3xl font-black uppercase mb-6 italic underline underline-offset-8">Nuestra Visión</h2>
                             <p class="text-lg font-bold leading-relaxed uppercase text-justify">
-                                Convertirnos en un referente de participación ciudadana activa y organizada. A través de nuestra comunidad e innovación social, generando cambios sostenibles y positivos en Puebla.
+                                Convertirnos en un referente de participación ciudadana activa y organizada.
+                                A través de nuestra comunidad e innovación social, generando cambios sostenibles y positivos en Puebla.
                             </p>
                         </div>
                     </div>
@@ -635,6 +643,8 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getDatabase, ref, push, onValue, remove, set, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        // IMPORTAMOS AUTENTICACIÓN
+        import { getAuth, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         
         // --- DEFINICIÓN DE PESTAÑAS MAESTRAS ---
         const MASTER_TABS_FINAL = [
@@ -653,8 +663,10 @@
 
         // --- CREDENCIALES DE FIREBASE ---
         const firebaseConfig = { apiKey: "AIzaSyCK6A7G6IvAJyYPCEspvvHg6qjDZdhuQuY", authDomain: "jornada-de-salud1.firebaseapp.com", projectId: "jornada-de-salud1", storageBucket: "jornada-de-salud1.firebasestorage.app", messagingSenderId: "947161304402", appId: "1:947161304402:web:906da7370cc343300cbe8b", measurementId: "G-W945F157DC" };
+        
         const fbApp = initializeApp(firebaseConfig);
         const db = getDatabase(fbApp);
+        const auth = getAuth(fbApp); // INICIALIZAMOS AUTH
         
         const { createApp, ref: vRef, reactive, computed, onMounted, nextTick } = Vue;
 
@@ -674,19 +686,19 @@
                 const inventory = vRef([]); 
                 const history = vRef([]);
                 const printData = vRef(null);
-                
+            
                 // FORMULARIOS
                 const formP = reactive({ nombre: '', edad: null, sexo: 'MUJER', domicilio: '', telefono: '', servicio: 'medico' });
                 const formS = reactive({ nombre: '', area: 'medico', cedula: '', specialty: '', institution: '' });
                 const formI = reactive({ nombre: '', stock: null, caducidad: '', presentacion: '' });
-                
+
                 // VARIABLES DE CONSULTA
                 const selectedPatientId = vRef(null);
                 const currP = reactive({ enfermeria: null, medico: null, juridico: null, psicologia: null, cosmetologia: null });
                 const vitalsForm = reactive({ peso: null, talla: null, ta: '', temp: '', fc: '', glucosa: '' });
                 const consGen = reactive({ alergias: '', peso: null, talla: null, ta: '', temp:'', fc:'', glucosa:'', diagnostico: '', observaciones: '', tratamiento: '' });
                 const selStaffId = reactive({ medico: null, juridico: null, psicologia: null, cosmetologia: null });
-                const recipe = vRef([]); 
+                const recipe = vRef([]);
                 const tempMed = vRef(null); 
                 const tempDosis = vRef('');
 
@@ -695,18 +707,52 @@
                 const currentStaff = computed(() => { const doc = staff.value.find(s => s.id === selStaffId[activeTab.value]); return doc || { nombre: "ESPECIALISTA", cedula: "----", specialty: "", institution: "" }; });
                 const roleName = computed(() => userRole.value === 'SUPER' ? 'MASTER' : userRole.value === 'ADMIN' ? 'ADMIN' : 'DOCTOR');
 
-                // --- LÓGICA DE LOGIN CON ROLES ---
+                // --- NUEVA LÓGICA DE LOGIN SEGURO CON TUS CORREOS ---
                 const performLogin = () => {
-                    const u = String(loginData.user).trim().toUpperCase(); 
-                    const p = String(loginData.pass).trim().toUpperCase();
+                    const u = String(loginData.user).trim().toUpperCase();
+                    const p = String(loginData.pass).trim(); // La contraseña que escribe el usuario
+
+                    // 1. TRADUCTOR: De Usuario Corto a Tu Correo Real
+                    let emailReal = '';
                     
-                    if (u === 'MARIA0852' && p === 'ASUNA0852') { userRole.value = 'SUPER'; isLoggedIn.value = true; }
-                    else if (u === 'JORJE0852' && p === 'VALE0852') { userRole.value = 'ADMIN'; isLoggedIn.value = true; }
-                    else if (u === 'ESPECIALISTA0852' && p === 'LOGIN0852') { userRole.value = 'DOC'; isLoggedIn.value = true; }
-                    else { loginError.value = true; }
+                    if (u === 'MARIA0852')        emailReal = 'jornadasdesaludfg@gmail.com'; // SUPER
+                    else if (u === 'JORJE0852')   emailReal = 'jorjev0852@gmail.com';        // ADMIN
+                    else if (u === 'ESPECIALISTA0852') emailReal = 'especialistasfg@gmail.com';   // DOC
+
+                    if (!emailReal) {
+                        loginError.value = true;
+                        return;
+                    }
+
+                    // 2. ENVIAR A FIREBASE
+                    signInWithEmailAndPassword(auth, emailReal, p)
+                        .then((userCredential) => {
+                            const emailConfirmado = userCredential.user.email;
+
+                            // 3. ASIGNAR ROLES (Visuales)
+                            if (emailConfirmado === 'jornadasdesaludfg@gmail.com') userRole.value = 'SUPER';
+                            else if (emailConfirmado === 'jorjev0852@gmail.com')   userRole.value = 'ADMIN';
+                            else if (emailConfirmado === 'especialistasfg@gmail.com')   userRole.value = 'DOC';
+                            
+                            isLoggedIn.value = true;
+                            loginError.value = false;
+                        })
+                        .catch((error) => {
+                            console.error("Error acceso:", error.code);
+                            loginError.value = true;
+                        });
                 };
-                
-                const logout = () => { isLoggedIn.value = false; loginData.user = ''; loginData.pass = ''; userRole.value = ''; };
+
+                // --- NUEVA FUNCIÓN DE SALIR (Logout real) ---
+                const logout = () => { 
+                    signOut(auth).then(() => {
+                        isLoggedIn.value = false; 
+                        loginData.user = ''; 
+                        loginData.pass = ''; 
+                        userRole.value = '';
+                    });
+                };
+
                 const changeTab = (id) => { activeTab.value = id; selectedPatientId.value = null; };
 
                 // FILTRO DE PESTAÑAS SEGÚN ROL
@@ -734,20 +780,16 @@
                 // --- ACCIONES DE PACIENTE ---
                 const registerPatient = () => { if(formP.nombre.trim()) { push(ref(db,'patients'), {...formP}); Object.assign(formP, {nombre:'', edad:null, domicilio:'', telefono:''}); alert('REGISTRADO'); } };
                 const deletePatient = (id) => { if(confirm('¿Eliminar?')) remove(ref(db, `patients/${id}`)); };
-                
                 const loadPatientForVitals = () => { const p = patients.value.find(x => x.id === selectedPatientId.value); if(p) { currP.enfermeria=p; Object.keys(vitalsForm).forEach(k=>vitalsForm[k]=p.vitals?p.vitals[k]:''); } };
                 const saveVitals = () => { if(currP.enfermeria) { update(ref(db,`patients/${currP.enfermeria.id}`), {vitals:{...vitalsForm}}).then(()=>{ alert('GUARDADO'); currP.enfermeria=null; selectedPatientId.value=null; }); } };
-                
                 const loadSelectedPatient = (area) => { const p = patients.value.find(x=>x.id===selectedPatientId.value); if(p) { currP[area]=p; if(p.vitals) Object.assign(consGen, p.vitals); else Object.assign(consGen, {peso:null, talla:null, ta:'', temp:'', fc:'', glucosa:''}); } };
                 const addToRecipe = () => { if(tempMed.value) { recipe.value.push({id:tempMed.value.id, nombre:tempMed.value.nombre, presentacion:tempMed.value.presentacion, indicacion:tempDosis.value}); tempMed.value=null; tempDosis.value=''; } };
 
                 // --- IMPRESIÓN ROBUSTA ASÍNCRONA ---
                 const printRecipe = async (area) => {
                     if(!selStaffId[area]) return alert('Seleccione Especialista');
-                    
                     const p = currP[area];
                     const t_orig = parseFloat(consGen.talla); const t_m = t_orig > 3 ? (t_orig/100).toFixed(2) : t_orig;
-                    
                     const d = { 
                         ...consGen, ...p, 
                         talla: t_m, 
@@ -760,10 +802,8 @@
                         pacienteNombre: p.nombre, 
                         medicamentos: [...recipe.value] 
                     };
-                    
-                    // PASO 1: GUARDAR EN HISTORIAL Y ESPERAR CONFIRMACIÓN
+                    // PASO 1: GUARDAR EN HISTORIAL
                     await push(ref(db,'history'), d);
-                    
                     // PASO 2: DESCONTAR INVENTARIO
                     if(area!=='juridico') recipe.value.forEach(r => { 
                         const it = inventory.value.find(x=>x.id===r.id); 
@@ -771,8 +811,8 @@
                     });
                     
                     // PASO 3: BORRAR DE LISTA DE ESPERA
-                    remove(ref(db, `patients/${p.id}`)); 
-                    
+                    remove(ref(db, `patients/${p.id}`));
+
                     // PASO 4: IMPRIMIR VISUALMENTE
                     printData.value = d;
                     alert("GUARDADO EN BASE DE DATOS. IMPRIMIENDO...");
@@ -780,28 +820,24 @@
                     nextTick(() => { 
                         setTimeout(() => { window.print(); }, 500); 
                     });
-                    
                     currP[area]=null; recipe.value=[];
                 };
 
                 const reprintHistory = (h) => { 
-                    printData.value = h; 
+                    printData.value = h;
                     nextTick(() => { 
                         setTimeout(() => { window.print(); }, 500); 
-                    }); 
+                    });
                 };
 
                 // --- ACCIONES ADMIN ---
                 const addStaff = () => { push(ref(db,'staff'), {...formS}); Object.assign(formS, {nombre:'', specialty:'', institution:'', cedula:''}); alert('REGISTRADO'); };
                 const deleteStaff = (id) => remove(ref(db, `staff/${id}`));
-                
                 const addInventory = () => { push(ref(db,'inventory'), {...formI}); Object.assign(formI, {nombre:'', stock:null, caducidad:'', presentacion:''}); alert('GUARDADO'); };
                 const deleteInventory = (id) => remove(ref(db, `inventory/${id}`));
                 
                 const deleteHistory = (id) => remove(ref(db, `history/${id}`));
-                
                 const nukeDatabase = () => { if(confirm('¿BORRAR TODO? ESTA ACCIÓN NO SE PUEDE DESHACER.')) { ['patients','staff','inventory','history'].forEach(k=>remove(ref(db,k))); } };
-                
                 const exportData = () => { const b = new Blob([JSON.stringify({patients:patients.value, staff:staff.value, inventory:inventory.value, history:history.value})], {type:'application/json'}); const a = document.createElement('a'); a.href=URL.createObjectURL(b); a.download='BACKUP.json'; a.click(); };
                 const importData = (e) => { const r = new FileReader(); r.onload=ev=>{ const d=JSON.parse(ev.target.result); if(d.patients) d.patients.forEach(p=>push(ref(db,'patients'),p)); alert('IMPORTADO'); }; r.readAsText(e.target.files[0]); };
 
