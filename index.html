@@ -4,7 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JORNADAS DE SALUD - FUERZA GENERACIONAL</title>
-    
+
+    <script>
+        // Si el host no es EXACTAMENTE maria085208.github.io, se bloquea por completo.
+        // Se ha removido 'localhost' y '127.0.0.1' por cuestiones de seguridad absolutas.
+        const allowedDomain = "maria085208.github.io";
+        if (window.location.hostname !== allowedDomain) {
+            document.documentElement.innerHTML = '<body style="background-color: #000000; margin: 0; padding: 0; width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center;"><h1 style="color: #333; font-family: sans-serif; text-transform: uppercase; font-size: 14px; letter-spacing: 5px;">ACCESO DENEGADO - DOMINIO NO AUTORIZADO</h1></body>';
+            throw new Error("VIOLACIÓN DE SEGURIDAD: INTENTO DE USO FUERA DEL ENTORNO GITHUB PERMITIDO.");
+        }
+    </script>
+
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -15,28 +25,15 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-    
-    <script>
-        (function() {
-            const allowedHost = "maria085208.github.io";
-            // Si el host no es el permitido (se bloquea localhost y otros dominios)
-            if (window.location.hostname !== allowedHost) {
-                document.documentElement.innerHTML = '<body style="background-color: black; margin: 0; padding: 0; width: 100vw; height: 100vh; display: flex; justify-content: center; align-items: center;"><h1 style="color: #333; font-family: monospace;">ACCESO RESTRINGIDO - DOMINIO NO AUTORIZADO</h1></body>';
-                throw new Error("Violación de seguridad: El sistema solo puede ejecutarse en el dominio autorizado.");
-            }
-            // Evitar inspección básica (clic derecho)
-            document.addEventListener('contextmenu', event => event.preventDefault());
-        })();
-    </script>
 
     <style>
         /* ========================================= */
-        /* ESTÉTICA Y DISEÑO VISUAL BEIGE / ÁMBAR */
+        /* ESTÉTICA Y DISEÑO VISUAL BEIGE / ÁMBAR    */
         /* ========================================= */
         :root { 
-            --bg-color: #f8fafc; /* Color más neutro y profesional */
+            --bg-color: #fffbeb; 
             --text-main: #1e293b; 
-            --accent-main: #92400e; 
+            --accent-main: #b45309; 
             --primary-dark: #0f172a;
         }
         
@@ -49,11 +46,11 @@
             print-color-adjust: exact;
         }
 
-        /* COMPONENTES DE INTERFAZ */
+        /* COMPONENTES DE INTERFAZ ESTÁNDARES */
         .input-std { 
             width: 100%; 
             padding: 15px; 
-            border: 2px solid #cbd5e1; 
+            border: 2px solid #e2e8f0; 
             border-radius: 12px; 
             font-weight: 700; 
             text-transform: uppercase; 
@@ -64,60 +61,65 @@
         }
         .input-std:focus { 
             border-color: var(--accent-main); 
-            box-shadow: 0 0 0 4px rgba(146, 64, 14, 0.1); 
+            box-shadow: 0 0 0 4px rgba(180, 83, 9, 0.1); 
         }
 
         /* CHECKBOXES PERSONALIZADOS PARA HISTORIA CLÍNICA */
-        .hc-checkbox-container {
+        .check-container {
             display: flex;
             align-items: center;
             gap: 8px;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: 700;
+            font-size: 11px;
+            font-weight: 800;
             color: #475569;
             text-transform: uppercase;
-        }
-        .hc-checkbox {
-            appearance: none;
-            width: 24px;
-            height: 24px;
-            border: 2px solid #cbd5e1;
-            border-radius: 6px;
-            background-color: #f1f5f9;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
         }
-        .hc-checkbox:checked {
-            background-color: var(--primary-dark);
-            border-color: var(--primary-dark);
+        .check-container input[type="checkbox"] {
+            appearance: none;
+            background-color: #fff;
+            margin: 0;
+            font: inherit;
+            color: currentColor;
+            width: 1.5em;
+            height: 1.5em;
+            border: 2px solid #cbd5e1;
+            border-radius: 4px;
+            display: grid;
+            place-content: center;
+            cursor: pointer;
+            transition: 0.2s all ease-in-out;
         }
-        .hc-checkbox:checked::after {
-            content: '\f00c';
-            font-family: 'Font Awesome 5 Free';
-            font-weight: 900;
-            color: white;
-            font-size: 14px;
+        .check-container input[type="checkbox"]::before {
+            content: "";
+            width: 0.8em;
+            height: 0.8em;
+            transform: scale(0);
+            transition: 120ms transform ease-in-out;
+            box-shadow: inset 1em 1em var(--accent-main);
+            background-color: var(--accent-main);
+            transform-origin: center;
+            clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+        }
+        .check-container input[type="checkbox"]:checked {
+            border-color: var(--accent-main);
+            background-color: #fef3c7;
+        }
+        .check-container input[type="checkbox"]:checked::before {
+            transform: scale(1);
         }
 
-        /* NAVEGACIÓN */
+        /* NAVEGACIÓN Y TABS */
         .tab-active { 
             background-color: var(--primary-dark) !important; 
             color: white !important; 
             font-weight: 900; 
         }
         .tab-inactive { 
-            color: #475569; 
+            color: #78350f; 
             background-color: white; 
             font-weight: 600; 
-            border-bottom: 2px solid #e2e8f0; 
-        }
-        .tab-inactive:hover {
-            background-color: #f8fafc;
-            color: var(--accent-main);
+            border-bottom: 2px solid #fed7aa; 
         }
 
         /* SEMÁFORO DE FARMACIA */
@@ -126,72 +128,60 @@
         .stock-green { background: #f0fdf4; border-left: 8px solid #22c55e; color: #166534; }
         .stock-expired { background: #450a0a !important; color: white !important; border-left: 8px solid black; }
 
-        /* TABLAS ESTILO EXCEL */
+        /* TABLAS ESTILO EXCEL PARA CENSO */
         .excel-table { width: 100%; border-collapse: collapse; font-size: 11px; background: white; }
-        .excel-table th { background: #e2e8f0; border: 1px solid #cbd5e1; padding: 12px; text-transform: uppercase; font-weight: 900; text-align: left; color: #1e293b; }
-        .excel-table td { border: 1px solid #e2e8f0; padding: 12px; font-weight: 600; }
+        .excel-table th { background: #ffedd5; border: 1px solid #fdba74; padding: 12px; text-transform: uppercase; font-weight: 900; text-align: left; color: #7c2d12; }
+        .excel-table td { border: 1px solid #fed7aa; padding: 12px; font-weight: 600; }
 
-        /* LOGIN (PANTALLA COMPLETA) - SE MANTIENE INTACTO EL DISEÑO BASE */
+        /* PANTALLA DE LOGIN (PANTALLA COMPLETA INVIOLABLE) */
         #login-overlay { 
             position: fixed; inset: 0; 
             background-color: #fffbeb; 
             display: flex; align-items: center; justify-content: center; z-index: 1000; flex-direction: column; 
         }
         .login-box { width: 100%; max-width: 460px; text-align: center; padding: 2rem; }
-        
         .brand-title { font-weight: 900; text-transform: uppercase; color: #000; line-height: 1; letter-spacing: -2px; font-size: 3rem; }
         .brand-subtitle { font-weight: 900; text-transform: uppercase; color: #b45309; line-height: 1; letter-spacing: -1px; font-size: 3rem; margin-top: 8px; }
 
-        /* DISEÑO DE HISTORIAL CLÍNICO MODAL */
-        .hc-section-title {
-            background-color: #1e293b;
-            color: white;
-            padding: 10px 20px;
-            font-weight: 900;
-            text-transform: uppercase;
-            font-size: 12px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            letter-spacing: 1px;
+        /* MODAL OVERLAYS (PARA VER HISTORIA CLÍNICA COMPLETA LOS DOCTORES) */
+        .modal-overlay {
+            position: fixed; inset: 0; background-color: rgba(0,0,0,0.8); z-index: 9999;
+            display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px);
         }
 
         /* ========================================= */
-        /* DISEÑO DE IMPRESIÓN ADAPTATIVO (CARTA) */
+        /* DISEÑO DE IMPRESIÓN ADAPTATIVO (CARTA)    */
         /* ========================================= */
         #print-zone { display: none; }
         @media print {
-            #app-container, #login-overlay, header, nav, .no-print { display: none !important; }
+            #app-container, #login-overlay, header, nav, .no-print, .modal-overlay { display: none !important; }
             body { background: white; margin: 0; padding: 0; }
             #print-zone { 
                 display: block !important; 
                 position: absolute; top: 0; left: 0; 
-                width: 21.59cm; height: 27.94cm; /* Tamaño Carta 8.5x11 */
+                width: 21.59cm; min-height: 27.94cm; /* Tamaño Carta 8.5x11 */
                 z-index: 9999; padding: 1.2cm; box-sizing: border-box;
-                overflow: hidden;
+                overflow: visible; background: white;
             }
             .receta-maestra { 
                 width: 100%; height: 100%; 
                 border: 3px solid #000; color: #000; 
                 padding: 35px; position: relative;
-                box-sizing: border-box;
-                display: flex; flex-direction: column;
+                box-sizing: border-box; display: flex; flex-direction: column;
             }
             .receta-header { text-align: center; border-bottom: 5px solid #d97706; padding-bottom: 15px; margin-bottom: 20px; }
             .print-brand-1 { font-size: 26px; font-weight: 900; color: #000; margin: 0; line-height: 1; }
             .print-brand-2 { font-size: 26px; font-weight: 900; color: #d97706; margin: 5px 0 0 0; line-height: 1; }
             
-            /* LÍNEA DE FIRMA CENTRAL */
             .firma-container {
-                margin-top: auto; 
-                margin-bottom: 30px;
-                text-align: center;
-                width: 100%;
+                margin-top: auto; padding-top: 30px; margin-bottom: 20px;
+                text-align: center; width: 100%; page-break-inside: avoid;
             }
-            .firma-linea {
-                width: 350px;
-                border-top: 2px solid #000;
-                margin: 0 auto 8px auto;
-            }
+            .firma-linea { width: 350px; border-top: 2px solid #000; margin: 0 auto 8px auto; }
+            
+            /* SALTO DE PÁGINA PARA HISTORIAL CLÍNICO EXTENSO */
+            .page-break { page-break-before: always; }
+            
             @page { size: letter; margin: 0; }
         }
         [v-cloak] { display: none; }
@@ -209,7 +199,7 @@
                     <div class="brand-title">FUERZA</div>
                     <div class="brand-title">GENERACIONAL</div>
                     <div class="brand-subtitle">JORNADAS DE SALUD</div>
-                    <p class="text-[10px] font-black mt-4 text-gray-400 tracking-[0.3em]">CFMM</p>
+                    <p class="text-[10px] font-black mt-4 text-gray-400 tracking-[0.3em]">CFMM - SISTEMA ONLINE</p>
                 </div>
                 
                 <form @submit.prevent="performLogin" class="space-y-6">
@@ -225,7 +215,7 @@
                     </div>
                     
                     <button type="submit" class="w-full bg-black text-white py-5 rounded-2xl font-black uppercase shadow-2xl hover:bg-zinc-800 transition-all text-sm tracking-widest active:scale-95">
-                        ENTRAR 
+                        ENTRAR AL PANEL
                     </button>
                 </form>
             </div>
@@ -233,17 +223,17 @@
 
         <div v-else id="app-container" class="min-h-screen pb-20">
             
-            <header class="bg-white border-b-4 border-amber-800 sticky top-0 z-40 shadow-xl no-print">
+            <header class="bg-white border-b-4 border-amber-600 sticky top-0 z-40 shadow-xl no-print">
                 <div class="container mx-auto px-6 py-4 flex justify-between items-center">
                     <div class="flex items-center gap-5">
-                        <div class="bg-amber-900 text-white p-4 rounded-3xl shadow-lg"><i class="fas fa-hospital-user text-2xl"></i></div>
+                        <div class="bg-amber-700 text-white p-4 rounded-3xl shadow-lg"><i class="fas fa-hospital-user text-2xl"></i></div>
                         <div>
                             <h1 class="text-xl font-black uppercase text-slate-900 leading-none">FUERZA GENERACIONAL</h1>
-                            <h2 class="text-xl font-black uppercase text-amber-800 leading-none mt-1">JORNADAS DE SALUD</h2>
-                            <p class="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-1 italic">CFMM | SESIÓN: {{ roleName }}</p>
+                            <h2 class="text-xl font-black uppercase text-amber-700 leading-none mt-1">JORNADAS DE SALUD</h2>
+                            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1 italic">CFMM | SESIÓN: {{ roleName }}</p>
                         </div>
                     </div>
-                    <button @click="logout" class="bg-red-700 text-white px-8 py-3 rounded-2xl font-black uppercase text-[10px] shadow-lg hover:bg-red-800 transition-all">CERRAR SESIÓN</button>
+                    <button @click="logout" class="bg-red-600 text-white px-8 py-3 rounded-2xl font-black uppercase text-[10px] shadow-lg hover:bg-red-700 transition-all">CERRAR SESIÓN</button>
                 </div>
                 
                 <nav class="flex overflow-x-auto bg-white border-t no-scrollbar shadow-inner">
@@ -259,12 +249,12 @@
                 <section v-if="activeTab === 'nosotros'" class="max-w-5xl mx-auto space-y-10 animate-fade-in">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
                         <div class="bg-white p-12 rounded-[3.5rem] border shadow-2xl relative overflow-hidden">
-                            <div class="absolute top-0 left-0 w-2 h-full bg-amber-700"></div>
-                            <h2 class="text-4xl font-black text-amber-900 uppercase mb-8 italic">Nosotros</h2>
+                            <div class="absolute top-0 left-0 w-2 h-full bg-amber-600"></div>
+                            <h2 class="text-4xl font-black text-amber-800 uppercase mb-8 italic">Nosotros</h2>
                             <p class="text-lg font-bold text-slate-600 leading-relaxed uppercase text-justify">Somos una plataforma ciudadana que busca convertirse en un referente en la ejecución de proyectos de ciudadanía activa y organizada.</p>
                         </div>
                         <div class="bg-slate-900 p-12 rounded-[3.5rem] text-white shadow-2xl relative overflow-hidden">
-                            <div class="absolute top-0 right-0 w-2 h-full bg-red-700"></div>
+                            <div class="absolute top-0 right-0 w-2 h-full bg-red-600"></div>
                             <h2 class="text-4xl font-black uppercase mb-8 italic">Visión</h2>
                             <p class="text-lg font-bold leading-relaxed uppercase text-justify">Convertirnos en un referente de participación ciudadana activa y organizada para generar cambios sostenibles y positivos en Puebla.</p>
                         </div>
@@ -272,13 +262,16 @@
                 </section>
 
                 <section v-if="activeTab === 'recepcion'" class="grid grid-cols-1 lg:grid-cols-3 gap-10 animate-fade-in">
-                    <div class="bg-white p-10 rounded-[3rem] border-4 border-slate-100 shadow-2xl h-fit">
-                        <h3 class="font-black text-sm uppercase mb-8 text-slate-500 border-b-2 pb-2 italic">Registro Beneficiario</h3>
+                    <div class="bg-white p-10 rounded-[3rem] border-4 border-amber-100 shadow-2xl h-fit">
+                        <h3 class="font-black text-sm uppercase mb-8 text-slate-400 border-b-2 pb-2 italic">Registro Beneficiario</h3>
                         <div class="space-y-5">
                             <input v-model="formP.nombre" placeholder="Nombre Completo" class="input-std">
                             <div class="grid grid-cols-2 gap-5">
                                 <input v-model.number="formP.edad" type="number" placeholder="Edad" class="input-std">
-                                <select v-model="formP.sexo" class="input-std"><option value="HOMBRE">HOMBRE</option><option value="MUJER">MUJER</option></select>
+                                <select v-model="formP.sexo" class="input-std">
+                                    <option value="HOMBRE">HOMBRE</option>
+                                    <option value="MUJER">MUJER</option>
+                                </select>
                             </div>
                             <input v-model="formP.domicilio" placeholder="Domicilio Completo" class="input-std">
                             <input v-model="formP.telefono" placeholder="Teléfono de Contacto" class="input-std">
@@ -288,33 +281,34 @@
                                 <option value="juridico">JURÍDICO</option>
                                 <option value="cosmetologia">COSMETOLOGÍA</option>
                             </select>
-                            <button @click="registerPatient" class="w-full bg-amber-800 text-white py-6 rounded-2xl font-black uppercase text-xs shadow-xl hover:bg-amber-900 active:scale-95 transition-all">GUARDAR REGISTRO</button>
+                            <button @click="registerPatient" class="w-full bg-amber-600 text-white py-6 rounded-2xl font-black uppercase text-xs shadow-xl hover:bg-amber-700 active:scale-95 transition-all">GUARDAR REGISTRO</button>
                         </div>
                     </div>
                     <div class="lg:col-span-2 bg-white rounded-[3rem] border-2 h-[750px] flex flex-col shadow-2xl overflow-hidden">
                         <div class="bg-slate-900 p-8 text-white font-black uppercase text-xs flex justify-between items-center">
                             <span>Fila de Espera Global</span>
-                            <span class="bg-amber-700 px-5 py-2 rounded-full">{{patients.length}} Pacientes</span>
+                            <span class="bg-amber-600 px-5 py-2 rounded-full">{{patients.length}} Pacientes</span>
                         </div>
                         <div class="overflow-y-auto p-6 space-y-4">
-                            <div v-for="p in patients" :key="p.id" class="flex justify-between items-center p-6 border-2 rounded-[2.5rem] hover:bg-slate-50 transition-all border-slate-200 shadow-sm">
+                            <div v-for="p in patients" :key="p.id" class="flex justify-between items-center p-6 border-2 rounded-[2.5rem] hover:bg-amber-50 transition-all border-slate-100 shadow-sm">
                                 <div>
                                     <p class="font-black text-base uppercase text-slate-900">{{ p.nombre }}</p>
-                                    <span class="text-[9px] font-black bg-slate-200 text-slate-800 px-3 py-1 rounded-full uppercase tracking-tighter">{{ p.servicio }}</span>
+                                    <span class="text-[9px] font-black bg-amber-100 text-amber-800 px-3 py-1 rounded-full uppercase tracking-tighter">{{ p.servicio }}</span>
                                 </div>
-                                <button v-if="roleName === 'SUPER' || roleName === 'ADMIN'" @click="deletePatient(p.id)" class="text-red-400 hover:text-red-700 p-3"><i class="fas fa-trash-alt text-2xl"></i></button>
+                                <button @click="deletePatient(p.id)" class="text-red-300 hover:text-red-600 p-3"><i class="fas fa-trash-alt text-2xl"></i></button>
                             </div>
                         </div>
                     </div>
                 </section>
                 <section v-if="activeTab === 'signos'" class="max-w-4xl mx-auto animate-fade-in">
-                    <div class="bg-white p-12 rounded-[4rem] border-4 shadow-2xl text-center border-slate-100">
-                        <h3 class="font-black text-2xl uppercase mb-10 text-slate-800">SIGNOS VITALES</h3>
+                    <div class="bg-white p-12 rounded-[4rem] border-4 shadow-2xl text-center border-amber-50 relative overflow-hidden">
+                        <div class="absolute top-0 right-0 bg-amber-600 text-white font-black text-[10px] px-8 py-2 rounded-bl-3xl">ÁREA DE ENFERMERÍA / INTERNOS</div>
+                        <h3 class="font-black text-3xl uppercase mb-10 text-slate-800 italic mt-4">Signos Vitales</h3>
                         
-                        <div class="bg-slate-50 p-6 rounded-[2rem] border-2 mb-8 text-left">
-                            <label class="text-[11px] font-black uppercase text-slate-500 block mb-3 ml-3"><i class="fas fa-user-nurse mr-2"></i> Personal en Turno (Internos/Enfermería)</label>
-                            <select v-model="internalStaffId" class="input-std h-16 shadow-sm border-slate-300">
-                                <option :value="null">-- SELECCIONA TU NOMBRE EN LA LISTA --</option>
+                        <div class="mb-8 text-left">
+                            <label class="text-[11px] font-black uppercase text-slate-400 block mb-2 ml-3">¿Quién toma los signos?</label>
+                            <select v-model="selectedEnfermeroId" class="input-std shadow-md border-amber-200">
+                                <option :value="null">-- SELECCIONA TU NOMBRE DEL PERSONAL --</option>
                                 <option v-for="s in staff" :key="s.id" :value="s.id">{{ s.nombre }} ({{ s.area }})</option>
                             </select>
                         </div>
@@ -324,219 +318,163 @@
                             <option v-for="p in pendingVitalsList" :key="p.id" :value="p.id">{{ p.nombre }} ({{p.servicio}})</option>
                         </select>
 
-                        <div v-if="currP.enfermeria" class="bg-slate-900 p-12 rounded-[4rem] border-2 text-left space-y-8 shadow-2xl relative overflow-hidden">
-                            <div class="absolute top-0 right-0 w-3 h-full bg-amber-600"></div>
-                            <p class="text-center font-black text-2xl uppercase text-white mb-8 border-b border-slate-700 pb-6">{{ currP.enfermeria.nombre }}</p>
+                        <div v-if="currP.enfermeria" class="bg-slate-50 p-10 rounded-[3rem] border-2 text-left space-y-8 shadow-inner">
+                            <p class="text-center font-black text-2xl uppercase text-amber-900 underline">{{ currP.enfermeria.nombre }}</p>
+                            <p class="text-center text-xs font-bold text-slate-500 uppercase">{{ currP.enfermeria.edad }} Años | {{ currP.enfermeria.sexo }}</p>
                             
-                            <div class="grid grid-cols-2 md:grid-cols-3 gap-8">
+                            <div class="grid grid-cols-2 md:grid-cols-3 gap-8 mt-6">
                                 <div v-for="(label, key) in {peso:'Peso (kg)', talla:'Talla (m)', ta:'Presión (TA)', temp:'Temp (°C)', fc:'Frec. Card.', glucosa:'Glucosa'}" :key="key">
                                     <label class="text-[11px] font-black uppercase text-slate-400 block mb-2 ml-3">{{ label }}</label>
-                                    <input v-model="vitalsForm[key]" class="input-std text-center text-2xl shadow-sm h-16 border-none text-slate-900">
+                                    <input v-model="vitalsForm[key]" class="input-std text-center text-2xl shadow-sm h-16 font-black text-slate-800" :placeholder="key === 'talla' ? 'Ej: 1.70' : ''">
                                 </div>
                             </div>
                             
-                            <button @click="saveVitalsAndContinue" class="w-full bg-amber-700 text-white py-8 rounded-[2.5rem] font-black uppercase text-sm mt-8 shadow-2xl hover:bg-amber-800 transition-all active:scale-95 flex items-center justify-center gap-3">
-                                CONTINÚA CON EL PROCESO <i class="fas fa-arrow-right"></i>
+                            <button @click="saveVitalsAndContinue" class="w-full bg-slate-900 text-white py-8 rounded-[2.5rem] font-black uppercase text-sm mt-8 shadow-2xl hover:bg-black active:scale-95 transition-all flex justify-center items-center gap-4">
+                                CONTINUAR CON EL PROCESO <i class="fas fa-arrow-right"></i>
                             </button>
                         </div>
                     </div>
                 </section>
 
-                <section v-if="activeTab === 'historia_clinica'" class="max-w-6xl mx-auto animate-fade-in">
-                    <div class="bg-white p-12 rounded-[4rem] border-t-8 border-slate-900 shadow-2xl space-y-10">
-                        <div class="flex justify-between items-center border-b-4 border-slate-100 pb-6">
+                <section v-if="activeTab === 'historia_clinica'" class="max-w-6xl mx-auto animate-fade-in space-y-8">
+                    <div class="bg-white p-10 rounded-[3rem] border-4 border-amber-600 shadow-2xl relative">
+                        
+                        <div class="flex justify-between items-end border-b-4 border-slate-900 pb-6 mb-8">
                             <div>
-                                <h2 class="text-3xl font-black uppercase text-slate-900">Historial Clínico</h2>
-                                <p class="text-[12px] font-black uppercase tracking-[0.3em] text-amber-700 mt-2">Documento Oficial de Registro</p>
+                                <h2 class="text-4xl font-black uppercase text-slate-900 italic">Historial Clínico</h2>
+                                <p class="text-amber-700 font-bold uppercase mt-2 text-sm tracking-widest">Fuerza Generacional - Formato Completo</p>
                             </div>
-                            <button @click="changeTab('medico')" class="bg-slate-200 text-slate-700 px-6 py-3 rounded-xl font-black text-xs uppercase hover:bg-slate-300 transition-all">
-                                <i class="fas fa-arrow-left mr-2"></i> VOLVER A CONSULTA
-                            </button>
+                            <div class="text-right" v-if="hcPatient">
+                                <p class="text-xl font-black uppercase text-slate-800">{{ hcPatient.nombre }}</p>
+                                <p class="text-xs font-bold text-slate-500 uppercase">{{ hcPatient.edad }} AÑOS | {{ hcPatient.sexo }}</p>
+                            </div>
                         </div>
 
-                        <div v-if="!selectedPatientId" class="bg-red-50 text-red-600 p-8 rounded-3xl font-black text-center border-2 border-red-200 uppercase">
-                            <i class="fas fa-exclamation-triangle text-4xl mb-4 block"></i>
-                            DEBE SELECCIONAR UN PACIENTE EN LA PESTAÑA DE MEDICINA PRIMERO
+                        <div v-if="!hcPatient" class="text-center py-10">
+                            <p class="text-red-500 font-black uppercase text-xl">NO SE HA SELECCIONADO NINGÚN PACIENTE EN SIGNOS VITALES.</p>
+                            <button @click="changeTab('signos')" class="mt-6 bg-slate-900 text-white px-8 py-4 rounded-2xl font-black uppercase text-xs">VOLVER A SIGNOS</button>
                         </div>
 
-                        <div v-else class="space-y-12">
-                            <div class="bg-slate-50 p-8 rounded-[2rem] border-2 border-slate-200 shadow-sm">
-                                <div class="hc-section-title"><i class="fas fa-id-card mr-2"></i> Datos Personales</div>
-                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                    <div class="lg:col-span-2">
-                                        <label class="text-[10px] font-black uppercase text-slate-400 ml-3">Nombre</label>
-                                        <input v-model="hcForm.nombre" class="input-std bg-slate-200 cursor-not-allowed" readonly>
+                        <div v-else class="space-y-10">
+                            <div class="bg-slate-50 p-8 rounded-3xl border border-slate-200 shadow-sm">
+                                <h4 class="font-black text-sm uppercase text-amber-700 mb-6 flex items-center gap-2"><i class="fas fa-user-tag"></i> Datos Personales Complementarios</h4>
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                    <div>
+                                        <label class="text-[10px] font-black uppercase text-slate-500 ml-2">Fecha de Nacimiento</label>
+                                        <input v-model="hcForm.f_nacimiento" type="date" class="input-std">
                                     </div>
                                     <div>
-                                        <label class="text-[10px] font-black uppercase text-slate-400 ml-3">Estado Civil</label>
-                                        <input v-model="hcForm.estadoCivil" class="input-std" placeholder="Ej. Soltero/a">
+                                        <label class="text-[10px] font-black uppercase text-slate-500 ml-2">Estado Civil</label>
+                                        <select v-model="hcForm.estado_civil" class="input-std">
+                                            <option value="">-- SELECCIONAR --</option>
+                                            <option value="SOLTERO(A)">SOLTERO(A)</option><option value="CASADO(A)">CASADO(A)</option>
+                                            <option value="DIVORCIADO(A)">DIVORCIADO(A)</option><option value="VIUDO(A)">VIUDO(A)</option>
+                                            <option value="UNIÓN LIBRE">UNIÓN LIBRE</option>
+                                        </select>
                                     </div>
                                     <div>
-                                        <label class="text-[10px] font-black uppercase text-slate-400 ml-3">Religión</label>
-                                        <input v-model="hcForm.religion" class="input-std" placeholder="Opcional">
-                                    </div>
-                                    <div>
-                                        <label class="text-[10px] font-black uppercase text-slate-400 ml-3">Fecha de Nacimiento</label>
-                                        <input type="date" v-model="hcForm.fechaNacimiento" class="input-std">
-                                    </div>
-                                    <div>
-                                        <label class="text-[10px] font-black uppercase text-slate-400 ml-3">Edad</label>
-                                        <input v-model="hcForm.edad" class="input-std bg-slate-200 cursor-not-allowed" readonly>
+                                        <label class="text-[10px] font-black uppercase text-slate-500 ml-2">Religión</label>
+                                        <input v-model="hcForm.religion" type="text" placeholder="Ej: Católica" class="input-std">
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="bg-white p-8 rounded-[2rem] border-2 border-amber-100 shadow-sm">
-                                <div class="hc-section-title bg-amber-900"><i class="fas fa-dna mr-2"></i> Antecedentes Heredofamiliares</div>
-                                <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-                                    <label class="hc-checkbox-container">
-                                        <input type="checkbox" v-model="hcForm.ahf_diabetes" class="hc-checkbox"> Diabetes
-                                    </label>
-                                    <label class="hc-checkbox-container">
-                                        <input type="checkbox" v-model="hcForm.ahf_hipertension" class="hc-checkbox"> Hipertensión
-                                    </label>
-                                    <label class="hc-checkbox-container">
-                                        <input type="checkbox" v-model="hcForm.ahf_nefropatias" class="hc-checkbox"> Nefropatías
-                                    </label>
-                                    <label class="hc-checkbox-container">
-                                        <input type="checkbox" v-model="hcForm.ahf_tuberculosis" class="hc-checkbox"> Tuberculosis
-                                    </label>
-                                    <label class="hc-checkbox-container">
-                                        <input type="checkbox" v-model="hcForm.ahf_cancer" class="hc-checkbox"> Cáncer
-                                    </label>
-                                    <label class="hc-checkbox-container">
-                                        <input type="checkbox" v-model="hcForm.ahf_cardiopatias" class="hc-checkbox"> Cardiopatías
-                                    </label>
+                            <div class="bg-slate-50 p-8 rounded-3xl border border-slate-200 shadow-sm">
+                                <h4 class="font-black text-sm uppercase text-amber-700 mb-6 flex items-center gap-2"><i class="fas fa-users"></i> Antecedentes Heredofamiliares</h4>
+                                <div class="grid grid-cols-2 md:grid-cols-3 gap-6 bg-white p-6 rounded-2xl border">
+                                    <label class="check-container"><input type="checkbox" v-model="hcForm.ahf_diabetes"> DIABETES</label>
+                                    <label class="check-container"><input type="checkbox" v-model="hcForm.ahf_hta"> HIPERTENSIÓN</label>
+                                    <label class="check-container"><input type="checkbox" v-model="hcForm.ahf_nefro"> NEFROPATÍAS</label>
+                                    <label class="check-container"><input type="checkbox" v-model="hcForm.ahf_tb"> TUBERCULOSIS</label>
+                                    <label class="check-container"><input type="checkbox" v-model="hcForm.ahf_cancer"> CÁNCER</label>
+                                    <label class="check-container"><input type="checkbox" v-model="hcForm.ahf_cardio"> CARDIOPATÍAS</label>
                                 </div>
                             </div>
 
-                            <div class="bg-white p-8 rounded-[2rem] border-2 border-red-100 shadow-sm">
-                                <div class="hc-section-title bg-red-900"><i class="fas fa-notes-medical mr-2"></i> Antecedentes Personales Patológicos</div>
-                                <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-6">
-                                    <label class="hc-checkbox-container">
-                                        <input type="checkbox" v-model="hcForm.app_diabetes" class="hc-checkbox"> Diabetes
-                                    </label>
-                                    <label class="hc-checkbox-container">
-                                        <input type="checkbox" v-model="hcForm.app_hipertension" class="hc-checkbox"> Hipertensión
-                                    </label>
-                                    <label class="hc-checkbox-container">
-                                        <input type="checkbox" v-model="hcForm.app_nefropatias" class="hc-checkbox"> Nefropatías
-                                    </label>
-                                    <label class="hc-checkbox-container">
-                                        <input type="checkbox" v-model="hcForm.app_tuberculosis" class="hc-checkbox"> Tuberculosis
-                                    </label>
-                                    <label class="hc-checkbox-container">
-                                        <input type="checkbox" v-model="hcForm.app_cancer" class="hc-checkbox"> Cáncer
-                                    </label>
+                            <div class="bg-slate-50 p-8 rounded-3xl border border-slate-200 shadow-sm">
+                                <h4 class="font-black text-sm uppercase text-amber-700 mb-6 flex items-center gap-2"><i class="fas fa-notes-medical"></i> Antecedentes Personales Patológicos</h4>
+                                <div class="grid grid-cols-2 md:grid-cols-4 gap-6 bg-white p-6 rounded-2xl border mb-6">
+                                    <label class="check-container"><input type="checkbox" v-model="hcForm.app_diabetes"> DIABETES</label>
+                                    <label class="check-container"><input type="checkbox" v-model="hcForm.app_hta"> HIPERTENSIÓN</label>
+                                    <label class="check-container"><input type="checkbox" v-model="hcForm.app_nefro"> NEFROPATÍAS</label>
+                                    <label class="check-container"><input type="checkbox" v-model="hcForm.app_tb"> TUBERCULOSIS</label>
+                                    <label class="check-container"><input type="checkbox" v-model="hcForm.app_cancer"> CÁNCER</label>
+                                    <label class="check-container"><input type="checkbox" v-model="hcForm.app_alcohol"> ALCOHOLISMO</label>
+                                    <label class="check-container"><input type="checkbox" v-model="hcForm.app_tabaco"> TABAQUISMO</label>
                                 </div>
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div class="flex flex-col gap-2">
-                                        <label class="hc-checkbox-container">
-                                            <input type="checkbox" v-model="hcForm.app_alergias" class="hc-checkbox"> Alergias
-                                        </label>
-                                        <input v-if="hcForm.app_alergias" v-model="hcForm.app_alergias_esp" class="input-std border-red-300" placeholder="Especificar Alergias">
+                                    <div class="bg-white p-5 rounded-2xl border">
+                                        <label class="check-container mb-3"><input type="checkbox" v-model="hcForm.app_alergias"> ALERGIAS</label>
+                                        <input v-if="hcForm.app_alergias" v-model="hcForm.app_alergias_esp" class="input-std h-10 border-red-200 text-red-600 font-black" placeholder="Especifique alergia">
                                     </div>
-                                    <div class="flex flex-col gap-2">
-                                        <label class="hc-checkbox-container">
-                                            <input type="checkbox" v-model="hcForm.app_cirugias" class="hc-checkbox"> Cirugías Previas
-                                        </label>
-                                        <input v-if="hcForm.app_cirugias" v-model="hcForm.app_cirugias_esp" class="input-std border-red-300" placeholder="Especificar Cirugías">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="bg-white p-8 rounded-[2rem] border-2 border-green-100 shadow-sm">
-                                <div class="hc-section-title bg-green-900"><i class="fas fa-leaf mr-2"></i> Antecedentes Personales No Patológicos</div>
-                                <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-6">
-                                    <label class="hc-checkbox-container">
-                                        <input type="checkbox" v-model="hcForm.apnp_alcohol" class="hc-checkbox"> Alcoholismo
-                                    </label>
-                                    <label class="hc-checkbox-container">
-                                        <input type="checkbox" v-model="hcForm.apnp_tabaquismo" class="hc-checkbox"> Tabaquismo
-                                    </label>
-                                    <label class="hc-checkbox-container">
-                                        <input type="checkbox" v-model="hcForm.apnp_animales" class="hc-checkbox"> Convivencia con Animales
-                                    </label>
-                                </div>
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div>
-                                        <label class="text-[10px] font-black uppercase text-slate-400 ml-3">Alimentación</label>
-                                        <input v-model="hcForm.apnp_alimentacion" class="input-std" placeholder="Ej. Buena, Regular, Mala">
-                                    </div>
-                                    <div>
-                                        <label class="text-[10px] font-black uppercase text-slate-400 ml-3">Actividad Física</label>
-                                        <input v-model="hcForm.apnp_actividad" class="input-std" placeholder="Frecuencia y tipo">
+                                    <div class="bg-white p-5 rounded-2xl border">
+                                        <label class="check-container mb-3"><input type="checkbox" v-model="hcForm.app_cirugias"> CIRUGÍAS PREVIAS</label>
+                                        <input v-if="hcForm.app_cirugias" v-model="hcForm.app_cirugias_esp" class="input-std h-10" placeholder="Especifique cirugía">
                                     </div>
                                 </div>
                             </div>
 
-                            <div v-if="hcForm.sexo === 'MUJER'" class="bg-white p-8 rounded-[2rem] border-2 border-pink-100 shadow-sm">
-                                <div class="hc-section-title bg-pink-900"><i class="fas fa-venus mr-2"></i> Gineco Obstétricos</div>
-                                <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-6">
+                            <div class="bg-slate-50 p-8 rounded-3xl border border-slate-200 shadow-sm">
+                                <h4 class="font-black text-sm uppercase text-amber-700 mb-6 flex items-center gap-2"><i class="fas fa-apple-alt"></i> Antecedentes Personales No Patológicos</h4>
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                                     <div>
-                                        <label class="text-[10px] font-black uppercase text-slate-400 ml-3">Menarca (Años)</label>
-                                        <input type="number" v-model="hcForm.ago_menarca" class="input-std">
+                                        <label class="text-[10px] font-black uppercase text-slate-500 ml-2">Alimentación</label>
+                                        <select v-model="hcForm.apnp_alimentacion" class="input-std">
+                                            <option value="">-- SELECCIONAR --</option>
+                                            <option value="BUENA">BUENA</option><option value="REGULAR">REGULAR</option><option value="MALA">MALA</option>
+                                        </select>
                                     </div>
                                     <div>
-                                        <label class="text-[10px] font-black uppercase text-slate-400 ml-3">IVSA (Años)</label>
-                                        <input type="number" v-model="hcForm.ago_ivsa" class="input-std">
+                                        <label class="text-[10px] font-black uppercase text-slate-500 ml-2">Actividad Física</label>
+                                        <select v-model="hcForm.apnp_fisica" class="input-std">
+                                            <option value="">-- SELECCIONAR --</option>
+                                            <option value="SEDENTARIO">SEDENTARIO</option><option value="OCASIONAL">OCASIONAL</option><option value="FRECUENTE">FRECUENTE</option>
+                                        </select>
                                     </div>
-                                    <label class="hc-checkbox-container mt-6">
-                                        <input type="checkbox" v-model="hcForm.ago_ciclo" class="hc-checkbox"> Ciclo Regular
-                                    </label>
-                                    <label class="hc-checkbox-container mt-6">
-                                        <input type="checkbox" v-model="hcForm.ago_dismenorrea" class="hc-checkbox"> Dismenorrea
-                                    </label>
-                                </div>
-                                <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-6">
-                                    <div>
-                                        <label class="text-[10px] font-black uppercase text-slate-400 ml-3">Gestas</label>
-                                        <input type="number" v-model="hcForm.ago_gestas" class="input-std">
-                                    </div>
-                                    <div>
-                                        <label class="text-[10px] font-black uppercase text-slate-400 ml-3">Partos</label>
-                                        <input type="number" v-model="hcForm.ago_partos" class="input-std">
-                                    </div>
-                                    <div>
-                                        <label class="text-[10px] font-black uppercase text-slate-400 ml-3">Abortos</label>
-                                        <input type="number" v-model="hcForm.ago_abortos" class="input-std">
-                                    </div>
-                                    <div>
-                                        <label class="text-[10px] font-black uppercase text-slate-400 ml-3">Cesáreas</label>
-                                        <input type="number" v-model="hcForm.ago_cesareas" class="input-std">
-                                    </div>
-                                </div>
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div>
-                                        <label class="text-[10px] font-black uppercase text-slate-400 ml-3">FUM (Última Menstruación)</label>
-                                        <input type="date" v-model="hcForm.ago_fum" class="input-std">
-                                    </div>
-                                    <div>
-                                        <label class="text-[10px] font-black uppercase text-slate-400 ml-3">Método Anticonceptivo</label>
-                                        <input v-model="hcForm.ago_metodo" class="input-std" placeholder="Especifique">
+                                    <div class="flex items-center bg-white border rounded-2xl px-5 h-[54px] mt-[22px]">
+                                        <label class="check-container w-full"><input type="checkbox" v-model="hcForm.apnp_animales"> CONVIVENCIA CON ANIMALES</label>
                                     </div>
                                 </div>
                             </div>
-                            
-                            <button @click="saveHistoriaClinica" class="w-full bg-slate-900 text-white py-8 rounded-[2.5rem] font-black uppercase text-sm mt-8 shadow-2xl hover:bg-black transition-all active:scale-95 flex items-center justify-center gap-3">
-                                <i class="fas fa-cloud-upload-alt text-2xl"></i> GUARDAR HISTORIAL CLÍNICO EN BASE DE DATOS
+
+                            <div v-if="hcPatient.sexo === 'MUJER'" class="bg-pink-50 p-8 rounded-3xl border border-pink-200 shadow-sm">
+                                <h4 class="font-black text-sm uppercase text-pink-700 mb-6 flex items-center gap-2"><i class="fas fa-venus"></i> Gineco Obstétricos</h4>
+                                <div class="grid grid-cols-2 md:grid-cols-5 gap-6 mb-6">
+                                    <div><label class="text-[10px] font-black uppercase text-pink-500 ml-2">Menarca (Edad)</label><input v-model="hcForm.go_menarca" type="number" class="input-std border-pink-100"></div>
+                                    <div><label class="text-[10px] font-black uppercase text-pink-500 ml-2">IVSA (Edad)</label><input v-model="hcForm.go_ivsa" type="number" class="input-std border-pink-100"></div>
+                                    <div class="flex flex-col justify-end pb-3"><label class="check-container text-pink-700"><input type="checkbox" v-model="hcForm.go_ciclo"> CICLO REGULAR</label></div>
+                                    <div class="flex flex-col justify-end pb-3"><label class="check-container text-pink-700"><input type="checkbox" v-model="hcForm.go_dismenorrea"> DISMENORREA</label></div>
+                                    <div><label class="text-[10px] font-black uppercase text-pink-500 ml-2">FUM (Últ. Menst.)</label><input v-model="hcForm.go_fum" type="date" class="input-std border-pink-100 text-xs"></div>
+                                </div>
+                                <div class="grid grid-cols-2 md:grid-cols-5 gap-6">
+                                    <div><label class="text-[10px] font-black uppercase text-pink-500 ml-2">Gestas</label><input v-model="hcForm.go_gestas" type="number" class="input-std border-pink-100"></div>
+                                    <div><label class="text-[10px] font-black uppercase text-pink-500 ml-2">Partos</label><input v-model="hcForm.go_partos" type="number" class="input-std border-pink-100"></div>
+                                    <div><label class="text-[10px] font-black uppercase text-pink-500 ml-2">Abortos</label><input v-model="hcForm.go_abortos" type="number" class="input-std border-pink-100"></div>
+                                    <div><label class="text-[10px] font-black uppercase text-pink-500 ml-2">Cesáreas</label><input v-model="hcForm.go_cesareas" type="number" class="input-std border-pink-100"></div>
+                                    <div><label class="text-[10px] font-black uppercase text-pink-500 ml-2">Método Anticonc.</label><input v-model="hcForm.go_metodo" type="text" placeholder="Ej: DIU" class="input-std border-pink-100"></div>
+                                </div>
+                            </div>
+
+                            <button @click="saveHistoriaClinica" class="w-full bg-green-700 text-white py-8 rounded-[3rem] font-black uppercase text-lg shadow-2xl hover:bg-green-800 active:scale-95 transition-all flex justify-center items-center gap-4">
+                                <i class="fas fa-save text-2xl"></i> GUARDAR HISTORIA CLÍNICA (TIEMPO REAL)
                             </button>
                         </div>
                     </div>
                 </section>
-
                 <section v-if="['medico', 'psicologia', 'cosmetologia', 'juridico'].includes(activeTab)" class="max-w-6xl mx-auto space-y-8 animate-fade-in">
+                    
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <div class="bg-white p-8 border-2 rounded-[2.5rem] shadow-xl border-slate-100">
-                            <label class="text-[11px] font-black text-slate-500 uppercase ml-3 block mb-2">Beneficiario en Turno</label>
-                            <select v-model="selectedPatientId" @change="loadSelectedPatient(activeTab)" class="input-std">
+                            <label class="text-[11px] font-black text-slate-400 uppercase ml-3 block mb-2">Beneficiario en Turno</label>
+                            <select v-model="selectedPatientId" @change="loadSelectedPatient(activeTab)" class="input-std shadow-inner border-slate-200">
                                 <option :value="null">-- ELEGIR PACIENTE DE LA FILA --</option>
                                 <option v-for="p in waitingFor(activeTab)" :key="p.id" :value="p.id">{{ p.nombre }}</option>
                             </select>
                         </div>
                         <div class="bg-white p-8 border-2 rounded-[2.5rem] shadow-xl border-slate-100">
-                            <label class="text-[11px] font-black text-slate-500 uppercase ml-3 block mb-2">{{ activeTab === 'juridico' ? 'Licenciado' : 'Especialista' }}</label>
-                            <select v-model="selStaffId[activeTab]" class="input-std">
-                                <option :value="null">-- SELECCIONAR {{ activeTab === 'juridico' ? 'LICENCIADO' : 'MÉDICO' }} --</option>
+                            <label class="text-[11px] font-black text-slate-400 uppercase ml-3 block mb-2">{{ activeTab === 'juridico' ? 'Licenciado en Turno' : 'Especialista en Turno' }}</label>
+                            <select v-model="selStaffId[activeTab]" class="input-std shadow-inner border-slate-200">
+                                <option :value="null">-- SELECCIONAR {{ activeTab === 'juridico' ? 'LICENCIADO' : 'MÉDICO / ESPECIALISTA' }} --</option>
                                 <option v-for="s in staffByArea(activeTab)" :key="s.id" :value="s.id">{{ s.nombre }}</option>
                             </select>
                         </div>
@@ -544,271 +482,315 @@
 
                     <div v-if="currP[activeTab]" class="bg-white p-12 rounded-[4rem] border-t-8 border-slate-900 shadow-2xl space-y-10 relative">
                         
-                        <div class="flex justify-between items-center bg-slate-50 p-6 rounded-3xl border-2 border-slate-200 shadow-inner">
-                            <div>
-                                <h3 class="font-black text-xl uppercase text-slate-800">{{ currP[activeTab].nombre }}</h3>
-                                <p class="text-[11px] font-bold text-slate-500 uppercase mt-1">EDAD: {{ currP[activeTab].edad }} | SEXO: {{ currP[activeTab].sexo }}</p>
-                                <p v-if="currP[activeTab].vitals" class="text-[10px] font-black text-amber-700 uppercase mt-2">
-                                    T/A: {{currP[activeTab].vitals.ta}} | F.C: {{currP[activeTab].vitals.fc}} | TEMP: {{currP[activeTab].vitals.temp}}°C | GLUCOSA: {{currP[activeTab].vitals.glucosa}}
-                                </p>
-                            </div>
-                            <button @click="showModalHC = true" class="bg-amber-700 text-white px-8 py-4 rounded-2xl font-black text-[10px] uppercase shadow-xl hover:bg-amber-800 transition-all flex items-center gap-2">
-                                <i class="fas fa-file-medical-alt text-lg"></i> VER HISTORIAL CLÍNICO
+                        <div v-if="activeTab === 'medico' && currP[activeTab].historia_clinica" class="text-center border-b-2 pb-10 mb-8 border-dashed border-slate-300">
+                            <button @click="viewHistoriaClinicaModal = true" class="bg-amber-600 text-white px-12 py-6 rounded-[2.5rem] font-black uppercase text-sm shadow-xl hover:bg-amber-700 active:scale-95 transition-all inline-flex items-center gap-4 border-4 border-amber-200">
+                                <i class="fas fa-notes-medical text-3xl"></i> VER HISTORIA CLÍNICA COMPLETA DEL PACIENTE
                             </button>
                         </div>
-                        
+
                         <div v-if="activeTab !== 'juridico'">
-                            <label class="text-[11px] font-black text-red-600 uppercase ml-3 block mb-2 italic"><i class="fas fa-exclamation-circle mr-1"></i> Alergias Detectadas</label>
-                            <input v-model="consGen.alergias" class="input-std border-red-200 font-black text-red-700 h-20 text-xl shadow-inner bg-red-50" placeholder="ESCRIBIR: NEGADAS O ALERGIA ESPECÍFICA">
+                            <label class="text-[11px] font-black text-red-500 uppercase ml-3 block mb-2 italic">Alergias Detectadas (Revisión Rápida)</label>
+                            <input v-model="consGen.alergias" class="input-std border-red-200 font-black text-red-600 h-20 text-xl shadow-inner bg-red-50" placeholder="ESCRIBIR: NEGADAS O ALERGIA ESPECÍFICA">
                         </div>
                         
                         <div class="space-y-6">
-                            <label class="text-[11px] font-black uppercase text-slate-500 ml-3 block">{{ activeTab === 'juridico' ? 'Descripción de Hechos' : 'Diagnóstico Clínico' }}</label>
-                            <textarea v-model="consGen.diagnostico" class="input-std h-40 normal-case" placeholder="Escriba aquí los detalles..."></textarea>
+                            <label class="text-[11px] font-black uppercase text-slate-400 ml-3 block">{{ activeTab === 'juridico' ? 'Descripción de los Hechos (Asunto Legal)' : 'Diagnóstico Clínico / Psicológico' }}</label>
+                            <textarea v-model="consGen.diagnostico" class="input-std h-40 normal-case bg-slate-50 border-slate-200" placeholder="Describa a detalle la situación o diagnóstico aquí..."></textarea>
                             
-                            <label class="text-[11px] font-black uppercase text-slate-500 ml-3 block">{{ activeTab === 'juridico' ? 'Asesoría Brindada' : 'Plan de Tratamiento' }}</label>
-                            <textarea v-model="consGen.tratamiento" class="input-std h-40 normal-case" placeholder="Escriba las indicaciones..."></textarea>
+                            <label class="text-[11px] font-black uppercase text-slate-400 ml-3 block">{{ activeTab === 'juridico' ? 'Asesoría Brindada y Recomendaciones' : 'Plan de Tratamiento y Recomendaciones' }}</label>
+                            <textarea v-model="consGen.tratamiento" class="input-std h-40 normal-case bg-slate-50 border-slate-200" placeholder="Escriba las indicaciones a seguir..."></textarea>
                         </div>
-                        <div v-if="['medico', 'cosmetologia'].includes(activeTab)" class="bg-slate-900 p-10 rounded-[3rem] shadow-2xl">
-                            <p class="text-white font-black text-xs uppercase mb-8 tracking-widest text-center"><i class="fas fa-pills mr-2"></i> Suministro de Insumos Médicos</p>
+
+                        <div v-if="['medico', 'cosmetologia'].includes(activeTab)" class="bg-slate-900 p-10 rounded-[3rem] shadow-2xl border-4 border-slate-800">
+                            <p class="text-amber-500 font-black text-sm uppercase mb-8 tracking-widest text-center flex items-center justify-center gap-3">
+                                <i class="fas fa-pills text-xl"></i> Suministro de Insumos y Medicamentos
+                            </p>
                             <div class="flex flex-col md:flex-row gap-5 mb-8">
-                                <select v-model="tempMed" class="input-std flex-1 h-16 border-none text-slate-800">
-                                    <option :value="null">-- Seleccionar de Almacén --</option>
-                                    <option v-for="m in inventory" :key="m.id" :value="m">{{m.nombre}} (Stock: {{m.stock}})</option>
+                                <select v-model="tempMed" class="input-std flex-1 h-16 bg-slate-800 text-white border-slate-700">
+                                    <option :value="null">-- Seleccionar Insumo del Almacén --</option>
+                                    <option v-for="m in inventory" :key="m.id" :value="m">{{m.nombre}} (Stock Disponible: {{m.stock}})</option>
                                 </select>
-                                <input v-model="tempDosis" class="input-std flex-1 h-16 border-none text-slate-800" placeholder="Indicación de uso / Dosis">
-                                <button @click="addToRecipe" class="bg-amber-700 text-white px-10 rounded-2xl font-black uppercase text-xs hover:bg-amber-800 transition-all shadow-lg active:scale-95">AÑADIR</button>
+                                <input v-model="tempDosis" class="input-std flex-1 h-16 bg-slate-800 text-white border-slate-700 placeholder-slate-500" placeholder="Indicación / Dosis (Ej: 1 cada 8 hrs)">
+                                <button @click="addToRecipe" class="bg-amber-600 text-white px-10 rounded-2xl font-black uppercase text-xs hover:bg-amber-700 transition-all border-2 border-amber-500">AÑADIR A RECETA</button>
                             </div>
                             <div class="space-y-3">
-                                <div v-for="(m, i) in recipe" :key="i" class="bg-white/10 p-4 text-white rounded-2xl flex justify-between items-center text-sm font-bold uppercase border border-white/10 shadow-sm">
-                                    <span>{{ m.nombre }} - <span class="text-amber-400 italic">{{ m.indicacion }}</span></span>
-                                    <i @click="recipe.splice(i,1)" class="fas fa-times cursor-pointer text-red-400 text-xl p-2 hover:bg-white/5 rounded-full transition-all"></i>
+                                <div v-for="(m, i) in recipe" :key="i" class="bg-slate-800 p-5 text-white rounded-2xl flex justify-between items-center text-sm font-bold uppercase border border-slate-700 shadow-sm">
+                                    <span><i class="fas fa-check-circle text-green-400 mr-3"></i> {{ m.nombre }} <span class="text-slate-500 mx-2">|</span> <span class="text-amber-400 italic">{{ m.indicacion }}</span></span>
+                                    <button @click="recipe.splice(i,1)" class="text-red-400 text-xl p-2 hover:bg-red-500 hover:text-white rounded-full transition-all w-10 h-10 flex items-center justify-center"><i class="fas fa-times"></i></button>
+                                </div>
+                                <div v-if="recipe.length === 0" class="text-center text-slate-500 text-xs font-black uppercase py-4">
+                                    AÚN NO SE HAN AÑADIDO MEDICAMENTOS A LA RECETA
                                 </div>
                             </div>
                         </div>
 
-                        <button @click="printRecipe(activeTab)" class="w-full bg-slate-900 text-white py-10 rounded-[3rem] font-black uppercase text-lg shadow-2xl hover:bg-black active:scale-95 transition-all">
-                            <i class="fas fa-print mr-3"></i> GUARDAR E IMPRIMIR DOCUMENTO
+                        <button @click="printRecipe(activeTab)" class="w-full bg-slate-900 text-white py-10 rounded-[3rem] font-black uppercase text-lg shadow-2xl hover:bg-black active:scale-95 transition-all border-b-8 border-slate-700 hover:border-slate-900 flex justify-center items-center gap-4">
+                            <i class="fas fa-print text-2xl"></i> CERRAR CONSULTA, GUARDAR EN BASE E IMPRIMIR DOCUMENTO
                         </button>
-                    </div>
-
-                    <div v-if="showModalHC" class="fixed inset-0 bg-slate-900/80 z-50 flex items-center justify-center p-4 md:p-10 backdrop-blur-sm animate-fade-in no-print">
-                        <div class="bg-white w-full max-w-5xl max-h-full rounded-[3rem] shadow-2xl flex flex-col overflow-hidden border-4 border-slate-200">
-                            <div class="bg-slate-900 p-8 flex justify-between items-center text-white">
-                                <div>
-                                    <h2 class="text-2xl font-black uppercase"><i class="fas fa-book-medical mr-3"></i> Historia Clínica Guardada</h2>
-                                    <p class="text-[10px] font-black tracking-[0.2em] text-slate-400 mt-1 uppercase">PACIENTE: {{ currP[activeTab]?.nombre }}</p>
-                                </div>
-                                <button @click="showModalHC = false" class="bg-red-600 hover:bg-red-700 text-white w-12 h-12 rounded-full flex items-center justify-center transition-all shadow-lg">
-                                    <i class="fas fa-times text-xl"></i>
-                                </button>
-                            </div>
-                            
-                            <div class="p-8 overflow-y-auto bg-slate-50 flex-grow" v-if="currP[activeTab]?.historiaClinica">
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                    <div class="bg-white p-6 rounded-3xl border-2 border-slate-200 shadow-sm">
-                                        <h4 class="font-black text-[11px] uppercase text-slate-400 mb-4 border-b pb-2">Antecedentes Heredofamiliares</h4>
-                                        <ul class="text-sm font-bold text-slate-700 uppercase space-y-2">
-                                            <li>Diabetes: <span class="text-amber-700">{{ currP[activeTab].historiaClinica.ahf_diabetes ? 'SÍ' : 'NO' }}</span></li>
-                                            <li>Hipertensión: <span class="text-amber-700">{{ currP[activeTab].historiaClinica.ahf_hipertension ? 'SÍ' : 'NO' }}</span></li>
-                                            <li>Nefropatías: <span class="text-amber-700">{{ currP[activeTab].historiaClinica.ahf_nefropatias ? 'SÍ' : 'NO' }}</span></li>
-                                            <li>Tuberculosis: <span class="text-amber-700">{{ currP[activeTab].historiaClinica.ahf_tuberculosis ? 'SÍ' : 'NO' }}</span></li>
-                                            <li>Cáncer: <span class="text-amber-700">{{ currP[activeTab].historiaClinica.ahf_cancer ? 'SÍ' : 'NO' }}</span></li>
-                                            <li>Cardiopatías: <span class="text-amber-700">{{ currP[activeTab].historiaClinica.ahf_cardiopatias ? 'SÍ' : 'NO' }}</span></li>
-                                        </ul>
-                                    </div>
-                                    <div class="bg-white p-6 rounded-3xl border-2 border-slate-200 shadow-sm">
-                                        <h4 class="font-black text-[11px] uppercase text-slate-400 mb-4 border-b pb-2">Personales Patológicos</h4>
-                                        <ul class="text-sm font-bold text-slate-700 uppercase space-y-2">
-                                            <li>Diabetes: <span class="text-amber-700">{{ currP[activeTab].historiaClinica.app_diabetes ? 'SÍ' : 'NO' }}</span></li>
-                                            <li>Hipertensión: <span class="text-amber-700">{{ currP[activeTab].historiaClinica.app_hipertension ? 'SÍ' : 'NO' }}</span></li>
-                                            <li>Alergias: <span class="text-red-600">{{ currP[activeTab].historiaClinica.app_alergias ? currP[activeTab].historiaClinica.app_alergias_esp : 'NEGADAS' }}</span></li>
-                                            <li>Cirugías: <span class="text-amber-700">{{ currP[activeTab].historiaClinica.app_cirugias ? currP[activeTab].historiaClinica.app_cirugias_esp : 'NEGADAS' }}</span></li>
-                                        </ul>
-                                    </div>
-                                    <div class="bg-white p-6 rounded-3xl border-2 border-slate-200 shadow-sm">
-                                        <h4 class="font-black text-[11px] uppercase text-slate-400 mb-4 border-b pb-2">No Patológicos</h4>
-                                        <ul class="text-sm font-bold text-slate-700 uppercase space-y-2">
-                                            <li>Alcoholismo: <span class="text-amber-700">{{ currP[activeTab].historiaClinica.apnp_alcohol ? 'SÍ' : 'NO' }}</span></li>
-                                            <li>Tabaquismo: <span class="text-amber-700">{{ currP[activeTab].historiaClinica.apnp_tabaquismo ? 'SÍ' : 'NO' }}</span></li>
-                                            <li>Alimentación: <span class="text-amber-700">{{ currP[activeTab].historiaClinica.apnp_alimentacion || 'N/A' }}</span></li>
-                                            <li>Actividad Física: <span class="text-amber-700">{{ currP[activeTab].historiaClinica.apnp_actividad || 'N/A' }}</span></li>
-                                        </ul>
-                                    </div>
-                                    <div v-if="currP[activeTab].sexo === 'MUJER'" class="bg-white p-6 rounded-3xl border-2 border-slate-200 shadow-sm">
-                                        <h4 class="font-black text-[11px] uppercase text-slate-400 mb-4 border-b pb-2">Gineco Obstétricos</h4>
-                                        <ul class="text-sm font-bold text-slate-700 uppercase space-y-2 grid grid-cols-2 gap-x-4">
-                                            <li>Menarca: <span class="text-amber-700">{{ currP[activeTab].historiaClinica.ago_menarca || '-' }}</span></li>
-                                            <li>IVSA: <span class="text-amber-700">{{ currP[activeTab].historiaClinica.ago_ivsa || '-' }}</span></li>
-                                            <li>Gestas: <span class="text-amber-700">{{ currP[activeTab].historiaClinica.ago_gestas || '0' }}</span></li>
-                                            <li>Partos: <span class="text-amber-700">{{ currP[activeTab].historiaClinica.ago_partos || '0' }}</span></li>
-                                            <li>Abortos: <span class="text-amber-700">{{ currP[activeTab].historiaClinica.ago_abortos || '0' }}</span></li>
-                                            <li>Cesáreas: <span class="text-amber-700">{{ currP[activeTab].historiaClinica.ago_cesareas || '0' }}</span></li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                            <div v-else class="p-12 text-center text-slate-400 font-black uppercase flex flex-col items-center justify-center flex-grow bg-slate-50">
-                                <i class="fas fa-folder-open text-6xl mb-6 text-slate-300"></i>
-                                NO SE HA GUARDADO UN HISTORIAL CLÍNICO COMPLETO PARA ESTE PACIENTE.
-                            </div>
-                        </div>
                     </div>
                 </section>
 
+                <div v-if="viewHistoriaClinicaModal && activeTab === 'medico' && currP.medico" class="modal-overlay">
+                    <div class="bg-white w-full max-w-4xl h-[85vh] rounded-[3rem] shadow-2xl flex flex-col overflow-hidden border-8 border-slate-900 animate-fade-in relative">
+                        <div class="bg-slate-900 text-white p-8 flex justify-between items-center shrink-0">
+                            <div>
+                                <h3 class="font-black text-2xl uppercase italic">EXPEDIENTE CLÍNICO DIGITAL</h3>
+                                <p class="text-[10px] font-black tracking-[0.3em] text-amber-500 mt-2">PACIENTE: {{ currP.medico.nombre }}</p>
+                            </div>
+                            <button @click="viewHistoriaClinicaModal = false" class="bg-red-600 w-12 h-12 rounded-full flex items-center justify-center font-black hover:bg-red-700 transition-all text-xl"><i class="fas fa-times"></i></button>
+                        </div>
+                        
+                        <div class="p-10 overflow-y-auto space-y-8 flex-grow bg-slate-50" v-if="currP.medico.historia_clinica">
+                            <div class="bg-white p-6 rounded-3xl border shadow-sm">
+                                <h4 class="font-black text-xs uppercase text-slate-400 border-b pb-2 mb-4">I. Datos Personales Complementarios</h4>
+                                <div class="grid grid-cols-3 gap-4 text-sm font-bold text-slate-800 uppercase">
+                                    <p><span class="text-slate-400 block text-[10px]">Fecha Nacimiento</span>{{ currP.medico.historia_clinica.f_nacimiento || 'N/D' }}</p>
+                                    <p><span class="text-slate-400 block text-[10px]">Estado Civil</span>{{ currP.medico.historia_clinica.estado_civil || 'N/D' }}</p>
+                                    <p><span class="text-slate-400 block text-[10px]">Religión</span>{{ currP.medico.historia_clinica.religion || 'N/D' }}</p>
+                                </div>
+                            </div>
+
+                            <div class="bg-white p-6 rounded-3xl border shadow-sm">
+                                <h4 class="font-black text-xs uppercase text-slate-400 border-b pb-2 mb-4">II. Antecedentes Heredofamiliares</h4>
+                                <div class="flex flex-wrap gap-3">
+                                    <span v-if="currP.medico.historia_clinica.ahf_diabetes" class="bg-red-100 text-red-800 px-4 py-2 rounded-xl text-xs font-black">DIABETES</span>
+                                    <span v-if="currP.medico.historia_clinica.ahf_hta" class="bg-red-100 text-red-800 px-4 py-2 rounded-xl text-xs font-black">HIPERTENSIÓN</span>
+                                    <span v-if="currP.medico.historia_clinica.ahf_nefro" class="bg-red-100 text-red-800 px-4 py-2 rounded-xl text-xs font-black">NEFROPATÍAS</span>
+                                    <span v-if="currP.medico.historia_clinica.ahf_tb" class="bg-red-100 text-red-800 px-4 py-2 rounded-xl text-xs font-black">TUBERCULOSIS</span>
+                                    <span v-if="currP.medico.historia_clinica.ahf_cancer" class="bg-red-100 text-red-800 px-4 py-2 rounded-xl text-xs font-black">CÁNCER</span>
+                                    <span v-if="currP.medico.historia_clinica.ahf_cardio" class="bg-red-100 text-red-800 px-4 py-2 rounded-xl text-xs font-black">CARDIOPATÍAS</span>
+                                    <span v-if="!currP.medico.historia_clinica.ahf_diabetes && !currP.medico.historia_clinica.ahf_hta && !currP.medico.historia_clinica.ahf_nefro && !currP.medico.historia_clinica.ahf_tb && !currP.medico.historia_clinica.ahf_cancer && !currP.medico.historia_clinica.ahf_cardio" class="text-slate-400 font-bold text-xs uppercase italic">Sin datos relevantes registrados.</span>
+                                </div>
+                            </div>
+
+                            <div class="bg-white p-6 rounded-3xl border shadow-sm">
+                                <h4 class="font-black text-xs uppercase text-slate-400 border-b pb-2 mb-4">III. Antecedentes Personales Patológicos</h4>
+                                <div class="flex flex-wrap gap-3 mb-4">
+                                    <span v-if="currP.medico.historia_clinica.app_diabetes" class="bg-amber-100 text-amber-800 px-4 py-2 rounded-xl text-xs font-black">DIABETES</span>
+                                    <span v-if="currP.medico.historia_clinica.app_hta" class="bg-amber-100 text-amber-800 px-4 py-2 rounded-xl text-xs font-black">HIPERTENSIÓN</span>
+                                    <span v-if="currP.medico.historia_clinica.app_nefro" class="bg-amber-100 text-amber-800 px-4 py-2 rounded-xl text-xs font-black">NEFROPATÍAS</span>
+                                    <span v-if="currP.medico.historia_clinica.app_tb" class="bg-amber-100 text-amber-800 px-4 py-2 rounded-xl text-xs font-black">TUBERCULOSIS</span>
+                                    <span v-if="currP.medico.historia_clinica.app_cancer" class="bg-amber-100 text-amber-800 px-4 py-2 rounded-xl text-xs font-black">CÁNCER</span>
+                                    <span v-if="currP.medico.historia_clinica.app_alcohol" class="bg-amber-100 text-amber-800 px-4 py-2 rounded-xl text-xs font-black">ALCOHOLISMO</span>
+                                    <span v-if="currP.medico.historia_clinica.app_tabaco" class="bg-amber-100 text-amber-800 px-4 py-2 rounded-xl text-xs font-black">TABAQUISMO</span>
+                                </div>
+                                <div class="grid grid-cols-2 gap-4 text-sm font-bold text-slate-800 uppercase bg-slate-50 p-4 rounded-2xl">
+                                    <p><span class="text-slate-400 block text-[10px]">Alergias</span>{{ currP.medico.historia_clinica.app_alergias ? currP.medico.historia_clinica.app_alergias_esp : 'NEGADAS' }}</p>
+                                    <p><span class="text-slate-400 block text-[10px]">Cirugías Previas</span>{{ currP.medico.historia_clinica.app_cirugias ? currP.medico.historia_clinica.app_cirugias_esp : 'NEGADAS' }}</p>
+                                </div>
+                            </div>
+
+                            <div class="bg-white p-6 rounded-3xl border shadow-sm">
+                                <h4 class="font-black text-xs uppercase text-slate-400 border-b pb-2 mb-4">IV. Antecedentes No Patológicos</h4>
+                                <div class="grid grid-cols-3 gap-4 text-sm font-bold text-slate-800 uppercase">
+                                    <p><span class="text-slate-400 block text-[10px]">Alimentación</span>{{ currP.medico.historia_clinica.apnp_alimentacion || 'N/D' }}</p>
+                                    <p><span class="text-slate-400 block text-[10px]">Actividad Física</span>{{ currP.medico.historia_clinica.apnp_fisica || 'N/D' }}</p>
+                                    <p><span class="text-slate-400 block text-[10px]">Convivencia Animales</span>{{ currP.medico.historia_clinica.apnp_animales ? 'SÍ' : 'NO' }}</p>
+                                </div>
+                            </div>
+
+                            <div v-if="currP.medico.sexo === 'MUJER'" class="bg-pink-50 p-6 rounded-3xl border border-pink-200 shadow-sm">
+                                <h4 class="font-black text-xs uppercase text-pink-500 border-b border-pink-200 pb-2 mb-4">V. Gineco Obstétricos</h4>
+                                <div class="grid grid-cols-4 gap-4 text-sm font-bold text-pink-900 uppercase mb-4">
+                                    <p><span class="text-pink-400 block text-[10px]">Menarca</span>{{ currP.medico.historia_clinica.go_menarca ? currP.medico.historia_clinica.go_menarca + ' AÑOS' : 'N/D' }}</p>
+                                    <p><span class="text-pink-400 block text-[10px]">IVSA</span>{{ currP.medico.historia_clinica.go_ivsa ? currP.medico.historia_clinica.go_ivsa + ' AÑOS' : 'N/D' }}</p>
+                                    <p><span class="text-pink-400 block text-[10px]">Ciclo Regular</span>{{ currP.medico.historia_clinica.go_ciclo ? 'SÍ' : 'NO' }}</p>
+                                    <p><span class="text-pink-400 block text-[10px]">Dismenorrea</span>{{ currP.medico.historia_clinica.go_dismenorrea ? 'SÍ' : 'NO' }}</p>
+                                </div>
+                                <div class="grid grid-cols-5 gap-4 text-sm font-bold text-pink-900 uppercase">
+                                    <p><span class="text-pink-400 block text-[10px]">Gestas</span>{{ currP.medico.historia_clinica.go_gestas || '0' }}</p>
+                                    <p><span class="text-pink-400 block text-[10px]">Partos</span>{{ currP.medico.historia_clinica.go_partos || '0' }}</p>
+                                    <p><span class="text-pink-400 block text-[10px]">Abortos</span>{{ currP.medico.historia_clinica.go_abortos || '0' }}</p>
+                                    <p><span class="text-pink-400 block text-[10px]">Cesáreas</span>{{ currP.medico.historia_clinica.go_cesareas || '0' }}</p>
+                                    <p><span class="text-pink-400 block text-[10px]">FUM</span>{{ currP.medico.historia_clinica.go_fum || 'N/D' }}</p>
+                                </div>
+                                <div class="mt-4 pt-4 border-t border-pink-200">
+                                    <p class="text-sm font-bold text-pink-900 uppercase"><span class="text-pink-400 block text-[10px]">Método Anticonceptivo</span>{{ currP.medico.historia_clinica.go_metodo || 'NINGUNO / NO ESPECIFICADO' }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <section v-if="activeTab === 'farmacia'" class="grid grid-cols-1 lg:grid-cols-3 gap-10 animate-fade-in">
-                    <div class="bg-white p-10 rounded-[3rem] border-2 shadow-2xl border-slate-100 h-fit">
-                        <h3 class="font-black text-xs uppercase mb-8 text-slate-500 border-b-2 pb-2 italic">Entrada de Insumos</h3>
+                    <div class="bg-white p-10 rounded-[3rem] border-2 shadow-2xl h-fit border-slate-100">
+                        <h3 class="font-black text-xs uppercase mb-8 text-slate-400 border-b-2 pb-2 italic">Entrada de Insumos</h3>
                         <div class="space-y-5">
-                            <input v-model="formI.nombre" placeholder="Nombre Comercial" class="input-std">
-                            <input v-model="formI.presentacion" placeholder="Presentación (Ej. Caja, Ampolleta)" class="input-std">
+                            <input v-model="formI.nombre" placeholder="Nombre Comercial / Fármaco" class="input-std">
+                            <input v-model="formI.presentacion" placeholder="Presentación (Ej: Caja 10 Tabs)" class="input-std">
                             <input v-model.number="formI.stock" type="number" placeholder="Cantidad Inicial" class="input-std">
                             <div>
-                                <label class="text-[10px] font-black uppercase text-slate-400 ml-3">Fecha de Vencimiento</label>
+                                <label class="text-[10px] font-black uppercase text-slate-400 ml-3">Fecha de Vencimiento (Caducidad)</label>
                                 <input v-model="formI.caducidad" type="date" class="input-std">
                             </div>
                             <button @click="addInventory" class="w-full bg-slate-900 text-white py-5 rounded-2xl font-black uppercase text-xs hover:bg-black transition-all shadow-xl active:scale-95">REGISTRAR EN ALMACÉN</button>
                         </div>
                     </div>
-                    <div class="lg:col-span-2 bg-white rounded-[3rem] border-2 border-slate-100 h-[750px] overflow-hidden flex flex-col shadow-2xl">
+                    <div class="lg:col-span-2 bg-white rounded-[3rem] border-2 h-[750px] overflow-hidden flex flex-col shadow-2xl border-slate-100">
                         <div class="bg-slate-900 p-8 text-white font-black uppercase text-xs flex justify-between items-center">
-                            <span>Semaforización de Stock</span>
-                            <div class="flex gap-5 text-[9px] tracking-widest">
+                            <span>Semaforización de Stock Global</span>
+                            <div class="flex gap-5 text-[9px] tracking-widest bg-slate-800 px-4 py-2 rounded-xl">
                                 <span class="flex items-center gap-2"><i class="fas fa-circle text-red-500"></i> AGOTADO</span>
                                 <span class="flex items-center gap-2"><i class="fas fa-circle text-yellow-500"></i> BAJO</span>
                                 <span class="flex items-center gap-2"><i class="fas fa-circle text-green-500"></i> ÓPTIMO</span>
                             </div>
                         </div>
-                        <div class="overflow-y-auto p-6 space-y-4">
+                        <div class="overflow-y-auto p-6 space-y-4 bg-slate-50">
                             <div v-for="m in inventory" :key="m.id" 
                                 :class="['flex justify-between items-center p-6 border-2 rounded-[2.5rem] transition-all shadow-sm', getStockClass(m.stock), isExpired(m.caducidad) ? 'stock-expired' : '']">
                                 <div>
                                     <p class="font-black text-base uppercase">{{ m.nombre }} <span class="text-[11px] opacity-60">({{ m.presentacion }})</span></p>
                                     <div class="flex gap-6 mt-2 text-[10px] font-black uppercase tracking-widest">
-                                        <span>CANTIDAD: {{ m.stock }}</span>
-                                        <span>VENCIMIENTO: {{ formatDate(m.caducidad) }}</span>
+                                        <span>CANTIDAD EXISTENTE: {{ m.stock }}</span>
+                                        <span :class="isExpired(m.caducidad) ? 'text-red-400 font-black' : ''">VENCIMIENTO: {{ formatDate(m.caducidad) }}</span>
                                     </div>
+                                    <p v-if="isExpired(m.caducidad)" class="text-[9px] text-red-400 font-black tracking-[0.2em] mt-1 uppercase">¡ALERTA: MEDICAMENTO CADUCADO!</p>
                                 </div>
-                                <button v-if="roleName === 'SUPER' || roleName === 'ADMIN'" @click="deleteInventory(m.id)" class="text-red-400 hover:text-red-700 p-4 transition-colors"><i class="fas fa-trash-alt text-2xl"></i></button>
+                                <button @click="deleteInventory(m.id)" class="text-red-400 hover:text-red-600 p-4 transition-colors"><i class="fas fa-trash-alt text-2xl"></i></button>
                             </div>
+                            <div v-if="inventory.length === 0" class="text-center py-20 text-slate-400 font-black uppercase text-sm">EL ALMACÉN ESTÁ VACÍO</div>
                         </div>
                     </div>
                 </section>
 
                 <section v-if="activeTab === 'beneficiarios'" class="space-y-8 animate-fade-in">
-                    <div class="flex flex-col md:flex-row justify-between items-center bg-white p-8 rounded-[2.5rem] shadow-2xl border-2 border-slate-100 gap-6">
-                        <h2 class="text-3xl font-black uppercase italic text-slate-900">Censo Global</h2>
-                        <div class="flex gap-4">
-                            <button @click="downloadBeneficiariosPDF('today')" class="bg-amber-700 text-white px-8 py-4 rounded-2xl font-black text-[10px] uppercase shadow-xl hover:bg-amber-800 transition-all flex items-center gap-2">
-                                <i class="fas fa-file-pdf"></i> PDF JORNADA ACTUAL
+                    <div class="flex flex-col md:flex-row justify-between items-center bg-white p-8 rounded-[2.5rem] shadow-2xl border-2 border-amber-50 gap-6">
+                        <div>
+                            <h2 class="text-3xl font-black uppercase italic text-slate-900">Censo de Beneficiarios</h2>
+                            <p class="text-[11px] font-black text-slate-400 uppercase tracking-widest mt-1">SISTEMA AISLADO - SÓLO DATOS DE ADMISIÓN</p>
+                        </div>
+                        <div class="flex flex-col sm:flex-row gap-4">
+                            <button @click="downloadBeneficiariosPDF('hoy')" class="bg-slate-900 text-white px-8 py-4 rounded-2xl font-black text-[10px] uppercase shadow-xl hover:bg-black transition-all flex items-center justify-center gap-3">
+                                <i class="fas fa-file-pdf text-red-400 text-lg"></i> DESCARGAR CENSO DE HOY
                             </button>
-                            <button @click="downloadBeneficiariosPDF('all')" class="bg-slate-900 text-white px-8 py-4 rounded-2xl font-black text-[10px] uppercase shadow-xl hover:bg-black transition-all flex items-center gap-2">
-                                <i class="fas fa-database"></i> PDF HISTÓRICO TOTAL
+                            <button @click="downloadBeneficiariosPDF('historico')" class="bg-amber-600 text-white px-8 py-4 rounded-2xl font-black text-[10px] uppercase shadow-xl hover:bg-amber-700 transition-all flex items-center justify-center gap-3">
+                                <i class="fas fa-file-pdf text-white text-lg"></i> DESCARGAR HISTÓRICO TOTAL
                             </button>
                         </div>
                     </div>
-                    <div class="bg-white border-2 border-slate-100 rounded-[3rem] shadow-2xl overflow-hidden">
+                    
+                    <div class="bg-white border-2 rounded-[3rem] shadow-2xl overflow-hidden border-slate-100">
                         <div class="overflow-x-auto">
                             <table class="excel-table">
                                 <thead>
                                     <tr>
-                                        <th>Fecha Registro</th>
+                                        <th>Fecha y Hora</th>
                                         <th>Nombre Completo</th>
                                         <th>Edad</th>
                                         <th>Sexo</th>
                                         <th>Domicilio</th>
                                         <th>Teléfono</th>
-                                        <th>Servicio Atendido</th>
+                                        <th>Área de Atención</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr v-for="h in filteredHistory" :key="h.id">
-                                        <td>{{ h.fecha }}</td>
+                                    <tr v-for="h in filteredCensus" :key="h.id" class="hover:bg-slate-50 transition-colors">
+                                        <td class="whitespace-nowrap">{{ h.fecha }}</td>
                                         <td class="font-black text-slate-900">{{ h.pacienteNombre }}</td>
                                         <td>{{ h.edad }}</td>
                                         <td>{{ h.sexo }}</td>
-                                        <td>{{ h.domicilio || 'SIN DATO' }}</td>
+                                        <td class="max-w-[200px] truncate" :title="h.domicilio">{{ h.domicilio || 'SIN DATO' }}</td>
                                         <td>{{ h.telefono || 'SIN DATO' }}</td>
-                                        <td><span class="bg-slate-200 px-4 py-1 rounded-full text-[10px] font-black text-slate-800 uppercase">{{ h.tipoServicio }}</span></td>
+                                        <td>
+                                            <span class="bg-slate-100 px-4 py-1 rounded-full text-[9px] font-black uppercase text-slate-600 border border-slate-200">
+                                                {{ h.tipoServicio === 'juridico' ? 'JURÍDICO' : h.tipoServicio === 'medico' ? 'MEDICINA' : h.tipoServicio }}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <tr v-if="filteredCensus.length === 0">
+                                        <td colspan="7" class="text-center py-10 font-black text-slate-400 uppercase">NO HAY REGISTROS VISIBLES PARA TU ÁREA</td>
                                     </tr>
                                 </tbody>
                             </table>
-                            <div v-if="filteredHistory.length === 0" class="p-10 text-center font-black text-slate-400 uppercase">
-                                No hay registros para tu área.
-                            </div>
                         </div>
                     </div>
                 </section>
 
                 <section v-if="activeTab === 'config'" class="max-w-5xl mx-auto animate-fade-in">
-                    <div class="bg-white p-12 rounded-[4rem] border-2 border-slate-100 shadow-2xl">
-                        <h3 class="font-black text-xl uppercase mb-10 text-center border-b pb-4 italic text-slate-800">Censo de Personal Médico y Especialistas</h3>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12 bg-slate-50 p-8 rounded-3xl border border-slate-200">
-                            <input v-model="formS.nombre" placeholder="Nombre Completo" class="input-std bg-white">
-                            <input v-model="formS.cedula" placeholder="Cédula / Matrícula" class="input-std bg-white">
-                            <input v-model="formS.escuela" placeholder="Universidad / Institución" class="input-std col-span-full md:col-span-2 bg-white">
+                    <div class="bg-white p-12 rounded-[4rem] border-2 shadow-2xl border-slate-100">
+                        <h3 class="font-black text-xl uppercase mb-10 text-center border-b pb-4 italic">Alta de Personal y Estudiantes</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+                            <input v-model="formS.nombre" placeholder="Nombre Completo" class="input-std bg-slate-50">
+                            <input v-model="formS.cedula" placeholder="Cédula Profesional (O 'ESTUDIANTE')" class="input-std bg-slate-50">
+                            <input v-model="formS.escuela" placeholder="Universidad de Egreso / Procedencia" class="input-std col-span-full md:col-span-2 bg-slate-50">
                             
-                            <select v-model="formS.area" class="input-std col-span-full bg-white">
-                                <option value="medico">MEDICINA GENERAL</option>
-                                <option value="psicologia">PSICOLOGÍA</option>
-                                <option value="juridico">JURÍDICO</option>
-                                <option value="cosmetologia">COSMETOLOGÍA</option>
-                                <option value="enfermeria">INTERNO / ENFERMERÍA</option>
+                            <select v-model="formS.area" class="input-std col-span-full bg-slate-900 text-white">
+                                <option value="medico">MÉDICO GENERAL / DOCTOR(A)</option>
+                                <option value="interno">ESTUDIANTE / ENFERMERO(A) (TOMA DE SIGNOS)</option>
+                                <option value="psicologia">PSICÓLOGO(A)</option>
+                                <option value="juridico">ABOGADO(A) / LICENCIADO(A)</option>
+                                <option value="cosmetologia">COSMETÓLOGO(A)</option>
                             </select>
-                            <button @click="addStaff" class="col-span-full bg-slate-900 text-white py-6 rounded-2xl font-black uppercase active:scale-95 shadow-xl hover:bg-black transition-all">REGISTRAR PERSONAL</button>
+                            <button @click="addStaff" class="col-span-full bg-amber-600 text-white py-6 rounded-2xl font-black uppercase active:scale-95 shadow-xl transition-all hover:bg-amber-700">REGISTRAR PERSONAL AL SISTEMA</button>
                         </div>
+                        
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                            <div v-for="s in staff" :key="s.id" class="p-6 border-2 border-slate-200 rounded-[2rem] flex justify-between bg-white hover:bg-slate-50 transition-all shadow-sm">
+                            <div v-for="s in staff" :key="s.id" class="p-6 border-2 rounded-[2rem] flex justify-between bg-slate-50 hover:bg-white transition-all shadow-sm">
                                 <div>
                                     <p class="font-black text-sm uppercase text-slate-800">{{ s.nombre }}</p>
-                                    <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest mt-1">
-                                        {{ s.area }} | CÉD/MAT: {{ s.cedula }} <br>
-                                        <span class="text-amber-700 italic font-bold">{{ s.escuela }}</span>
+                                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">
+                                        <span class="text-amber-600">{{ s.area === 'interno' ? 'ESTUDIANTE/ENF.' : s.area }}</span> | CÉD: {{ s.cedula }} <br>
+                                        <span class="text-slate-500 italic font-bold">{{ s.escuela }}</span>
                                     </p>
                                 </div>
-                                <button v-if="roleName === 'SUPER' || roleName === 'ADMIN'" @click="deleteStaff(s.id)" class="text-red-400 hover:text-red-700 p-3 transition-colors"><i class="fas fa-trash-alt text-2xl"></i></button>
+                                <button @click="deleteStaff(s.id)" class="text-red-300 hover:text-red-600 p-3 transition-colors"><i class="fas fa-trash-alt text-2xl"></i></button>
                             </div>
                         </div>
                     </div>
                 </section>
+
                 <section v-if="activeTab === 'historial'" class="space-y-8 animate-fade-in">
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 animate-fade-in">
-                        <div v-for="h in filteredHistory" :key="h.id" class="bg-white p-8 rounded-[2.5rem] border-2 shadow-xl flex justify-between items-center hover:scale-[1.02] transition-all border-slate-100">
-                            <div>
-                                <p class="font-black uppercase text-base text-slate-800">{{ h.pacienteNombre }}</p>
-                                <p class="text-[11px] font-bold text-slate-500 uppercase italic mt-1">{{ h.fecha }}</p>
-                                <p class="text-[9px] font-black bg-slate-200 text-slate-700 px-3 py-1 rounded-full uppercase tracking-tighter mt-2 inline-block">{{ h.tipoServicio }}</p>
+                    <div class="bg-amber-100 border-l-8 border-amber-600 p-6 rounded-2xl shadow-sm mb-8 flex justify-between items-center">
+                        <div>
+                            <h4 class="font-black text-amber-900 uppercase">Consultas Registradas</h4>
+                            <p class="text-xs font-bold text-amber-700 uppercase mt-1">Mostrando únicamente consultas procesadas en su área correspondientes a la jornada actual. El histórico anterior se archiva automáticamente en la Base de Datos general.</p>
+                        </div>
+                        <i class="fas fa-archive text-4xl text-amber-300 opacity-50"></i>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <div v-for="h in displayHistoryFiltered" :key="h.id" class="bg-white p-8 rounded-[2.5rem] border-2 shadow-xl flex justify-between items-center hover:scale-[1.03] transition-all border-slate-100 shadow-slate-900/5">
+                            <div class="truncate pr-4">
+                                <p class="font-black uppercase text-base text-slate-800 truncate" :title="h.pacienteNombre">{{ h.pacienteNombre }}</p>
+                                <p class="text-[10px] font-black text-amber-600 uppercase mt-1">{{ h.tipoServicio }}</p>
+                                <p class="text-[9px] font-bold text-slate-400 uppercase italic mt-1">{{ h.fecha }}</p>
                             </div>
-                            <div class="flex gap-3">
-                                <button @click="reprintHistory(h)" class="bg-amber-700 text-white w-14 h-14 rounded-2xl flex items-center justify-center shadow-xl hover:bg-amber-800 transition-all"><i class="fas fa-print text-xl"></i></button>
-                                <button v-if="roleName === 'SUPER' || roleName === 'ADMIN'" @click="deleteHistory(h.id)" class="text-red-300 hover:text-red-600 w-14 h-14 flex items-center justify-center transition-all"><i class="fas fa-trash-alt text-2xl"></i></button>
+                            <div class="flex gap-3 shrink-0">
+                                <button @click="reprintHistory(h)" class="bg-slate-900 text-white w-14 h-14 rounded-2xl flex items-center justify-center shadow-xl hover:bg-black transition-all" title="Reimprimir Documento"><i class="fas fa-print text-xl"></i></button>
+                                <button v-if="userRole === 'SUPER'" @click="deleteHistory(h.id)" class="text-red-300 hover:text-red-500 w-14 h-14 flex items-center justify-center transition-all bg-red-50 rounded-2xl" title="Eliminar Registro"><i class="fas fa-trash-alt text-xl"></i></button>
                             </div>
                         </div>
+                    </div>
+                    <div v-if="displayHistoryFiltered.length === 0" class="text-center py-20">
+                        <i class="fas fa-folder-open text-6xl text-slate-200 mb-6"></i>
+                        <h3 class="font-black text-xl text-slate-400 uppercase">No hay consultas de tu área en la jornada actual.</h3>
                     </div>
                 </section>
 
                 <section v-if="activeTab === 'data'" class="max-w-xl mx-auto text-center animate-fade-in">
                     <div class="bg-white p-12 rounded-[4.5rem] border-4 shadow-2xl border-slate-100">
-                        <i class="fas fa-server text-8xl text-slate-200 mb-10"></i>
-                        <h3 class="font-black text-3xl uppercase mb-4 text-slate-800 italic">Mantenimiento Global</h3>
-                        <p class="text-[10px] font-black uppercase text-green-600 tracking-[0.2em] mb-12"><i class="fas fa-circle mr-1 animate-pulse"></i> BASE DE DATOS OPERANDO EN TIEMPO REAL</p>
-                        <div class="space-y-8">
-                            
-                            <button @click="loadExampleData" class="w-full bg-slate-800 text-white py-7 rounded-3xl font-black uppercase text-xs shadow-2xl flex items-center justify-center gap-4 hover:bg-slate-900 transition-all">
-                                <i class="fas fa-flask text-lg"></i> INYECTAR DATOS DEMOSTRATIVOS
+                        <div class="relative inline-block mb-10">
+                            <i class="fas fa-database text-8xl text-slate-200"></i>
+                            <div class="absolute bottom-0 right-0 bg-green-500 w-6 h-6 rounded-full border-4 border-white animate-pulse" title="Conexión en Tiempo Real Activa"></div>
+                        </div>
+                        <h3 class="font-black text-3xl uppercase text-slate-800 italic">Mantenimiento Global</h3>
+                        <p class="text-xs font-black text-amber-600 uppercase mt-2 mb-12 tracking-widest"><i class="fas fa-sync fa-spin mr-1"></i> SINCRONIZACIÓN EN TIEMPO REAL ACTIVA</p>
+                        
+                        <div class="space-y-6">
+                            <button @click="loadExampleData" class="w-full bg-slate-800 text-white py-6 rounded-3xl font-black uppercase text-[11px] shadow-xl flex items-center justify-center gap-4 hover:bg-slate-900 transition-all">
+                                <i class="fas fa-flask text-lg"></i> INYECTAR DATOS DEMOSTRATIVOS (PRUEBAS)
                             </button>
 
-                            <button @click="exportData" class="w-full bg-blue-700 text-white py-7 rounded-3xl font-black uppercase text-xs shadow-2xl flex items-center justify-center gap-4 hover:bg-blue-800 transition-all">
-                                <i class="fas fa-download text-lg"></i> GENERAR BACKUP TOTAL (JSON)
+                            <button @click="exportData" class="w-full bg-blue-700 text-white py-6 rounded-3xl font-black uppercase text-[11px] shadow-xl flex items-center justify-center gap-4 hover:bg-blue-800 transition-all">
+                                <i class="fas fa-download text-lg"></i> GENERAR BACKUP TOTAL (DESCARGAR .JSON)
                             </button>
                             
-                            <button v-if="roleName === 'SUPER'" @click="nukeDatabase" class="w-full bg-red-700 text-white py-7 rounded-3xl font-black uppercase text-xs hover:bg-red-800 transition-all active:scale-95 shadow-lg">
-                                <i class="fas fa-trash-alt mr-3 text-lg"></i> BORRAR TODOS LOS DATOS DEL SISTEMA
+                            <button v-if="roleName === 'SUPER'" @click="nukeDatabase" class="w-full bg-red-600 text-white py-6 rounded-3xl font-black uppercase text-[11px] hover:bg-red-800 transition-all active:scale-95 shadow-lg shadow-red-900/20 mt-8">
+                                <i class="fas fa-exclamation-triangle mr-3 text-lg"></i> BORRAR ABSOLUTAMENTE TODOS LOS DATOS
                             </button>
                             
-                            <div class="mt-12 pt-12 border-t-4 border-slate-50">
-                                <p class="text-[10px] font-black text-slate-400 mb-6 uppercase tracking-[0.3em]">Restaurar desde Respaldo Externo</p>
-                                <input type="file" @change="importData" class="text-xs file:mr-4 file:py-3 file:px-6 file:rounded-full file:border-0 file:text-xs file:font-black file:bg-slate-900 file:text-white cursor-pointer">
+                            <div class="mt-12 pt-12 border-t-2 border-dashed border-slate-200">
+                                <p class="text-[10px] font-black text-slate-400 mb-6 uppercase tracking-[0.2em]"><i class="fas fa-upload mr-2"></i>Restaurar desde Respaldo Externo (.JSON)</p>
+                                <input type="file" @change="importData" class="w-full text-xs file:mr-4 file:py-3 file:px-6 file:rounded-xl file:border-0 file:text-[10px] file:font-black file:uppercase file:bg-slate-900 file:text-white hover:file:bg-black cursor-pointer bg-slate-50 border-2 border-slate-100 rounded-2xl p-2">
                             </div>
                         </div>
                     </div>
@@ -816,25 +798,25 @@
 
             </main>
         </div>
-
         <div id="print-zone" v-if="printData">
             <div class="receta-maestra">
                 <div class="receta-header">
                     <h1 class="print-brand-1">FUERZA GENERACIONAL</h1>
                     <h2 class="print-brand-2">JORNADAS DE SALUD</h2>
-                    <p style="font-size: 11px; font-weight: 900; letter-spacing: 5px; color: #444; margin-top: 5px;">CFMM | PUEBLA</p>
+                    <p style="font-size: 11px; font-weight: 900; letter-spacing: 5px; color: #444; margin-top: 5px;">CFMM | SISTEMA DIGITAL DE ATENCIÓN</p>
                 </div>
                 
                 <div style="text-align: center; margin-bottom: 25px;">
                     <h2 style="font-size: 24px; font-weight: 900; text-transform: uppercase; margin: 0;">{{ printData.medicoNombre }}</h2>
                     <p style="font-size: 14px; font-weight: bold; margin: 5px 0; text-transform: uppercase;">
-                        {{ printData.tipoServicio === 'juridico' ? 'LICENCIADO EN DERECHO' : printData.tipoServicio }}
+                        {{ printData.tipoServicio === 'juridico' ? 'LICENCIADO EN DERECHO' : 
+                           printData.tipoServicio === 'medico' ? 'MÉDICO GENERAL' : printData.tipoServicio }}
                     </p>
-                    <p style="font-size: 11px; font-weight: bold; color: #334155;">CÉDULA/MATRÍCULA: {{ printData.medicoCedula }}</p>
+                    <p style="font-size: 11px; font-weight: bold; color: #334155;">CÉDULA PROFESIONAL: {{ printData.medicoCedula }}</p>
                     <p v-if="printData.medicoEscuela" style="font-size: 10px; font-weight: 700; color: #555; text-transform: uppercase;">EGRESADO DE: {{ printData.medicoEscuela }}</p>
                 </div>
 
-                <div style="text-align: right; font-size: 12px; margin-bottom: 20px; font-weight: 900;">FECHA: {{ printData.fecha }}</div>
+                <div style="text-align: right; font-size: 12px; margin-bottom: 20px; font-weight: 900;">FECHA Y HORA: {{ printData.fecha }}</div>
                 
                 <div style="background-color: #f8fafc; border: 3px solid #000; padding: 20px; border-radius: 15px; margin-bottom: 20px;">
                     <p style="font-size: 14px; font-weight: 900; text-transform: uppercase; margin-bottom: 8px;">DATOS DEL BENEFICIARIO:</p>
@@ -852,24 +834,24 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td>{{ printData.vitals.peso }}</td><td>{{ printData.vitals.talla }}</td><td style="font-weight: 900; color: #92400e;">{{ printData.vitals.imc }}</td>
+                            <td>{{ printData.vitals.peso }}</td><td>{{ printData.vitals.talla }}</td><td style="font-weight: 900; color: #b45309;">{{ printData.vitals.imc }}</td>
                             <td>{{ printData.vitals.ta }}</td><td>{{ printData.vitals.fc }}</td><td>{{ printData.vitals.temp }}°C</td><td>{{ printData.vitals.glucosa }}</td>
                         </tr>
                     </tbody>
                 </table>
 
                 <div style="flex-grow: 1; font-size: 14px; line-height: 1.8; text-transform: uppercase;">
-                    <h3 style="font-size: 12px; font-weight: 900; background: #1e293b; color: white; padding: 6px 20px; display: inline-block; margin-bottom: 15px; border-radius: 6px;">
+                    <h3 style="font-size: 12px; font-weight: 900; background: #0f172a; color: white; padding: 6px 20px; display: inline-block; margin-bottom: 15px; border-radius: 6px;">
                         {{ printData.tipoServicio === 'juridico' ? 'MOTIVO / HECHOS:' : 'DIAGNÓSTICO:' }}
                     </h3>
-                    <p style="font-weight: 700; border-bottom: 2px dashed #cbd5e1; padding-bottom: 20px; margin-bottom: 30px; text-align: justify;">{{ printData.diagnostico }}</p>
+                    <p style="font-weight: 700; border-bottom: 2px dashed #e2e8f0; padding-bottom: 20px; margin-bottom: 30px; text-align: justify; white-space: pre-wrap;">{{ printData.diagnostico }}</p>
                     
-                    <h3 style="font-size: 12px; font-weight: 900; background: #1e293b; color: white; padding: 6px 20px; display: inline-block; margin-bottom: 15px; border-radius: 6px;">
+                    <h3 style="font-size: 12px; font-weight: 900; background: #0f172a; color: white; padding: 6px 20px; display: inline-block; margin-bottom: 15px; border-radius: 6px;">
                         {{ printData.tipoServicio === 'juridico' ? 'ASESORÍA Y RECOMENDACIONES LEGALES:' : 'TRATAMIENTO E INDICACIONES:' }}
                     </h3>
                     
                     <table v-if="printData.medicamentos && printData.medicamentos.length > 0" style="width: 100%; border-collapse: collapse; margin-bottom: 25px; border: 2px solid #000;">
-                        <tr v-for="m in printData.medicamentos">
+                        <tr v-for="m in printData.medicamentos" :key="m.nombre">
                             <td style="border: 1px solid #000; padding: 12px; font-weight: 900; width: 45%; background: #f8fafc;">{{ m.nombre }}</td>
                             <td style="border: 1px solid #000; padding: 12px; font-weight: 700;">{{ m.indicacion }}</td>
                         </tr>
@@ -890,13 +872,66 @@
                     <div>presidenciafuerzageneracional@gmail.com</div>
                 </div>
             </div>
+            
+            <div v-if="printData.historia_clinica" class="receta-maestra page-break">
+                <div class="receta-header">
+                    <h1 class="print-brand-1">EXPEDIENTE CLÍNICO DIGITAL</h1>
+                    <h2 class="print-brand-2" style="font-size: 18px; margin-top:10px;">{{ printData.pacienteNombre }}</h2>
+                </div>
+                
+                <div style="font-size: 12px; line-height: 1.6; text-transform: uppercase;">
+                    <p style="font-weight: 900; background: #e2e8f0; padding: 5px;">I. DATOS COMPLEMENTARIOS</p>
+                    <p>F. NAC: <b>{{ printData.historia_clinica.f_nacimiento || 'N/D' }}</b> | ESTADO CIVIL: <b>{{ printData.historia_clinica.estado_civil || 'N/D' }}</b> | RELIGIÓN: <b>{{ printData.historia_clinica.religion || 'N/D' }}</b></p>
+                    
+                    <p style="font-weight: 900; background: #e2e8f0; padding: 5px; margin-top: 15px;">II. HEREDOFAMILIARES</p>
+                    <p>
+                        DIABETES: <b>{{ printData.historia_clinica.ahf_diabetes ? 'SÍ' : 'NO' }}</b> | 
+                        HTA: <b>{{ printData.historia_clinica.ahf_hta ? 'SÍ' : 'NO' }}</b> | 
+                        NEFROPATÍAS: <b>{{ printData.historia_clinica.ahf_nefro ? 'SÍ' : 'NO' }}</b> | 
+                        CÁNCER: <b>{{ printData.historia_clinica.ahf_cancer ? 'SÍ' : 'NO' }}</b>
+                    </p>
+
+                    <p style="font-weight: 900; background: #e2e8f0; padding: 5px; margin-top: 15px;">III. PERSONALES PATOLÓGICOS</p>
+                    <p>
+                        DIABETES: <b>{{ printData.historia_clinica.app_diabetes ? 'SÍ' : 'NO' }}</b> | 
+                        HTA: <b>{{ printData.historia_clinica.app_hta ? 'SÍ' : 'NO' }}</b> | 
+                        ALCOHOL: <b>{{ printData.historia_clinica.app_alcohol ? 'SÍ' : 'NO' }}</b> | 
+                        TABACO: <b>{{ printData.historia_clinica.app_tabaco ? 'SÍ' : 'NO' }}</b><br>
+                        ALERGIAS: <b>{{ printData.historia_clinica.app_alergias ? printData.historia_clinica.app_alergias_esp : 'NEGADAS' }}</b><br>
+                        CIRUGÍAS: <b>{{ printData.historia_clinica.app_cirugias ? printData.historia_clinica.app_cirugias_esp : 'NEGADAS' }}</b>
+                    </p>
+
+                    <p style="font-weight: 900; background: #e2e8f0; padding: 5px; margin-top: 15px;">IV. NO PATOLÓGICOS</p>
+                    <p>ALIMENTACIÓN: <b>{{ printData.historia_clinica.apnp_alimentacion || 'N/D' }}</b> | ACTIVIDAD FÍSICA: <b>{{ printData.historia_clinica.apnp_fisica || 'N/D' }}</b></p>
+
+                    <div v-if="printData.sexo === 'MUJER'">
+                        <p style="font-weight: 900; background: #fce7f3; color: #831843; padding: 5px; margin-top: 15px;">V. GINECO OBSTÉTRICOS</p>
+                        <p>
+                            MENARCA: <b>{{ printData.historia_clinica.go_menarca || 'N/D' }}</b> | 
+                            IVSA: <b>{{ printData.historia_clinica.go_ivsa || 'N/D' }}</b> | 
+                            FUM: <b>{{ printData.historia_clinica.go_fum || 'N/D' }}</b> | 
+                            GESTAS: <b>{{ printData.historia_clinica.go_gestas || '0' }}</b> | 
+                            PARTOS: <b>{{ printData.historia_clinica.go_partos || '0' }}</b><br>
+                            MÉTODO: <b>{{ printData.historia_clinica.go_metodo || 'N/D' }}</b>
+                        </p>
+                    </div>
+                </div>
+            </div>
         </div>
 
     </div>
 
     <script>
-        // CONFIGURACIÓN FIREBASE (SIN CAMBIOS)
-        const firebaseConfig = { apiKey: "AIzaSyCK6A7G6IvAJyYPCEspvvHg6qjDZdhuQuY", authDomain: "jornada-de-salud1.firebaseapp.com", projectId: "jornada-de-salud1", storageBucket: "jornada-de-salud1.firebasestorage.app", messagingSenderId: "947161304402", appId: "1:947161304402:web:906da7370cc343300cbe8b", measurementId: "G-W945F157DC" };
+        // CONFIGURACIÓN INTACTA DE FIREBASE
+        const firebaseConfig = { 
+            apiKey: "AIzaSyCK6A7G6IvAJyYPCEspvvHg6qjDZdhuQuY", 
+            authDomain: "jornada-de-salud1.firebaseapp.com", 
+            projectId: "jornada-de-salud1", 
+            storageBucket: "jornada-de-salud1.firebasestorage.app", 
+            messagingSenderId: "947161304402", 
+            appId: "1:947161304402:web:906da7370cc343300cbe8b", 
+            measurementId: "G-W945F157DC" 
+        };
         
         if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
         const db = firebase.database();
@@ -905,42 +940,44 @@
 
         createApp({
             setup() {
-                // ESTADO GLOBAL
+                // VARIABLES GLOBALES
                 const isLoggedIn = ref(false); 
                 const userRole = ref(''); 
                 const loginData = reactive({ user: '', pass: '' }); 
                 const loginError = ref(false);
                 const errorMsg = ref('');
-                const activeTab = ref('nosotros'); 
+                const activeTab = ref('recepcion'); 
                 
                 const patients = ref([]); const staff = ref([]); const inventory = ref([]); const history = ref([]);
                 const printData = ref(null);
-                const showModalHC = ref(false);
             
-                // FORMULARIOS BÁSICOS
+                // FORMULARIOS DE INGRESO
                 const formP = reactive({ nombre: '', edad: null, sexo: 'MUJER', domicilio: '', telefono: '', servicio: 'medico' });
                 const formS = reactive({ nombre: '', area: 'medico', cedula: '', escuela: '' });
                 const formI = reactive({ nombre: '', stock: null, caducidad: '', presentacion: '' });
 
-                // VARIABLES DE CONSULTA
-                const internalStaffId = ref(null);
+                // MANEJO DE CITAS Y RECETAS
                 const selectedPatientId = ref(null);
+                const selectedEnfermeroId = ref(null);
+                const hcPatient = ref(null);
+                const viewHistoriaClinicaModal = ref(false);
+
                 const currP = reactive({ enfermeria: null, medico: null, juridico: null, psicologia: null, cosmetologia: null });
                 const vitalsForm = reactive({ peso: '', talla: '', ta: '', temp: '', fc: '', glucosa: '' });
                 const consGen = reactive({ alergias: '', diagnostico: '', tratamiento: '' });
                 const selStaffId = reactive({ medico: null, juridico: null, psicologia: null, cosmetologia: null });
                 const recipe = ref([]); const tempMed = ref(null); const tempDosis = ref('');
 
-                // MEGA FORMULARIO HISTORIA CLÍNICA (HC)
+                // ESTRUCTURA DE LA HISTORIA CLÍNICA COMPLETA
                 const hcForm = reactive({
-                    nombre: '', estadoCivil: '', religion: '', fechaNacimiento: '', edad: '', sexo: '',
-                    ahf_diabetes: false, ahf_hipertension: false, ahf_nefropatias: false, ahf_tuberculosis: false, ahf_cancer: false, ahf_cardiopatias: false,
-                    app_diabetes: false, app_hipertension: false, app_nefropatias: false, app_tuberculosis: false, app_cancer: false, app_alergias: false, app_alergias_esp: '', app_cirugias: false, app_cirugias_esp: '',
-                    apnp_alcohol: false, apnp_tabaquismo: false, apnp_animales: false, apnp_alimentacion: '', apnp_actividad: '',
-                    ago_menarca: null, ago_ciclo: false, ago_dismenorrea: false, ago_ivsa: null, ago_gestas: null, ago_partos: null, ago_abortos: null, ago_cesareas: null, ago_fum: '', ago_metodo: ''
+                    f_nacimiento: '', estado_civil: '', religion: '',
+                    ahf_diabetes: false, ahf_hta: false, ahf_nefro: false, ahf_tb: false, ahf_cancer: false, ahf_cardio: false,
+                    app_diabetes: false, app_hta: false, app_nefro: false, app_tb: false, app_cancer: false, app_alcohol: false, app_tabaco: false, app_alergias: false, app_alergias_esp: '', app_cirugias: false, app_cirugias_esp: '',
+                    apnp_alimentacion: '', apnp_fisica: '', apnp_animales: false,
+                    go_menarca: null, go_ivsa: null, go_ciclo: false, go_dismenorrea: false, go_gestas: null, go_partos: null, go_abortos: null, go_cesareas: null, go_fum: '', go_metodo: ''
                 });
 
-                // SINCRONIZACIÓN EN TIEMPO REAL CON FIREBASE
+                // SINCRONIZACIÓN FIREBASE
                 onMounted(() => {
                     db.ref('patients').on('value', s => { patients.value = s.exists() ? Object.entries(s.val()).map(([id,v])=>({id,...v})) : []; });
                     db.ref('staff').on('value', s => { staff.value = s.exists() ? Object.entries(s.val()).map(([id,v])=>({id,...v})) : []; });
@@ -948,213 +985,200 @@
                     db.ref('history').on('value', s => { history.value = s.exists() ? Object.entries(s.val()).map(([id,v])=>({id,...v})) : []; });
                 });
 
-                // DICCIONARIO DE CONTRASEÑAS ENCRIPTADAS (Base64) PARA MAYOR SEGURIDAD
-                const authMap = {
-                    'TUVESUNPU0ZH': { pass: 'TUVERlVFUlpBRw==', role: 'MEDICO' },
-                    'SU5URVJOT1NGRw==': { pass: 'RlVFUlpBRw==', role: 'INTERNO' },
-                    'QUJPR0FET0ZH': { pass: 'QUJPR0ZVRVJaQUc=', role: 'ABOGADO' },
-                    'UFNJQ09MT0dPRkc=': { pass: 'UFNJQ0ZVRVJaQUc=', role: 'PSICOLOGO' },
-                    'Q09TTUVGRw==': { pass: 'Q09TTUVGVUVSWkFH', role: 'COSMETOLOGA' },
-                    'S0FaVVRPMDg1Mg==': { pass: 'QVNVTkEwODUy', role: 'SUPER' },
-                    'QURNSU5GRw==': { pass: 'SFVFVk9TMQ==', role: 'ADMIN' }
+                // =========================================
+                // SISTEMA DE SEGURIDAD Y ENCRIPTACIÓN LOCAL
+                // =========================================
+                const ENCRYPTED_DB = {
+                    'S0FaVVRPMDg1Mg==': { p: 'QVNVTkEwODUy', r: 'SUPER' }, // KAZUTO0852
+                    'TUVESUNPU0ZH': { p: 'TUVERlVFUlpBRw==', r: 'MEDICO' }, // MEDICOSFG
+                    'SU5URVJOT1NGRw==': { p: 'RlVFUlpBRw==', r: 'INTERNO' }, // INTERNOSFG
+                    'QUJPR0FET0ZH': { p: 'QUJPR0ZVRVJaQUc=', r: 'JURIDICO' }, // ABOGADOFG
+                    'UFNJQ09MT0dPRkc=': { p: 'UFNJQ0ZVRVJaQUc=', r: 'PSICOLOGIA' }, // PSICOLOGOFG
+                    'Q09TTUVGRw==': { p: 'Q09TTUVGVUVSWkFH', r: 'COSMETOLOGIA' }, // COSMEFG
+                    'QURNSU5GRw==': { p: 'SFVFVk9TMQ==', r: 'ADMIN' } // ADMINFG
                 };
 
-                // SISTEMA DE LOGIN SEGURO CON ENCRIPTACIÓN
                 const performLogin = () => {
                     const u = btoa(loginData.user.toUpperCase().trim());
                     const p = btoa(loginData.pass.trim());
                     
-                    if (authMap[u] && authMap[u].pass === p) {
-                        userRole.value = authMap[u].role;
-                        isLoggedIn.value = true;
-                        loginError.value = false;
-                        activeTab.value = 'nosotros'; // Default tras iniciar sesión
+                    if (ENCRYPTED_DB[u] && ENCRYPTED_DB[u].p === p) {
+                        userRole.value = ENCRYPTED_DB[u].r;
+                        isLoggedIn.value = true; loginError.value = false;
+                        activeTab.value = 'nosotros';
                     } else {
-                        loginError.value = true;
-                        errorMsg.value = 'CREDENCIALES INCORRECTAS O ACCESO DENEGADO';
+                        loginError.value = true; errorMsg.value = 'CREDENCIALES INVÁLIDAS O NO AUTORIZADAS';
                     }
                 };
 
                 const logout = () => { isLoggedIn.value = false; userRole.value = ''; loginData.user = ''; loginData.pass = ''; };
 
-                // FILTRADO ESTRICTO DE PESTAÑAS SEGÚN EL ROL
+                // =========================================
+                // FILTRO DE TABS Y NAVEGACIÓN SEGÚN EL ROL
+                // =========================================
                 const filteredTabs = computed(() => {
-                    const all = [
-                        { id: 'nosotros', name: 'Nosotros', icon: 'fas fa-info-circle', roles: ['ALL'] },
-                        { id: 'recepcion', name: 'Admisión', icon: 'fas fa-address-book', roles: ['SUPER', 'ADMIN', 'MEDICO', 'INTERNO', 'ABOGADO', 'PSICOLOGO', 'COSMETOLOGA'] },
-                        { id: 'signos', name: 'Signos Vitales', icon: 'fas fa-heartbeat', roles: ['SUPER', 'ADMIN', 'MEDICO', 'INTERNO', 'PSICOLOGO', 'COSMETOLOGA'] },
-                        { id: 'historia_clinica', name: 'Historia Clínica', icon: 'fas fa-notes-medical', roles: ['SUPER', 'MEDICO', 'INTERNO'] },
+                    const tabs = [
+                        { id: 'nosotros', name: 'Nosotros', icon: 'fas fa-info-circle', roles: ['SUPER', 'ADMIN', 'MEDICO', 'INTERNO', 'JURIDICO', 'PSICOLOGIA', 'COSMETOLOGIA'] },
+                        { id: 'recepcion', name: 'Admisión', icon: 'fas fa-address-book', roles: ['SUPER', 'ADMIN', 'MEDICO', 'INTERNO', 'JURIDICO', 'PSICOLOGIA', 'COSMETOLOGIA'] },
+                        { id: 'signos', name: 'Signos Vitales', icon: 'fas fa-heartbeat', roles: ['SUPER', 'ADMIN', 'MEDICO', 'INTERNO', 'PSICOLOGIA', 'COSMETOLOGIA'] },
+                        { id: 'historia_clinica', name: 'H. Clínica', icon: 'fas fa-notes-medical', roles: ['SUPER', 'INTERNO'] },
                         { id: 'medico', name: 'Medicina', icon: 'fas fa-stethoscope', roles: ['SUPER', 'MEDICO', 'INTERNO'] },
-                        { id: 'psicologia', name: 'Psicología', icon: 'fas fa-brain', roles: ['SUPER', 'PSICOLOGO'] },
-                        { id: 'juridico', name: 'Jurídico', icon: 'fas fa-balance-scale', roles: ['SUPER', 'ABOGADO'] },
-                        { id: 'cosmetologia', name: 'Cosmetología', icon: 'fas fa-spa', roles: ['SUPER', 'COSMETOLOGA'] },
-                        { id: 'farmacia', name: 'Farmacia', icon: 'fas fa-pills', roles: ['SUPER', 'ADMIN', 'MEDICO', 'INTERNO', 'COSMETOLOGA'] },
-                        { id: 'beneficiarios', name: 'Base Datos', icon: 'fas fa-table', roles: ['SUPER', 'ADMIN', 'MEDICO', 'ABOGADO', 'PSICOLOGO', 'COSMETOLOGA'] },
+                        { id: 'psicologia', name: 'Psicología', icon: 'fas fa-brain', roles: ['SUPER', 'PSICOLOGIA'] },
+                        { id: 'juridico', name: 'Jurídico', icon: 'fas fa-balance-scale', roles: ['SUPER', 'JURIDICO'] },
+                        { id: 'cosmetologia', name: 'Cosmetología', icon: 'fas fa-spa', roles: ['SUPER', 'COSMETOLOGIA'] },
+                        { id: 'farmacia', name: 'Farmacia', icon: 'fas fa-pills', roles: ['SUPER', 'ADMIN', 'MEDICO', 'INTERNO', 'COSMETOLOGIA'] },
+                        { id: 'beneficiarios', name: 'Base Datos', icon: 'fas fa-table', roles: ['SUPER', 'ADMIN', 'MEDICO', 'JURIDICO', 'PSICOLOGIA', 'COSMETOLOGIA'] },
                         { id: 'config', name: 'Personal', icon: 'fas fa-user-md', roles: ['SUPER', 'ADMIN'] },
-                        { id: 'historial', name: 'Historial', icon: 'fas fa-folder-open', roles: ['SUPER', 'ADMIN', 'MEDICO', 'ABOGADO', 'PSICOLOGO', 'COSMETOLOGA'] },
+                        { id: 'historial', name: 'Historial', icon: 'fas fa-folder-open', roles: ['SUPER', 'MEDICO', 'JURIDICO', 'PSICOLOGIA', 'COSMETOLOGIA'] },
                         { id: 'data', name: 'Datos', icon: 'fas fa-database', roles: ['SUPER', 'ADMIN'] }
                     ];
-                    return all.filter(t => t.roles.includes('ALL') || t.roles.includes(userRole.value));
+                    return tabs.filter(t => t.roles.includes(userRole.value));
                 });
 
-                // FILTRADO ESTRICTO DEL CENSO E HISTORIAL POR ROL (CADA QUIEN VE LO SUYO)
-                const filteredHistory = computed(() => {
-                    const allRev = [...history.value].reverse();
-                    if (userRole.value === 'SUPER' || userRole.value === 'ADMIN') return allRev;
-                    if (userRole.value === 'MEDICO') return allRev.filter(h => h.tipoServicio === 'medico');
-                    if (userRole.value === 'ABOGADO') return allRev.filter(h => h.tipoServicio === 'juridico');
-                    if (userRole.value === 'PSICOLOGO') return allRev.filter(h => h.tipoServicio === 'psicologia');
-                    if (userRole.value === 'COSMETOLOGA') return allRev.filter(h => h.tipoServicio === 'cosmetologia');
-                    return [];
+                // =========================================
+                // FILTROS VISUALES (BASE DE DATOS E HISTORIAL)
+                // =========================================
+                const filteredCensus = computed(() => {
+                    let arr = [...history.value];
+                    if (['MEDICO', 'PSICOLOGIA', 'JURIDICO', 'COSMETOLOGIA'].includes(userRole.value)) {
+                        arr = arr.filter(h => h.tipoServicio === userRole.value.toLowerCase());
+                    }
+                    return arr.reverse();
                 });
 
-                // FUNCIONES DE ADMISIÓN
+                const displayHistoryFiltered = computed(() => {
+                    const today = new Date().toLocaleDateString();
+                    let arr = history.value.filter(h => h.fecha.includes(today)); // Solo de la jornada de hoy
+                    if (['MEDICO', 'PSICOLOGIA', 'JURIDICO', 'COSMETOLOGIA'].includes(userRole.value)) {
+                        arr = arr.filter(h => h.tipoServicio === userRole.value.toLowerCase());
+                    }
+                    return arr.reverse();
+                });
+
+                // =========================================
+                // LÓGICA CORE: RECEPCIÓN Y SIGNOS
+                // =========================================
                 const registerPatient = () => {
-                    if(!formP.nombre || !formP.edad) return alert("LLENA LOS CAMPOS OBLIGATORIOS.");
                     db.ref('patients').push({ ...formP, fecha: new Date().toLocaleString() });
                     Object.assign(formP, { nombre: '', edad: null, domicilio: '', telefono: '' });
                 };
 
-                // FUNCIONES DE SIGNOS VITALES E HISTORIA CLÍNICA
-                const loadPatientForVitals = () => {
-                    currP.enfermeria = patients.value.find(x => x.id === selectedPatientId.value);
-                };
-
                 const saveVitalsAndContinue = () => {
-                    if (!internalStaffId.value && userRole.value === 'INTERNO') return alert("DEBES SELECCIONAR TU NOMBRE COMO PERSONAL EN TURNO.");
                     const p = patients.value.find(x => x.id === selectedPatientId.value);
-                    let hVal = parseFloat(vitalsForm.talla);
-                    let wVal = parseFloat(vitalsForm.peso);
-                    if (!hVal || !wVal) return alert("PESO Y TALLA SON REQUERIDOS PARA EL IMC.");
-                    if (hVal > 3) hVal = hVal / 100; // Corrección por si lo ponen en cm
+                    if(!selectedEnfermeroId.value) return alert("POR FAVOR SELECCIONE SU NOMBRE PARA PROCEDER.");
+                    let hVal = parseFloat(vitalsForm.talla); let wVal = parseFloat(vitalsForm.peso);
+                    if (!hVal || !wVal) return alert("PESO Y TALLA REQUERIDOS PARA CALCULAR IMC");
+                    if (hVal > 3) hVal = hVal / 100;
                     const imcCalc = (wVal / (hVal * hVal)).toFixed(1);
                     
-                    db.ref(`patients/${p.id}`).update({ vitals: { ...vitalsForm, imc: imcCalc } });
+                    db.ref(`patients/${p.id}`).update({ vitals: { ...vitalsForm, imc: imcCalc, enfermero_id: selectedEnfermeroId.value } });
                     
-                    // Llenar datos de HC automáticamente
-                    hcForm.nombre = p.nombre;
-                    hcForm.edad = p.edad;
-                    hcForm.sexo = p.sexo;
-
-                    alert("SIGNOS GUARDADOS CORRECTAMENTE. CONTINUANDO A HISTORIA CLÍNICA.");
-                    
-                    // Redirigir y resetear
+                    // Pasar a la historia clínica
+                    hcPatient.value = p;
                     activeTab.value = 'historia_clinica';
-                    currP.enfermeria = null;
+                    selectedPatientId.value = null; currP.enfermeria = null;
                 };
 
                 const saveHistoriaClinica = () => {
-                    if (!selectedPatientId.value) return alert("ERROR DE REFERENCIA. SELECCIONE PACIENTE.");
-                    db.ref(`patients/${selectedPatientId.value}`).update({ historiaClinica: { ...hcForm } });
-                    alert("HISTORIAL CLÍNICO OFICIAL GUARDADO EN LA BASE DE DATOS.");
-                    activeTab.value = 'medico'; // Lo regresa a medicina para continuar
+                    if(!hcPatient.value) return;
+                    db.ref(`patients/${hcPatient.value.id}`).update({ historia_clinica: { ...hcForm } });
+                    alert("HISTORIA CLÍNICA GUARDADA EN LA BASE DE DATOS EN TIEMPO REAL.");
+                    hcPatient.value = null;
+                    activeTab.value = 'signos';
+                    // Resetear formulario HC
+                    Object.keys(hcForm).forEach(k => hcForm[k] = (typeof hcForm[k] === 'boolean' ? false : (typeof hcForm[k] === 'number' ? null : '')));
                 };
 
-                // FUNCIONES DE CONSULTA
-                const loadSelectedPatient = (area) => {
-                    const p = patients.value.find(x => x.id === selectedPatientId.value);
-                    currP[area] = p;
-                };
-
+                // =========================================
+                // LÓGICA CORE: CONSULTAS, RECETAS E IMPRESIÓN
+                // =========================================
                 const printRecipe = (area) => {
-                    const p = currP[area]; 
-                    const doc = staff.value.find(s => s.id === selStaffId[area]);
-                    if(!p || !doc) return alert("FALTAN DATOS DEL PACIENTE O EL ESPECIALISTA.");
+                    const p = currP[area]; const doc = staff.value.find(s => s.id === selStaffId[area]);
+                    if(!p || !doc) return alert("POR FAVOR SELECCIONE AL PACIENTE Y AL ESPECIALISTA.");
 
                     const report = {
                         pacienteNombre: p.nombre, edad: p.edad, sexo: p.sexo, domicilio: p.domicilio, telefono: p.telefono,
-                        vitals: p.vitals || null, historiaClinica: p.historiaClinica || null, alergias: consGen.alergias, diagnostico: consGen.diagnostico,
-                        tratamiento: consGen.tratamiento, medicamentos: [...recipe.value],
+                        vitals: p.vitals || null, historia_clinica: p.historia_clinica || null,
+                        alergias: consGen.alergias, diagnostico: consGen.diagnostico, tratamiento: consGen.tratamiento,
+                        medicamentos: [...recipe.value],
                         medicoNombre: doc.nombre, medicoCedula: doc.cedula, medicoEscuela: doc.escuela, 
                         tipoServicio: area, fecha: new Date().toLocaleString()
                     };
 
-                    // Guardar en Histórico Global
                     db.ref('history').push(report);
-                    
-                    // Descontar Inventario
+                    // Descuento de stock en almacén
                     recipe.value.forEach(r => {
                         const it = inventory.value.find(x => x.id === r.id);
                         if(it) db.ref(`inventory/${r.id}/stock`).set(it.stock - 1);
                     });
 
-                    // Eliminar de Fila Activa
-                    db.ref(`patients/${p.id}`).remove();
-                    
+                    db.ref(`patients/${p.id}`).remove(); // Sale de la fila de espera
                     printData.value = report;
                     nextTick(() => { setTimeout(() => { window.print(); printData.value = null; }, 1200); });
                     
-                    // Resetear
-                    currP[area] = null; selectedPatientId.value = null;
-                    consGen.diagnostico = ''; consGen.tratamiento = ''; recipe.value = [];
-                    // Limpiar HC form local
-                    Object.keys(hcForm).forEach(k => { if(typeof hcForm[k] === 'boolean') hcForm[k] = false; else hcForm[k] = ''; });
-                    hcForm.sexo = 'MUJER';
+                    currP[area] = null; selectedPatientId.value = null; viewHistoriaClinicaModal.value = false;
+                    consGen.alergias = ''; consGen.diagnostico = ''; consGen.tratamiento = ''; recipe.value = [];
                 };
 
-                // DESCARGAR PDF CENSO (DOS BOTONES COMO SE PIDIÓ)
-                const downloadBeneficiariosPDF = (type) => {
+                // =========================================
+                // REPORTES EN PDF Y EXPORTACIÓN
+                // =========================================
+                const downloadBeneficiariosPDF = (tipo) => {
                     const { jsPDF } = window.jspdf; const doc = new jsPDF('l');
-                    let targetData = filteredHistory.value;
-
-                    if (type === 'today') {
-                        const todayDate = new Date().toLocaleDateString();
-                        targetData = targetData.filter(h => {
-                            // Extrae solo la fecha antes de la coma en el string local
-                            const recordDate = h.fecha.split(',')[0].trim();
-                            return recordDate === todayDate;
-                        });
-                        doc.text(`CENSO JORNADA ACTUAL (${todayDate}) - FUERZA GENERACIONAL`, 14, 15);
-                    } else {
-                        doc.text("CENSO HISTÓRICO GLOBAL - FUERZA GENERACIONAL", 14, 15);
+                    const titulo = tipo === 'hoy' ? "CENSO DE BENEFICIARIOS (JORNADA ACTUAL)" : "CENSO HISTÓRICO GLOBAL (TODAS LAS JORNADAS)";
+                    doc.setFontSize(14); doc.text(titulo + " - FUERZA GENERACIONAL", 14, 15);
+                    
+                    let dataToPrint = filteredCensus.value;
+                    if(tipo === 'hoy') {
+                        const today = new Date().toLocaleDateString();
+                        dataToPrint = dataToPrint.filter(h => h.fecha.includes(today));
                     }
-
-                    if(targetData.length === 0) return alert("NO HAY DATOS PARA GENERAR EL REPORTE.");
-
+                    
                     doc.autoTable({ 
                         startY: 20, 
+                        headStyles: { fillColor: [180, 83, 9] },
                         head: [['Fecha', 'Nombre', 'Edad', 'Sexo', 'Domicilio', 'Teléfono', 'Servicio']], 
-                        body: targetData.map(h => [h.fecha, h.pacienteNombre, h.edad, h.sexo, h.domicilio, h.telefono, h.tipoServicio]),
-                        theme: 'grid',
-                        headStyles: { fillColor: [30, 41, 59] }
+                        body: dataToPrint.map(h => [h.fecha, h.pacienteNombre, h.edad, h.sexo, h.domicilio, h.telefono, h.tipoServicio]) 
                     });
-                    doc.save(`Reporte_Censo_${type.toUpperCase()}.pdf`);
+                    doc.save(`Reporte_Censo_${tipo.toUpperCase()}.pdf`);
                 };
 
-                // BORRADO TOTAL (SOLO PARA LA PRESIDENTA/SUPER)
                 const nukeDatabase = () => { 
-                    if(confirm('¿ESTÁ SEGURA DE ELIMINAR TODA LA BASE DE DATOS DE FORMA PERMANENTE?')) { 
+                    if(confirm('¿ESTÁ COMPLETAMENTE SEGURO DE ELIMINAR TODA LA BASE DE DATOS? ESTA ACCIÓN ES IRREVERSIBLE.')) { 
                         ['patients','staff','inventory','history'].forEach(k => db.ref(k).remove()); 
-                        alert('BASE DE DATOS ELIMINADA. SISTEMA REINICIADO.');
+                        alert('SISTEMA VACIADO Y REINICIADO.');
                     } 
                 };
 
-                // CARGA DEMO
                 const loadExampleData = () => {
-                    if(confirm("¿Inyectar datos de demostración?")) {
+                    if(confirm("¿Cargar datos predeterminados de prueba?")) {
                         db.ref('staff').push({ nombre: "Dr. Juan Pérez", area: "medico", cedula: "11111", escuela: "BUAP" });
                         db.ref('staff').push({ nombre: "Lic. María Gómez", area: "juridico", cedula: "87654", escuela: "IBERO" });
-                        const meds = [{nombre:"Paracetamol",stock:50},{nombre:"Ibuprofeno",stock:5},{nombre:"Vendas",stock:100},{nombre:"Loratadina",stock:30},{nombre:"Metformina",stock:10}];
+                        db.ref('staff').push({ nombre: "Est. Carlos Ruiz", area: "interno", cedula: "ESTUDIANTE", escuela: "UPAEP" });
+                        const meds = [{nombre:"Paracetamol",stock:50},{nombre:"Ibuprofeno",stock:5},{nombre:"Vendas",stock:100},{nombre:"Loratadina",stock:30}];
                         meds.forEach(m => db.ref('inventory').push({...m, presentacion: "Caja", caducidad: "2028-01-01"}));
-                        alert("DATOS DEMOSTRATIVOS CARGADOS.");
+                        alert("DATOS CARGADOS CON ÉXITO.");
                     }
                 };
 
                 return { 
-                    isLoggedIn, loginData, loginError, errorMsg, performLogin, logout, activeTab, filteredTabs, roleName: computed(() => userRole.value),
-                    patients, staff, inventory, history, filteredHistory, formP, formS, formI, currP, vitalsForm, consGen, hcForm, selectedPatientId, internalStaffId, selStaffId, recipe, tempMed, tempDosis, printData, showModalHC,
+                    isLoggedIn, loginData, loginError, errorMsg, performLogin, logout, activeTab, filteredTabs, roleName: computed(() => userRole.value), userRole,
+                    patients, staff, inventory, history, formP, formS, formI, currP, vitalsForm, consGen, hcForm, selectedPatientId, selectedEnfermeroId, hcPatient, viewHistoriaClinicaModal, selStaffId, recipe, tempMed, tempDosis, printData, displayHistoryFiltered, filteredCensus,
                     registerPatient, saveVitalsAndContinue, saveHistoriaClinica, printRecipe, nukeDatabase, loadExampleData, downloadBeneficiariosPDF,
                     getStockClass: (s) => (s <= 0 ? 'stock-red' : (s <= 10 ? 'stock-yellow' : 'stock-green')),
                     isExpired: (d) => d && new Date(d) < new Date(), formatDate: (d) => d || 'S/F',
-                    changeTab: (id) => { activeTab.value = id; selectedPatientId.value = null; showModalHC.value = false; },
-                    loadPatientForVitals, loadSelectedPatient,
+                    changeTab: (id) => { activeTab.value = id; selectedPatientId.value = null; viewHistoriaClinicaModal.value = false; },
+                    loadPatientForVitals: () => currP.enfermeria = patients.value.find(x=>x.id===selectedPatientId.value),
+                    loadSelectedPatient: (area) => currP[area] = patients.value.find(x=>x.id===selectedPatientId.value),
                     addToRecipe: () => { if(tempMed.value){ recipe.value.push({id:tempMed.value.id, nombre:tempMed.value.nombre, indicacion:tempDosis.value}); tempMed.value=null; tempDosis.value=''; } },
-                    staffByArea: (a) => staff.value.filter(s => s.area === a), waitingFor: (a) => patients.value.filter(p => p.servicio === a), pendingVitalsList: computed(() => patients.value.filter(p => !p.vitals)),
+                    staffByArea: (a) => staff.value.filter(s => s.area === a), 
+                    waitingFor: (a) => patients.value.filter(p => p.servicio === a), 
+                    pendingVitalsList: computed(() => patients.value.filter(p => !p.vitals)),
                     addStaff: () => { db.ref('staff').push({...formS}); Object.assign(formS,{nombre:'',cedula:'',escuela:''}); }, deleteStaff: (id) => db.ref(`staff/${id}`).remove(),
                     addInventory: () => { db.ref('inventory').push({...formI}); Object.assign(formI,{nombre:'',stock:null,caducidad:'',presentacion:''}); }, deleteInventory: (id) => db.ref(`inventory/${id}`).remove(),
                     deleteHistory: (id) => db.ref(`history/${id}`).remove(), reprintHistory: (h) => { printData.value = h; nextTick(()=>setTimeout(()=>window.print(),1200)); },
-                    exportData: () => { const b=new Blob([JSON.stringify({history:history.value,inventory:inventory.value,staff:staff.value})],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='Backup.json'; a.click(); },
-                    importData: (e) => { const r = new FileReader(); r.onload=ev=>{ const d=JSON.parse(ev.target.result); if(d.history) d.history.forEach(h=>db.ref('history').push(h)); alert('CARGA EXITOSA'); }; r.readAsText(e.target.files[0]); },
+                    exportData: () => { const b=new Blob([JSON.stringify({history:history.value,inventory:inventory.value,staff:staff.value})],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='Backup_Fuerza_Generacional.json'; a.click(); },
+                    importData: (e) => { const r = new FileReader(); r.onload=ev=>{ const d=JSON.parse(ev.target.result); if(d.history) d.history.forEach(h=>db.ref('history').push(h)); alert('CARGA DE RESPALDO EXITOSA'); }; r.readAsText(e.target.files[0]); },
                     deletePatient: (id) => db.ref(`patients/${id}`).remove()
                 };
             }
