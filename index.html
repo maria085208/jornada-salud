@@ -17,16 +17,20 @@
 
     <script>
         const allowedHostname = "maria085208.github.io";
-        if (window.location.hostname !== allowedHostname && window.location.hostname !== "") {
-            document.write('<div style="background:#0f172a; width:100vw; height:100vh; position:fixed; top:0; left:0; z-index:999999; color:white; display:flex; flex-direction:column; align-items:center; justify-content:center; font-family:sans-serif;"><i class="fas fa-lock" style="font-size:6rem; margin-bottom:20px; color:#ef4444;"></i><h1 style="font-weight:900; letter-spacing:2px; font-size:2rem;">SISTEMA BLOQUEADO</h1><p style="color:#94a3b8; margin-top:10px; font-weight:bold; letter-spacing:1px;">ENTORNO NO AUTORIZADO</p></div>');
+        if (window.location.hostname !== allowedHostname) {
+            document.write(`
+                <div style="background:#0f172a; width:100vw; height:100vh; position:fixed; top:0; left:0; z-index:999999; color:white; display:flex; flex-direction:column; align-items:center; justify-content:center; font-family:sans-serif;">
+                    <i class="fas fa-shield-alt" style="font-size:6rem; margin-bottom:20px; color:#ef4444;"></i>
+                    <h1 style="font-weight:900; letter-spacing:2px; font-size:2rem;">ACCESO DENEGADO</h1>
+                    <p style="color:#94a3b8; margin-top:10px; font-weight:bold; letter-spacing:1px;">SISTEMA RESTRINGIDO A DOMINIO AUTORIZADO</p>
+                </div>
+            `);
             window.stop();
         }
 
         document.addEventListener('contextmenu', e => e.preventDefault());
         document.onkeydown = function(e) {
-            if (e.keyCode === 123 || 
-               (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) || 
-               (e.ctrlKey && e.keyCode === 85)) {
+            if (e.keyCode === 123 || (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) || (e.ctrlKey && e.keyCode === 85)) {
                 document.body.innerHTML = '<div style="background:black; width:100vw; height:100vh; position:fixed; top:0; left:0; z-index:999999;"></div>';
                 return false;
             }
@@ -35,29 +39,12 @@
     </script>
 
     <style>
-        :root { 
-            --bg-color: #fffbeb; 
-            --text-main: #1e293b; 
-            --accent-main: #b45309; 
-            --primary-dark: #0f172a;
-        }
-        body { 
-            background-color: var(--bg-color); 
-            color: var(--text-main); 
-            margin: 0; 
-            font-family: 'Inter', sans-serif; 
-            -webkit-print-color-adjust: exact; 
-            print-color-adjust: exact;
-            user-select: none; 
-        }
+        :root { --bg-color: #fffbeb; --text-main: #1e293b; --accent-main: #b45309; --primary-dark: #0f172a; }
+        body { background-color: var(--bg-color); color: var(--text-main); margin: 0; font-family: 'Inter', sans-serif; -webkit-print-color-adjust: exact; print-color-adjust: exact; user-select: none; }
 
-        .input-std { 
-            width: 100%; padding: 15px; border: 2px solid #e2e8f0; border-radius: 12px; 
-            font-weight: 900; text-transform: uppercase; outline: none; background: #ffffff; 
-            font-size: 13px; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
-        }
+        .input-std { width: 100%; padding: 15px; border: 2px solid #e2e8f0; border-radius: 12px; font-weight: 900; text-transform: uppercase; outline: none; background: #ffffff; font-size: 13px; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         .input-std:focus { border-color: var(--accent-main); box-shadow: 0 0 0 4px rgba(180, 83, 9, 0.1); }
-        .input-pwd { font-family: 'Courier New', Courier, monospace; letter-spacing: 5px; }
+        .input-pwd { font-family: 'Courier New', Courier, monospace; letter-spacing: 5px; -webkit-text-security: disc; }
 
         .tab-active { background-color: var(--primary-dark) !important; color: white !important; font-weight: 900; }
         .tab-inactive { color: #78350f; background-color: white; font-weight: 600; border-bottom: 2px solid #fed7aa; }
@@ -125,7 +112,6 @@
         </div>
 
         <div v-else id="app-container" class="min-h-screen pb-20">
-            
             <header class="bg-white border-b-4 border-amber-600 sticky top-0 z-40 shadow-xl no-print">
                 <div class="container mx-auto px-6 py-4 flex justify-between items-center">
                     <div class="flex items-center gap-5">
@@ -231,7 +217,7 @@
                             </div>
                             
                             <button @click="goToClinicalHistory" class="w-full bg-slate-900 text-white py-8 rounded-[2.5rem] font-black uppercase text-sm mt-8 shadow-2xl hover:bg-black transition-all active:scale-95 flex items-center justify-center gap-3">
-                                CONTINUAR CON EL PROCESO <i class="fas fa-arrow-right ml-2"></i>
+                                CONTINUA CON EL PROCESO <i class="fas fa-arrow-right ml-2"></i>
                             </button>
                         </div>
                         <div v-else class="text-center p-10 opacity-50">
@@ -583,9 +569,7 @@
                 
                 <div style="text-align:center; margin-bottom:25px;">
                     <h2 style="font-size:22px; font-weight:900; text-transform:uppercase; margin:0;">{{ printData.medicoNombre }}</h2>
-                    <p style="font-size:14px; font-weight:bold; margin:5px 0; text-transform:uppercase;">
-                        ESPECIALIDAD: {{ printData.tipoServicio }}
-                    </p>
+                    <p style="font-size:14px; font-weight:bold; margin:5px 0; text-transform:uppercase;">ESPECIALIDAD: {{ printData.tipoServicio }}</p>
                     <p style="font-size:11px; font-weight:bold; color:#334155;">CÉDULA PROFESIONAL / MATRÍCULA: {{ printData.medicoCedula }}</p>
                 </div>
 
@@ -654,13 +638,16 @@
             "QURNSU4wODUyOkFETUlORkcxMg==": "ADM_ONLY" 
         };
 
-        const { createApp, ref, reactive, computed, onMounted, nextTick } = Vue;
+        // ANTI-PROXY FIX PARA FIREBASE
+        const cleanData = (obj) => JSON.parse(JSON.stringify(obj));
+
+        const { createApp, ref, computed, onMounted, nextTick } = Vue;
 
         createApp({
             setup() {
                 const isLoggedIn = ref(false); 
                 const userRole = ref(''); 
-                const loginData = reactive({ user: '', pass: '' }); 
+                const loginData = ref({ user: '', pass: '' }); 
                 const loginError = ref(false);
                 const errorMsg = ref('');
                 const activeTab = ref('recepcion'); 
@@ -670,13 +657,17 @@
                 const patients = ref([]); const staff = ref([]); const inventory = ref([]); const history = ref([]);
                 const printData = ref(null);
             
-                const formP = reactive({ nombre: '', edad: '', sexo: 'MUJER', domicilio: '', telefono: '', servicio: 'medico' });
-                const formS = reactive({ nombre: '', area: 'medico', cedula: '', escuela: '' });
-                const formI = reactive({ nombre: '', stock: '', caducidad: '', presentacion: '' });
+                // REF EN LUGAR DE REACTIVE PARA PREVENIR COLAPSOS DE PESTAÑAS
+                const formP = ref({ nombre: '', edad: '', sexo: 'MUJER', domicilio: '', telefono: '', servicio: 'medico' });
+                const formS = ref({ nombre: '', area: 'medico', cedula: '', escuela: '' });
+                const formI = ref({ nombre: '', stock: '', caducidad: '', presentacion: '' });
 
                 const selectedPatientId = ref(null);
                 const selectedInternId = ref(null);
-                const currentPatient = computed(() => patients.value.find(x => x.id === selectedPatientId.value) || null);
+                const currentPatient = computed(() => {
+                    if (!patients.value || !selectedPatientId.value) return null;
+                    return patients.value.find(x => x.id === selectedPatientId.value) || null;
+                });
                 
                 const defaultVitals = () => ({ peso: '', talla: '', ta: '', temp: '', fc: '', spo2: '', alergias: '' });
                 const defaultHc = () => ({ 
@@ -688,18 +679,18 @@
                 });
                 const defaultCons = () => ({ diagnostico: '', tratamiento: '' });
 
-                const vitalsForm = reactive(defaultVitals());
-                const hcForm = reactive(defaultHc());
-                const consGen = reactive(defaultCons());
+                const vitalsForm = ref(defaultVitals());
+                const hcForm = ref(defaultHc());
+                const consGen = ref(defaultCons());
 
-                const selStaffId = reactive({ medico: null, juridico: null, psicologia: null, cosmetologia: null, fisioterapia: null });
+                const selStaffId = ref({ medico: null, juridico: null, psicologia: null, cosmetologia: null, fisioterapia: null });
                 const recipe = ref([]); const tempMed = ref(null); const tempDosis = ref('');
 
                 onMounted(() => {
-                    db.ref('patients').on('value', s => { patients.value = s.exists() ? Object.entries(s.val()).map(([id,v])=>({id,...v})) : []; });
-                    db.ref('staff').on('value', s => { staff.value = s.exists() ? Object.entries(s.val()).map(([id,v])=>({id,...v})) : []; });
-                    db.ref('inventory').on('value', s => { inventory.value = s.exists() ? Object.entries(s.val()).map(([id,v])=>({id,...v})) : []; });
-                    db.ref('history').on('value', s => { history.value = s.exists() ? Object.entries(s.val()).map(([id,v])=>({id,...v})) : []; });
+                    db.ref('patients').on('value', s => { patients.value = s.exists() ? Object.entries(s.val()).map(([id,v])=>({id,...v})) : []; }, e => alert("Error DB Pacientes: " + e.message));
+                    db.ref('staff').on('value', s => { staff.value = s.exists() ? Object.entries(s.val()).map(([id,v])=>({id,...v})) : []; }, e => alert("Error DB Personal: " + e.message));
+                    db.ref('inventory').on('value', s => { inventory.value = s.exists() ? Object.entries(s.val()).map(([id,v])=>({id,...v})) : []; }, e => alert("Error DB Inventario: " + e.message));
+                    db.ref('history').on('value', s => { history.value = s.exists() ? Object.entries(s.val()).map(([id,v])=>({id,...v})) : []; }, e => alert("Error DB Historial: " + e.message));
                 });
 
                 const filteredDisplayHistory = computed(() => { 
@@ -710,18 +701,18 @@
                         if (myArea) list = list.filter(h => h.tipoServicio && h.tipoServicio.toLowerCase() === myArea);
                     }
                     if(searchHistory.value) {
-                        list = list.filter(h => h.pacienteNombre.includes(searchHistory.value.toUpperCase()));
+                        list = list.filter(h => h.pacienteNombre && h.pacienteNombre.includes(searchHistory.value.toUpperCase()));
                     } else {
                         const todayStr = new Date().toLocaleDateString();
-                        list = list.filter(h => h.fecha.includes(todayStr));
+                        list = list.filter(h => h.fecha && h.fecha.includes(todayStr));
                     }
                     return list.slice(0, historyLimit.value); 
                 });
 
                 const performLogin = () => {
                     const normalizeStr = (str) => (str || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-                    const u = normalizeStr(loginData.user).toUpperCase().trim();
-                    const p = normalizeStr(loginData.pass).toUpperCase().trim();
+                    const u = normalizeStr(loginData.value.user).toUpperCase().trim();
+                    const p = normalizeStr(loginData.value.pass).toUpperCase().trim();
                     const hash = btoa(u + ":" + p); 
                     
                     if(HASH_DB[hash]) {
@@ -739,7 +730,7 @@
                     }
                 };
 
-                const logout = () => { isLoggedIn.value = false; userRole.value = ''; loginData.user = ''; loginData.pass = ''; };
+                const logout = () => { isLoggedIn.value = false; userRole.value = ''; loginData.value = {user: '', pass: ''}; };
 
                 const filteredTabs = computed(() => {
                     const all = [
@@ -768,52 +759,52 @@
                 const changeTab = (id) => { 
                     activeTab.value = id; 
                     selectedPatientId.value = null; 
-                    Object.assign(vitalsForm, defaultVitals());
-                    Object.assign(hcForm, defaultHc());
-                    Object.assign(consGen, defaultCons());
+                    vitalsForm.value = defaultVitals();
+                    hcForm.value = defaultHc();
+                    consGen.value = defaultCons();
                     recipe.value = []; tempMed.value = null; tempDosis.value = '';
                 };
 
                 const registerPatient = () => {
-                    if(formP.telefono && formP.telefono.length !== 10) return alert("EL TELÉFONO DEBE TENER 10 DÍGITOS");
-                    if(!formP.nombre) return alert("NOMBRE ES REQUERIDO");
-                    const pData = {
-                        nombre: formP.nombre ? formP.nombre.toUpperCase() : 'SIN NOMBRE',
-                        edad: formP.edad || 0,
-                        sexo: formP.sexo || 'MUJER',
-                        domicilio: formP.domicilio ? formP.domicilio.toUpperCase() : 'SIN DOMICILIO',
-                        telefono: formP.telefono || '0000000000',
-                        servicio: formP.servicio || 'medico',
+                    if(formP.value.telefono && String(formP.value.telefono).length !== 10) return alert("EL TELÉFONO DEBE TENER 10 DÍGITOS");
+                    if(!formP.value.nombre) return alert("NOMBRE ES REQUERIDO");
+                    const pData = cleanData({
+                        nombre: formP.value.nombre ? formP.value.nombre.toUpperCase() : 'SIN NOMBRE',
+                        edad: formP.value.edad || 0,
+                        sexo: formP.value.sexo || 'MUJER',
+                        domicilio: formP.value.domicilio ? formP.value.domicilio.toUpperCase() : 'SIN DOMICILIO',
+                        telefono: formP.value.telefono || '0000000000',
+                        servicio: formP.value.servicio || 'medico',
                         fecha: new Date().toLocaleString()
-                    };
-                    db.ref('patients').push(pData);
-                    Object.assign(formP, { nombre: '', edad: '', domicilio: '', telefono: '' });
+                    });
+                    db.ref('patients').push(pData).catch(e => alert("Error DB: " + e.message));
+                    formP.value = { nombre: '', edad: '', sexo: 'MUJER', domicilio: '', telefono: '', servicio: 'medico' };
                 };
 
                 const loadVitalsForm = () => {
-                    Object.assign(vitalsForm, defaultVitals());
+                    vitalsForm.value = defaultVitals();
                     if (currentPatient.value && currentPatient.value.vitals) {
-                        Object.assign(vitalsForm, currentPatient.value.vitals);
+                        vitalsForm.value = cleanData(currentPatient.value.vitals);
                     }
                 };
 
                 const loadConsultForm = () => {
-                    Object.assign(consGen, defaultCons());
+                    consGen.value = defaultCons();
                     recipe.value = [];
                 };
 
                 const saveVitals = () => {
                     if(!currentPatient.value) return;
-                    let hVal = parseFloat(vitalsForm.talla); let wVal = parseFloat(vitalsForm.peso);
+                    let hVal = parseFloat(vitalsForm.value.talla); let wVal = parseFloat(vitalsForm.value.peso);
                     let imcCalc = '-';
                     if (hVal && wVal) { if (hVal > 3) hVal = hVal / 100; imcCalc = (wVal / (hVal * hVal)).toFixed(1); }
-                    const vData = {
-                        peso: vitalsForm.peso || '', talla: vitalsForm.talla || '', ta: vitalsForm.ta || '',
-                        temp: vitalsForm.temp || '', fc: vitalsForm.fc || '', spo2: vitalsForm.spo2 || '',
-                        alergias: vitalsForm.alergias ? vitalsForm.alergias.toUpperCase() : 'NEGADAS',
+                    const vData = cleanData({
+                        peso: vitalsForm.value.peso || '', talla: vitalsForm.value.talla || '', ta: vitalsForm.value.ta || '',
+                        temp: vitalsForm.value.temp || '', fc: vitalsForm.value.fc || '', spo2: vitalsForm.value.spo2 || '',
+                        alergias: vitalsForm.value.alergias ? vitalsForm.value.alergias.toUpperCase() : 'NEGADAS',
                         imc: imcCalc
-                    };
-                    db.ref(`patients/${currentPatient.value.id}/vitals`).set(vData);
+                    });
+                    db.ref(`patients/${currentPatient.value.id}/vitals`).set(vData).catch(e => alert("Error DB: " + e.message));
                 };
 
                 const goToClinicalHistory = () => {
@@ -823,19 +814,17 @@
                         selectedPatientId.value = null;
                         return;
                     }
-                    Object.assign(hcForm, defaultHc());
+                    hcForm.value = defaultHc();
                     if(currentPatient.value.historia_clinica) {
-                        Object.assign(hcForm, currentPatient.value.historia_clinica);
+                        hcForm.value = cleanData(currentPatient.value.historia_clinica);
                     }
                     activeTab.value = 'historia_clinica';
                 };
 
                 const saveClinicalHistory = () => {
                     if(!currentPatient.value) return;
-                    const hData = JSON.parse(JSON.stringify(hcForm));
-                    hData.edad = currentPatient.value.edad || 0;
-                    hData.sexo = currentPatient.value.sexo || 'MUJER';
-                    db.ref(`patients/${currentPatient.value.id}/historia_clinica`).set(hData);
+                    const hData = cleanData({ ...hcForm.value, edad: currentPatient.value.edad, sexo: currentPatient.value.sexo });
+                    db.ref(`patients/${currentPatient.value.id}/historia_clinica`).set(hData).catch(e => alert("Error DB: " + e.message));
                     alert("GUARDADO Y ENVIADO A ÁREA CORRESPONDIENTE");
                     selectedPatientId.value = null; activeTab.value = 'signos';
                 };
@@ -849,36 +838,36 @@
 
                 const printRecipe = (area) => {
                     const p = currentPatient.value; 
-                    const doc = staff.value.find(s => s.id === selStaffId[area]);
+                    const doc = staff.value.find(s => s.id === selStaffId.value[area]);
                     if(!p) return alert("FALTA SELECCIONAR PACIENTE DE LA FILA");
                     if(!doc) return alert("FALTA SELECCIONAR AL ESPECIALISTA EN TURNO");
 
-                    const report = {
+                    const report = cleanData({
                         pacienteNombre: p.nombre || '', edad: p.edad || 0, sexo: p.sexo || '', domicilio: p.domicilio || '', telefono: p.telefono || '',
                         vitals: p.vitals || null, historia: p.historia_clinica || null,
-                        diagnostico: consGen.diagnostico ? consGen.diagnostico.toUpperCase() : '', 
-                        tratamiento: consGen.tratamiento ? consGen.tratamiento.toUpperCase() : '', 
-                        medicamentos: JSON.parse(JSON.stringify(recipe.value)),
+                        diagnostico: consGen.value.diagnostico ? consGen.value.diagnostico.toUpperCase() : '', 
+                        tratamiento: consGen.value.tratamiento ? consGen.value.tratamiento.toUpperCase() : '', 
+                        medicamentos: [...recipe.value],
                         medicoNombre: doc.nombre || '', medicoCedula: doc.cedula || '', tipoServicio: area.toUpperCase(), 
                         fecha: new Date().toLocaleString()
-                    };
+                    });
 
-                    db.ref('history').push(report);
+                    db.ref('history').push(report).catch(e => alert("Error DB: " + e.message));
                     recipe.value.forEach(r => {
                         const it = inventory.value.find(x => x.id === r.id);
-                        if(it) db.ref(`inventory/${r.id}/stock`).set(Number(it.stock) - 1);
+                        if(it) db.ref(`inventory/${r.id}/stock`).set(Number(it.stock) - 1).catch(e => alert("Error DB Inventario: " + e.message));
                     });
 
                     db.ref(`patients/${p.id}`).remove();
                     printData.value = report;
                     nextTick(() => { setTimeout(() => { window.print(); printData.value = null; }, 1200); });
-                    selectedPatientId.value = null; Object.assign(consGen, defaultCons()); recipe.value = [];
+                    selectedPatientId.value = null; consGen.value = defaultCons(); recipe.value = [];
                 };
 
                 const nukeDatabase = () => { 
                     const p = prompt('INGRESE CÓDIGO DE AUTORIZACIÓN (123467):');
                     if(p === '123467') { 
-                        ['patients','staff','inventory','history'].forEach(k => db.ref(k).remove()); 
+                        ['patients','staff','inventory','history'].forEach(k => db.ref(k).remove().catch(e => alert("Error DB: " + e.message))); 
                         alert('SISTEMA LIMPIADO Y REINICIADO.');
                     } else { alert('CÓDIGO INCORRECTO.'); }
                 };
@@ -908,7 +897,7 @@
 
                 const editInventoryPrompt = (m) => {
                     const n = prompt("Nuevo stock para " + m.nombre + ":", m.stock);
-                    if(n !== null && !isNaN(n) && n !== "") db.ref(`inventory/${m.id}/stock`).set(Number(n));
+                    if(n !== null && !isNaN(n) && n !== "") db.ref(`inventory/${m.id}/stock`).set(Number(n)).catch(e => alert("Error DB: " + e.message));
                 };
 
                 const loadPreloadedInventory = () => {
@@ -937,34 +926,34 @@
                     ];
                     if(confirm("¿Cargar el inventario base solicitado?")) {
                         meds.forEach(m => {
-                            const newM = { nombre: m.nombre.toUpperCase(), presentacion: m.presentacion.toUpperCase(), stock: m.stock, caducidad: "2026-12-31" };
-                            db.ref('inventory').push(newM);
+                            const newM = cleanData({ nombre: m.nombre.toUpperCase(), presentacion: m.presentacion.toUpperCase(), stock: m.stock, caducidad: "2026-12-31" });
+                            db.ref('inventory').push(newM).catch(e => alert("Error DB: " + e.message));
                         });
                         alert("DATOS DE FARMACIA CARGADOS.");
                     }
                 };
 
                 const addStaff = () => { 
-                    if(formS.nombre && formS.cedula) { 
-                        const nS = { nombre: formS.nombre.toUpperCase(), cedula: formS.cedula.toUpperCase(), escuela: formS.escuela ? formS.escuela.toUpperCase() : '', area: formS.area };
-                        db.ref('staff').push(nS); 
-                        Object.assign(formS,{nombre:'',cedula:'',escuela:''}); 
+                    if(formS.value.nombre && formS.value.cedula) { 
+                        const nS = cleanData({ nombre: formS.value.nombre.toUpperCase(), cedula: formS.value.cedula.toUpperCase(), escuela: formS.value.escuela ? formS.value.escuela.toUpperCase() : '', area: formS.value.area });
+                        db.ref('staff').push(nS).catch(e => alert("Error DB: " + e.message)); 
+                        formS.value = {nombre:'', area:'medico', cedula:'', escuela:''}; 
                     } else { alert('NOMBRE Y CÉDULA REQUERIDOS'); } 
                 };
                 
-                const deleteStaff = (id) => db.ref(`staff/${id}`).remove();
+                const deleteStaff = (id) => db.ref(`staff/${id}`).remove().catch(e => alert("Error DB: " + e.message));
                 
                 const addInventory = () => { 
-                    if(formI.nombre && formI.stock !== null && formI.stock !== "") { 
-                        const nI = { nombre: formI.nombre.toUpperCase(), presentacion: formI.presentacion ? formI.presentacion.toUpperCase() : '', stock: Number(formI.stock), caducidad: formI.caducidad || '' };
-                        db.ref('inventory').push(nI); 
-                        Object.assign(formI,{nombre:'',stock:'',caducidad:'',presentacion:''}); 
+                    if(formI.value.nombre && formI.value.stock !== null && formI.value.stock !== "") { 
+                        const nI = cleanData({ nombre: formI.value.nombre.toUpperCase(), presentacion: formI.value.presentacion ? formI.value.presentacion.toUpperCase() : '', stock: Number(formI.value.stock), caducidad: formI.value.caducidad || '' });
+                        db.ref('inventory').push(nI).catch(e => alert("Error DB: " + e.message)); 
+                        formI.value = {nombre:'', stock:'', caducidad:'', presentacion:''}; 
                     } else { alert('COMPLETE LOS CAMPOS DE INVENTARIO'); } 
                 };
 
-                const deleteInventory = (id) => db.ref(`inventory/${id}`).remove();
-                const deleteHistory = (id) => db.ref(`history/${id}`).remove();
-                const reprintHistory = (h) => { printData.value = h; nextTick(()=>setTimeout(()=>window.print(),1200)); };
+                const deleteInventory = (id) => db.ref(`inventory/${id}`).remove().catch(e => alert("Error DB: " + e.message));
+                const deleteHistory = (id) => db.ref(`history/${id}`).remove().catch(e => alert("Error DB: " + e.message));
+                const reprintHistory = (h) => { printData.value = cleanData(h); nextTick(()=>setTimeout(()=>window.print(),1200)); };
                 
                 const exportData = () => { 
                     const b = new Blob([JSON.stringify({history:history.value,inventory:inventory.value,staff:staff.value})],{type:'application/json'}); 
@@ -978,13 +967,13 @@
                     const r = new FileReader(); 
                     r.onload = ev => { 
                         const d = JSON.parse(ev.target.result); 
-                        if(d.history) d.history.forEach(h => db.ref('history').push(h)); 
+                        if(d.history) d.history.forEach(h => db.ref('history').push(cleanData(h)).catch(e => alert("Error DB: " + e.message))); 
                         alert('CARGA EXITOSA'); 
                     }; 
                     r.readAsText(e.target.files[0]); 
                 };
                 
-                const deletePatient = (id) => db.ref(`patients/${id}`).remove();
+                const deletePatient = (id) => db.ref(`patients/${id}`).remove().catch(e => alert("Error DB: " + e.message));
 
                 return { 
                     isLoggedIn, loginData, loginError, errorMsg, performLogin, logout, activeTab, filteredTabs, roleName: computed(() => userRole.value), userRole, searchHistory,
