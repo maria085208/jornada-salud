@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://maria085208.github.io https://*.firebaseio.com https://*.googleapis.com; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com https://cdn.tailwindcss.com https://cdnjs.cloudflare.com https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; connect-src 'self' https://*.firebaseio.com wss://*.firebaseio.com https://*.googleapis.com;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://maria085208.github.io http://127.0.0.1 http://localhost https://*.firebaseio.com https://*.googleapis.com; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com https://cdn.tailwindcss.com https://cdnjs.cloudflare.com https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; connect-src 'self' https://*.firebaseio.com wss://*.firebaseio.com https://*.googleapis.com;">
     <title>JORNADAS DE SALUD - FUERZA GENERACIONAL</title>
     
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
@@ -154,6 +154,7 @@
                 </form>
             </div>
         </div>
+        
         <div v-else id="app-container" class="min-h-screen pb-20 bg-black text-white">
             
             <header class="bg-zinc-900 border-b-4 border-amber-600 sticky top-0 z-40 shadow-xl no-print">
@@ -178,7 +179,6 @@
             </header>
 
             <main class="container mx-auto px-6 py-10 no-print">
-                
                 <section v-if="activeTab === 'nosotros'" class="max-w-5xl mx-auto space-y-10 animate-fade-in">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
                         <div class="bg-zinc-900 p-12 rounded-[3.5rem] border border-zinc-800 shadow-2xl relative overflow-hidden">
@@ -274,6 +274,7 @@
                         </div>
                     </div>
                 </section>
+
                 <section v-if="activeTab === 'historia'" class="max-w-5xl mx-auto animate-fade-in">
                     <div class="bg-zinc-900 p-12 rounded-[4rem] border border-zinc-800 shadow-2xl">
                         <div class="flex justify-between items-center mb-10 border-b border-zinc-800 pb-6">
@@ -372,7 +373,7 @@
                             <div class="flex flex-col md:flex-row gap-5 mb-8">
                                 <select v-model="tempMed" class="input-std flex-1 h-16 bg-zinc-800 text-white border-zinc-700 focus:border-amber-500">
                                     <option :value="null">-- SELECCIONAR DE ALMACÉN --</option>
-                                    <option v-for="m in sortedInventory" :key="m.id" :value="m">{{m.nombre}} (STOCK: {{m.stock}})</option>
+                                    <option v-for="m in sortedInventory" :key="m.id" :value="m.id">{{m.nombre}} (STOCK: {{m.stock}})</option>
                                 </select>
                                 <input v-model="tempDosis" class="input-std flex-1 h-16 uppercase bg-zinc-800 text-white border-zinc-700 focus:border-amber-500" placeholder="INDICACIÓN DE USO / DOSIS">
                                 <button @click="addToRecipe" class="bg-amber-600 text-white px-10 rounded-2xl font-black uppercase text-xs hover:bg-amber-500 transition-all">AÑADIR A RECETA</button>
@@ -423,6 +424,7 @@
                         </button>
                     </div>
                 </section>
+
                 <section v-if="activeTab === 'juridico'" class="max-w-6xl mx-auto space-y-8 animate-fade-in">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <div class="bg-zinc-900 p-8 border border-zinc-800 rounded-[2.5rem] shadow-xl">
@@ -538,7 +540,7 @@
                             <div class="flex flex-col md:flex-row gap-5 mb-8">
                                 <select v-model="tempMed" class="input-std flex-1 h-16 bg-zinc-800 text-white border-zinc-700 focus:border-pink-500">
                                     <option :value="null">-- SELECCIONAR DE ALMACÉN --</option>
-                                    <option v-for="m in sortedInventory" :key="m.id" :value="m">{{m.nombre}} (STOCK: {{m.stock}})</option>
+                                    <option v-for="m in sortedInventory" :key="m.id" :value="m.id">{{m.nombre}} (STOCK: {{m.stock}})</option>
                                 </select>
                                 <input v-model="tempDosis" class="input-std flex-1 h-16 uppercase bg-zinc-800 text-white border-zinc-700 focus:border-pink-500" placeholder="INDICACIÓN DE USO / DOSIS">
                                 <button @click="addToRecipe" class="bg-pink-700 text-white px-10 rounded-2xl font-black uppercase text-xs hover:bg-pink-600 transition-all">AÑADIR A RECETA</button>
@@ -595,6 +597,7 @@
                         </div>
                     </div>
                 </section>
+
                 <section v-if="activeTab === 'beneficiarios'" class="space-y-8 animate-fade-in">
                     <div class="flex flex-col md:flex-row justify-between items-center bg-zinc-900 p-8 rounded-[2.5rem] shadow-2xl border border-zinc-800 gap-6">
                         <h2 class="text-3xl font-black uppercase italic text-white">CENSO GLOBAL</h2>
@@ -725,6 +728,7 @@
 
             </main>
         </div>
+        
         <div id="print-zone" v-if="printData">
             <div class="receta-maestra">
                 <div class="receta-header">
@@ -785,7 +789,7 @@
                     </h3>
                     
                     <table v-if="printData.medicamentos && printData.medicamentos.length > 0" style="width: 100%; border-collapse: collapse; margin-bottom: 25px; border: 2px solid #000;">
-                        <tr v-for="m in printData.medicamentos">
+                        <tr v-for="(m, i) in printData.medicamentos" :key="'med-'+i">
                             <td style="border: 1px solid #000; padding: 12px; font-weight: 900; width: 45%; background: #f8fafc;">{{ m.nombre }}</td>
                             <td style="border: 1px solid #000; padding: 12px; font-weight: 700;">{{ m.indicacion }}</td>
                         </tr>
@@ -812,14 +816,23 @@
 
     <script>
         /* ==========================================================
-           KILL-SWITCH DE SEGURIDAD (SOLO GITHUB PAGES PERMITIDO)
+            KILL-SWITCH DE SEGURIDAD (CORREGIDO PARA DESARROLLO LOCAL)
            ========================================================== */
-        if (window.location.hostname !== 'maria085208.github.io' && window.location.hostname !== '') {
+        const host = window.location.hostname;
+        if (host !== 'maria085208.github.io' && host !== '' && host !== 'localhost' && host !== '127.0.0.1') {
             document.body.innerHTML = '<div style="background:black;color:red;height:100vh;display:flex;align-items:center;justify-content:center;font-family:sans-serif;font-size:2rem;font-weight:bold;text-transform:uppercase;">ACCESO DENEGADO. ENTORNO NO SEGURO.</div>';
             throw new Error("Violación de seguridad: Entorno no autorizado.");
         }
 
-        const firebaseConfig = { apiKey: "AIzaSyCK6A7G6IvAJyYPCEspvvHg6qjDZdhuQuY", authDomain: "jornada-de-salud1.firebaseapp.com", projectId: "jornada-de-salud1", storageBucket: "jornada-de-salud1.firebasestorage.app", messagingSenderId: "947161304402", appId: "1:947161304402:web:906da7370cc343300cbe8b", measurementId: "G-W945F157DC" };
+        const firebaseConfig = { 
+            apiKey: "AIzaSyCK6A7G6IvAJyYPCEspvvHg6qjDZdhuQuY", 
+            authDomain: "jornada-de-salud1.firebaseapp.com", 
+            projectId: "jornada-de-salud1", 
+            storageBucket: "jornada-de-salud1.firebasestorage.app", 
+            messagingSenderId: "947161304402", 
+            appId: "1:947161304402:web:906da7370cc343300cbe8b", 
+            measurementId: "G-W945F157DC" 
+        };
         
         if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
         const db = firebase.database();
@@ -852,6 +865,8 @@
                 const vitalsForm = reactive({ interno: null, peso: '', talla: '', ta: '', temp: '', fc: '', spo2: '', alergias: '' });
                 const consGen = reactive({ diagnostico: '', tratamiento: '' });
                 const selStaffId = reactive({ medico: null, juridico: null, psicologia: null, cosmetologia: null, fisioterapia: null });
+                
+                // MEJORA: Solo guardamos el ID para evitar romper la reactividad de Vue
                 const recipe = ref([]); const tempMed = ref(null); const tempDosis = ref('');
 
                 onMounted(() => {
@@ -875,7 +890,6 @@
                     return history.value.filter(h => h.tipoServicio === userRole.value || (userRole.value === 'INTERNO' && ['medico','psicologia'].includes(h.tipoServicio)));
                 });
 
-                /* DICCIONARIO DE CREDENCIALES OFUSCADAS (Base64) */
                 const authMap = {
                     'UFJFU0lERU5URUZH|UFJFU0lH': 'SUPER',
                     'QURNSU4wODUy|QURNSU5GRzEy': 'ADMIN',
@@ -923,9 +937,10 @@
                     return all.filter(t => t.roles.includes(userRole.value));
                 });
 
+                // MEJORA: Manejo de errores en Firebase
                 const registerPatient = () => {
                     if(!formP.nombre || !formP.edad || !formP.telefono) return alert("LLENE LOS DATOS PRINCIPALES");
-                    db.ref('patients').push({ ...formP, fecha: new Date().toLocaleString() });
+                    db.ref('patients').push({ ...formP, fecha: new Date().toLocaleString() }).catch(err => alert("Error al guardar: " + err.message));
                     Object.assign(formP, { nombre: '', edad: null, domicilio: '', telefono: '' });
                 };
 
@@ -939,22 +954,43 @@
                         if (hVal > 3) hVal = hVal / 100;
                         imcCalc = (wVal / (hVal * hVal)).toFixed(1);
                     }
-                    db.ref(`patients/${p.id}`).update({ vitals: { ...vitalsForm, imc: imcCalc } });
                     
-                    // Pasar a historia clinica si es medico o psico, de lo contrario directo a la lista del especialista
+                    db.ref(`patients/${p.id}`).update({ vitals: { ...vitalsForm, imc: imcCalc } }).catch(err => alert("Error: " + err.message));
+                    
                     if(['medico', 'psicologia'].includes(p.servicio)) {
                         currP.historia = { ...p, vitals: { ...vitalsForm, imc: imcCalc } };
                         activeTab.value = 'historia';
                     }
-                    selectedPatientId.value = null; currP.enfermeria = null; Object.keys(vitalsForm).forEach(k => vitalsForm[k] = (k==='interno'?vitalsForm.interno:''));
+                    selectedPatientId.value = null; currP.enfermeria = null; 
+                    Object.keys(vitalsForm).forEach(k => vitalsForm[k] = (k==='interno'?vitalsForm.interno:''));
                 };
 
                 const saveHistoriaClinica = () => {
                     if(!currP.historia) return;
-                    db.ref(`patients/${currP.historia.id}`).update({ historia: { ...historiaForm } });
+                    db.ref(`patients/${currP.historia.id}`).update({ historia: { ...historiaForm } }).catch(err => alert("Error: " + err.message));
                     alert("HISTORIA CLÍNICA GUARDADA. EL PACIENTE YA ESTÁ DISPONIBLE EN EL CONSULTORIO.");
                     currP.historia = null; Object.keys(historiaForm).forEach(k => historiaForm[k] = '');
                     activeTab.value = 'recepcion';
+                };
+
+                // MEJORA: Limpiar consGen al cambiar de paciente para no mezclar diagnósticos
+                const loadSelectedPatient = (area) => { 
+                    currP[area] = patients.value.find(x => x.id === selectedPatientId.value); 
+                    showHistoriaCompleta.value = false;
+                    consGen.diagnostico = '';
+                    consGen.tratamiento = '';
+                    recipe.value = [];
+                };
+
+                const addToRecipe = () => { 
+                    if(tempMed.value){ 
+                        const item = inventory.value.find(x => x.id === tempMed.value);
+                        if(item) {
+                            recipe.value.push({id: item.id, nombre: item.nombre, indicacion: tempDosis.value}); 
+                        }
+                        tempMed.value = null; 
+                        tempDosis.value = ''; 
+                    } 
                 };
 
                 const printRecipe = (area) => {
@@ -969,7 +1005,8 @@
                         tipoServicio: area, fecha: new Date().toLocaleString()
                     };
 
-                    db.ref('history').push(report);
+                    db.ref('history').push(report).catch(err => alert("Error guardando reporte: " + err.message));
+                    
                     recipe.value.forEach(r => {
                         const it = inventory.value.find(x => x.id === r.id);
                         if(it) db.ref(`inventory/${r.id}/stock`).set(it.stock - 1);
@@ -977,7 +1014,14 @@
 
                     db.ref(`patients/${p.id}`).remove();
                     printData.value = report;
-                    nextTick(() => { setTimeout(() => { window.print(); printData.value = null; }, 1500); });
+                    
+                    nextTick(() => { 
+                        setTimeout(() => { 
+                            window.print(); 
+                            printData.value = null; 
+                        }, 1500); 
+                    });
+                    
                     currP[area] = null; selectedPatientId.value = null; showHistoriaCompleta.value = false;
                     consGen.diagnostico = ''; consGen.tratamiento = ''; recipe.value = [];
                 };
@@ -1003,13 +1047,13 @@
                 const nukeDatabaseWithPassword = () => { 
                     const pwd = prompt("INGRESE CONTRASEÑA DE ADMINISTRADOR PARA BORRAR TODO:");
                     if(pwd === '123467') { 
-                        ['patients','staff','inventory','history'].forEach(k => db.ref(k).remove()); 
+                        ['patients','staff','inventory','history'].forEach(k => db.ref(k).remove().catch(e => console.error(e))); 
                         alert('SISTEMA LIMPIADO CORRECTAMENTE.');
                     } else { alert("CONTRASEÑA INCORRECTA"); }
                 };
 
                 const loadExampleData = () => {
-                    if(confirm("¿INYECCIÓN MASIVA DE INVENTARIO? (Esto añadirá todos los medicamentos y tratamientos al stock)")) {
+                    if(confirm("¿INYECCIÓN MASIVA DE INVENTARIO? (Esto añadirá todos los medicamentos al stock)")) {
                         const meds = [
                             {nombre:"INCRESINA DÚO", stock: 19, presentacion: "4 TABLETAS"}, {nombre:"METFORMINA 850MG", stock: 4, presentacion: "30 TABLETAS (CAJA)"},
                             {nombre:"FERRICOL SUSPENSIÓN", stock: 1, presentacion: "CAJA"}, {nombre:"SUCRALFATO 1G", stock: 1, presentacion: "40 TABLETAS (CAJA)"},
@@ -1023,16 +1067,16 @@
                             {nombre:"PROBIÓTICOS", stock: 1, presentacion: "CAJA"}, {nombre:"LUMINANCE", stock: 1, presentacion: "CAJA"}, {nombre:"TRIVISOL PEDIÁTRICO", stock: 1, presentacion: "CAJA"},
                             
                             // DERMATOLOGICOS
-                            {nombre:"ISDIN BABY NATURALS LOCIÓN CORPORAL", stock: 20, presentacion: "SOBRES"}, {nombre:"PROAVENAL", stock: 2, presentacion: "SOBRES"},
+                            {nombre:"ISDIN BABY NATURALS", stock: 20, presentacion: "SOBRES"}, {nombre:"PROAVENAL", stock: 2, presentacion: "SOBRES"},
                             {nombre:"LA ROCHE POSAY EFFACLAR DUO", stock: 3, presentacion: "SOBRES"}, {nombre:"ACTINE JABÓN", stock: 2, presentacion: "SOBRES"},
-                            {nombre:"ISDIN HYDRATATIO UREADIN SHOWER GEL", stock: 11, presentacion: "GEL"}, {nombre:"GERMAINE FOR MEN ANTIEDAD", stock: 2, presentacion: "SOBRES"},
+                            {nombre:"ISDIN HYDRATATIO UREADIN", stock: 11, presentacion: "GEL"}, {nombre:"GERMAINE FOR MEN ANTIEDAD", stock: 2, presentacion: "SOBRES"},
                             {nombre:"BLOQUEADOR ISDIN COLOR", stock: 2, presentacion: "SOBRES"}, {nombre:"GERMAINE CREMA ANTI ARRUGAS", stock: 1, presentacion: "SOBRES"},
                             {nombre:"ISDIN ACNIVEN DÍA", stock: 1, presentacion: "SOBRE"}, {nombre:"ISDIN ACNIVEN NOCHE", stock: 1, presentacion: "SOBRE"},
                             {nombre:"SHAMPOO ANTI CASPA", stock: 2, presentacion: "SOBRES"}, {nombre:"CETAPHIL PIEL GRASA Y SENSIBLE", stock: 5, presentacion: "PIEZA"},
-                            {nombre:"CETAPHIL ESPUMOSO TODO TIPO DE PIEL", stock: 4, presentacion: "PIEZA"}, {nombre:"CETAPHIL SENSIBLE NORMAL A SECA", stock: 9, presentacion: "PIEZA"},
+                            {nombre:"CETAPHIL ESPUMOSO", stock: 4, presentacion: "PIEZA"}, {nombre:"CETAPHIL SENSIBLE NORMAL", stock: 9, presentacion: "PIEZA"},
                             {nombre:"ISISPHARMA TEEN DERM", stock: 3, presentacion: "PIEZA"}, {nombre:"BIODERMA SEBIUM HYDRA", stock: 6, presentacion: "PIEZA"},
-                            {nombre:"BIRETRIX ANTI IMPERFECCIONES SERUM", stock: 3, presentacion: "PIEZA"}, {nombre:"ENDOCARE CONTORNO DE OJOS", stock: 2, presentacion: "PIEZA"},
-                            {nombre:"ISISPHARMA CONTORNO DE OJOS", stock: 1, presentacion: "PIEZA"}, {nombre:"BIODERMA ATODERM", stock: 1, presentacion: "PIEZA"}
+                            {nombre:"BIRETRIX ANTI IMPERFECCIONES", stock: 3, presentacion: "PIEZA"}, {nombre:"ENDOCARE CONTORNO", stock: 2, presentacion: "PIEZA"},
+                            {nombre:"ISISPHARMA CONTORNO", stock: 1, presentacion: "PIEZA"}, {nombre:"BIODERMA ATODERM", stock: 1, presentacion: "PIEZA"}
                         ];
                         meds.forEach(m => db.ref('inventory').push({...m, caducidad: "2027-12-31"}));
                         alert("LISTA COMPLETA DE MEDICAMENTOS INYECTADA EN INVENTARIO.");
@@ -1048,12 +1092,13 @@
                     changeTab: (id) => { activeTab.value = id; selectedPatientId.value = null; showHistoriaCompleta.value = false; },
                     toggleHistoriaCompleta: () => { showHistoriaCompleta.value = !showHistoriaCompleta.value; },
                     loadPatientForVitals: () => currP.enfermeria = patients.value.find(x=>x.id===selectedPatientId.value),
-                    loadSelectedPatient: (area) => { currP[area] = patients.value.find(x=>x.id===selectedPatientId.value); showHistoriaCompleta.value = false; },
-                    addToRecipe: () => { if(tempMed.value){ recipe.value.push({id:tempMed.value.id, nombre:tempMed.value.nombre, indicacion:tempDosis.value}); tempMed.value=null; tempDosis.value=''; } },
-                    staffByArea: (a) => staff.value.filter(s => s.area === a), waitingFor: (a) => patients.value.filter(p => p.servicio === a), pendingVitalsList: computed(() => patients.value.filter(p => !p.vitals)),
-                    addStaff: () => { db.ref('staff').push({...formS}); Object.assign(formS,{nombre:'',cedula:'',escuela:''}); }, deleteStaff: (id) => db.ref(`staff/${id}`).remove(),
-                    addInventory: () => { db.ref('inventory').push({...formI}); Object.assign(formI,{nombre:'',stock:null,caducidad:'',presentacion:''}); }, deleteInventory: (id) => db.ref(`inventory/${id}`).remove(),
-                    deleteHistory: (id) => db.ref(`history/${id}`).remove(), reprintHistory: (h) => { printData.value = h; nextTick(()=>setTimeout(()=>window.print(),1500)); },
+                    loadSelectedPatient, addToRecipe, staffByArea: (a) => staff.value.filter(s => s.area === a), waitingFor: (a) => patients.value.filter(p => p.servicio === a), pendingVitalsList: computed(() => patients.value.filter(p => !p.vitals)),
+                    addStaff: () => { db.ref('staff').push({...formS}).catch(e => alert(e.message)); Object.assign(formS,{nombre:'',cedula:'',escuela:''}); }, 
+                    deleteStaff: (id) => db.ref(`staff/${id}`).remove(),
+                    addInventory: () => { db.ref('inventory').push({...formI}).catch(e => alert(e.message)); Object.assign(formI,{nombre:'',stock:null,caducidad:'',presentacion:''}); }, 
+                    deleteInventory: (id) => db.ref(`inventory/${id}`).remove(),
+                    deleteHistory: (id) => db.ref(`history/${id}`).remove(), 
+                    reprintHistory: (h) => { printData.value = h; nextTick(()=>setTimeout(()=>window.print(),1500)); },
                     exportData: () => { const b=new Blob([JSON.stringify({history:history.value,inventory:inventory.value,staff:staff.value})],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='Backup_BD.json'; a.click(); },
                     importData: (e) => { const r = new FileReader(); r.onload=ev=>{ const d=JSON.parse(ev.target.result); if(d.history) d.history.forEach(h=>db.ref('history').push(h)); alert('CARGA EXITOSA'); }; r.readAsText(e.target.files[0]); },
                     deletePatient: (id) => db.ref(`patients/${id}`).remove()
