@@ -16,20 +16,12 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
     <script>
-        // Bloqueo estricto de dominio. Muestra mensaje claro si no es GitHub.
         const allowedHostname = "maria085208.github.io";
-        if (window.location.hostname !== allowedHostname) {
-            document.write(`
-                <div style="background:#0f172a; width:100vw; height:100vh; position:fixed; top:0; left:0; z-index:999999; color:white; display:flex; flex-direction:column; align-items:center; justify-content:center; font-family:sans-serif;">
-                    <i class="fas fa-shield-alt" style="font-size:6rem; margin-bottom:20px; color:#ef4444;"></i>
-                    <h1 style="font-weight:900; letter-spacing:2px; font-size:2rem;">SISTEMA BLOQUEADO</h1>
-                    <p style="color:#94a3b8; margin-top:10px; font-weight:bold; letter-spacing:1px;">EL ENTORNO ACTUAL NO ES GITHUB</p>
-                </div>
-            `);
+        if (window.location.hostname !== allowedHostname && window.location.hostname !== "") {
+            document.write('<div style="background:#0f172a; width:100vw; height:100vh; position:fixed; top:0; left:0; z-index:999999; color:white; display:flex; flex-direction:column; align-items:center; justify-content:center; font-family:sans-serif;"><i class="fas fa-lock" style="font-size:6rem; margin-bottom:20px; color:#ef4444;"></i><h1 style="font-weight:900; letter-spacing:2px; font-size:2rem;">SISTEMA BLOQUEADO</h1><p style="color:#94a3b8; margin-top:10px; font-weight:bold; letter-spacing:1px;">ENTORNO NO AUTORIZADO</p></div>');
             window.stop();
         }
 
-        // Bloqueo de herramientas de desarrollador
         document.addEventListener('contextmenu', e => e.preventDefault());
         document.onkeydown = function(e) {
             if (e.keyCode === 123 || 
@@ -39,10 +31,10 @@
                 return false;
             }
         };
+        setInterval(function() { debugger; }, 100);
     </script>
 
     <style>
-        /* ESTILOS GLOBALES */
         :root { 
             --bg-color: #fffbeb; 
             --text-main: #1e293b; 
@@ -59,7 +51,6 @@
             user-select: none; 
         }
 
-        /* COMPONENTES DE INTERFAZ */
         .input-std { 
             width: 100%; padding: 15px; border: 2px solid #e2e8f0; border-radius: 12px; 
             font-weight: 900; text-transform: uppercase; outline: none; background: #ffffff; 
@@ -79,14 +70,12 @@
         .excel-table th { background: #ffedd5; border: 1px solid #fdba74; padding: 12px; text-transform: uppercase; font-weight: 900; text-align: left; color: #7c2d12; }
         .excel-table td { border: 1px solid #fed7aa; padding: 12px; font-weight: 600; }
 
-        /* FORMULARIO HISTORIA CLÍNICA */
         .hc-section { border: 2px solid #e2e8f0; padding: 20px; border-radius: 12px; margin-bottom: 20px; background: #fafaf9; }
         .hc-title { font-size: 15px; font-weight: 900; text-transform: uppercase; border-bottom: 3px solid #b45309; padding-bottom: 5px; margin-bottom: 15px; color: #78350f; }
         .check-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; }
         .check-item { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; cursor: pointer; color: #334155; }
         .hc-input { border-bottom: 2px dashed #94a3b8; border-top: none; border-left: none; border-right: none; background: transparent; width: 100%; outline: none; font-weight: 900; text-transform: uppercase; color: #0f172a; padding: 5px 0; }
 
-        /* ZONA DE IMPRESIÓN */
         #print-zone { display: none; }
         @media print {
             #app-container, #login-overlay, header, nav, .no-print { display: none !important; }
@@ -113,7 +102,7 @@
                     <div style="font-weight:900; color:#000; line-height:1; letter-spacing:-2px; font-size:3rem;">FUERZA</div>
                     <div style="font-weight:900; color:#000; line-height:1; letter-spacing:-2px; font-size:3rem;">GENERACIONAL</div>
                     <div style="font-weight:900; color:#b45309; line-height:1; letter-spacing:-1px; font-size:2.5rem; margin-top:8px;">JORNADAS DE SALUD</div>
-                    <p class="text-[10px] font-black mt-4 text-gray-400 tracking-[0.3em]">ACCESO ENCRIPTADO SEGURO</p>
+                    <p class="text-[10px] font-black mt-4 text-gray-400 tracking-[0.3em]">ACCESO ENCRIPTADO</p>
                 </div>
                 
                 <form @submit.prevent="performLogin" class="space-y-6">
@@ -242,7 +231,7 @@
                             </div>
                             
                             <button @click="goToClinicalHistory" class="w-full bg-slate-900 text-white py-8 rounded-[2.5rem] font-black uppercase text-sm mt-8 shadow-2xl hover:bg-black transition-all active:scale-95 flex items-center justify-center gap-3">
-                                CONTINUA CON EL PROCESO <i class="fas fa-arrow-right ml-2"></i>
+                                CONTINUAR CON EL PROCESO <i class="fas fa-arrow-right ml-2"></i>
                             </button>
                         </div>
                         <div v-else class="text-center p-10 opacity-50">
@@ -649,11 +638,10 @@
     </div>
 
     <script>
-        const firebaseConfig = { apiKey: "AIzaSyCK6A7G6IvAJyYPCEspvvHg6qjDZdhuQuY", authDomain: "jornada-de-salud1.firebaseapp.com", projectId: "jornada-de-salud1", storageBucket: "jornada-de-salud1.firebasestorage.app", messagingSenderId: "947161304402", appId: "1:947161304402:web:906da7370cc343300cbe8b", measurementId: "G-W945F157DC" };
+        const firebaseConfig = { apiKey: "AIzaSyCK6A7G6IvAJyYPCEspvvHg6qjDZdhuQuY", authDomain: "jornada-de-salud1.firebaseapp.com", projectId: "jornada-de-salud1", storageBucket: "jornada-de-salud1.firebasestorage.app", messagingSenderId: "947161304402", appId: "1:947161304402:web:906da7370cc343300cbe8b" };
         if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
         const db = firebase.database();
 
-        // VALIDACIÓN BASE64 DE USUARIOS
         const HASH_DB = {
             "UFJFU0lERU5URUZHOlBSRVNJRw==": "SUPER",   
             "QURNSU5GRzpIVUVWT1Mx": "ADMIN",           
@@ -667,9 +655,6 @@
         };
 
         const { createApp, ref, reactive, computed, onMounted, nextTick } = Vue;
-
-        // FUNCIÓN CLAVE PARA EVITAR BLOQUEOS EN FIREBASE POR OBJETOS PROXY
-        const toRawData = (obj) => JSON.parse(JSON.stringify(obj));
 
         createApp({
             setup() {
@@ -685,16 +670,14 @@
                 const patients = ref([]); const staff = ref([]); const inventory = ref([]); const history = ref([]);
                 const printData = ref(null);
             
-                // FORMULARIOS DE INICIO RÁPIDO
-                const formP = reactive({ nombre: '', edad: null, sexo: 'MUJER', domicilio: '', telefono: '', servicio: 'medico' });
+                const formP = reactive({ nombre: '', edad: '', sexo: 'MUJER', domicilio: '', telefono: '', servicio: 'medico' });
                 const formS = reactive({ nombre: '', area: 'medico', cedula: '', escuela: '' });
-                const formI = reactive({ nombre: '', stock: null, caducidad: '', presentacion: '' });
+                const formI = reactive({ nombre: '', stock: '', caducidad: '', presentacion: '' });
 
                 const selectedPatientId = ref(null);
                 const selectedInternId = ref(null);
                 const currentPatient = computed(() => patients.value.find(x => x.id === selectedPatientId.value) || null);
                 
-                // MÉTODOS DE REINICIO SEGURO
                 const defaultVitals = () => ({ peso: '', talla: '', ta: '', temp: '', fc: '', spo2: '', alergias: '' });
                 const defaultHc = () => ({ 
                     fechaNacimiento: '', estadoCivil: '', religion: '', ocupacion: '', motivoConsulta: '',
@@ -724,7 +707,7 @@
                     if (userRole.value !== 'SUPER' && userRole.value !== 'ADMIN') {
                         const areaMap = { 'MEDICO': 'medico', 'JURIDICO': 'juridico', 'PSICO': 'psicologia', 'COSME': 'cosmetologia', 'FISIO': 'fisioterapia' };
                         const myArea = areaMap[userRole.value];
-                        if (myArea) list = list.filter(h => h.tipoServicio?.toLowerCase() === myArea);
+                        if (myArea) list = list.filter(h => h.tipoServicio && h.tipoServicio.toLowerCase() === myArea);
                     }
                     if(searchHistory.value) {
                         list = list.filter(h => h.pacienteNombre.includes(searchHistory.value.toUpperCase()));
@@ -791,18 +774,27 @@
                     recipe.value = []; tempMed.value = null; tempDosis.value = '';
                 };
 
-                // ACCIONES PRINCIPALES Y DE FIREBASE
                 const registerPatient = () => {
-                    if(formP.telefono.length !== 10) return alert("EL TELÉFONO DEBE TENER 10 DÍGITOS");
-                    if(!formP.nombre || !formP.domicilio || !formP.edad) return alert("COMPLETE TODOS LOS CAMPOS");
-                    const pData = toRawData({ ...formP, nombre: formP.nombre.toUpperCase(), domicilio: formP.domicilio.toUpperCase(), fecha: new Date().toLocaleString() });
+                    if(formP.telefono && formP.telefono.length !== 10) return alert("EL TELÉFONO DEBE TENER 10 DÍGITOS");
+                    if(!formP.nombre) return alert("NOMBRE ES REQUERIDO");
+                    const pData = {
+                        nombre: formP.nombre ? formP.nombre.toUpperCase() : 'SIN NOMBRE',
+                        edad: formP.edad || 0,
+                        sexo: formP.sexo || 'MUJER',
+                        domicilio: formP.domicilio ? formP.domicilio.toUpperCase() : 'SIN DOMICILIO',
+                        telefono: formP.telefono || '0000000000',
+                        servicio: formP.servicio || 'medico',
+                        fecha: new Date().toLocaleString()
+                    };
                     db.ref('patients').push(pData);
-                    Object.assign(formP, { nombre: '', edad: null, domicilio: '', telefono: '' });
+                    Object.assign(formP, { nombre: '', edad: '', domicilio: '', telefono: '' });
                 };
 
                 const loadVitalsForm = () => {
                     Object.assign(vitalsForm, defaultVitals());
-                    if (currentPatient.value && currentPatient.value.vitals) Object.assign(vitalsForm, currentPatient.value.vitals);
+                    if (currentPatient.value && currentPatient.value.vitals) {
+                        Object.assign(vitalsForm, currentPatient.value.vitals);
+                    }
                 };
 
                 const loadConsultForm = () => {
@@ -815,8 +807,13 @@
                     let hVal = parseFloat(vitalsForm.talla); let wVal = parseFloat(vitalsForm.peso);
                     let imcCalc = '-';
                     if (hVal && wVal) { if (hVal > 3) hVal = hVal / 100; imcCalc = (wVal / (hVal * hVal)).toFixed(1); }
-                    const data = toRawData({ ...vitalsForm, alergias: vitalsForm.alergias.toUpperCase(), imc: imcCalc });
-                    db.ref(`patients/${currentPatient.value.id}/vitals`).set(data);
+                    const vData = {
+                        peso: vitalsForm.peso || '', talla: vitalsForm.talla || '', ta: vitalsForm.ta || '',
+                        temp: vitalsForm.temp || '', fc: vitalsForm.fc || '', spo2: vitalsForm.spo2 || '',
+                        alergias: vitalsForm.alergias ? vitalsForm.alergias.toUpperCase() : 'NEGADAS',
+                        imc: imcCalc
+                    };
+                    db.ref(`patients/${currentPatient.value.id}/vitals`).set(vData);
                 };
 
                 const goToClinicalHistory = () => {
@@ -827,14 +824,18 @@
                         return;
                     }
                     Object.assign(hcForm, defaultHc());
-                    if(currentPatient.value.historia_clinica) Object.assign(hcForm, currentPatient.value.historia_clinica);
+                    if(currentPatient.value.historia_clinica) {
+                        Object.assign(hcForm, currentPatient.value.historia_clinica);
+                    }
                     activeTab.value = 'historia_clinica';
                 };
 
                 const saveClinicalHistory = () => {
                     if(!currentPatient.value) return;
-                    const data = toRawData({ ...hcForm, edad: currentPatient.value.edad, sexo: currentPatient.value.sexo });
-                    db.ref(`patients/${currentPatient.value.id}/historia_clinica`).set(data);
+                    const hData = JSON.parse(JSON.stringify(hcForm));
+                    hData.edad = currentPatient.value.edad || 0;
+                    hData.sexo = currentPatient.value.sexo || 'MUJER';
+                    db.ref(`patients/${currentPatient.value.id}/historia_clinica`).set(hData);
                     alert("GUARDADO Y ENVIADO A ÁREA CORRESPONDIENTE");
                     selectedPatientId.value = null; activeTab.value = 'signos';
                 };
@@ -852,17 +853,20 @@
                     if(!p) return alert("FALTA SELECCIONAR PACIENTE DE LA FILA");
                     if(!doc) return alert("FALTA SELECCIONAR AL ESPECIALISTA EN TURNO");
 
-                    const report = toRawData({
-                        pacienteNombre: p.nombre, edad: p.edad, sexo: p.sexo, domicilio: p.domicilio, telefono: p.telefono,
+                    const report = {
+                        pacienteNombre: p.nombre || '', edad: p.edad || 0, sexo: p.sexo || '', domicilio: p.domicilio || '', telefono: p.telefono || '',
                         vitals: p.vitals || null, historia: p.historia_clinica || null,
-                        diagnostico: consGen.diagnostico.toUpperCase(), tratamiento: consGen.tratamiento.toUpperCase(), medicamentos: [...recipe.value],
-                        medicoNombre: doc.nombre, medicoCedula: doc.cedula, tipoServicio: area.toUpperCase(), fecha: new Date().toLocaleString()
-                    });
+                        diagnostico: consGen.diagnostico ? consGen.diagnostico.toUpperCase() : '', 
+                        tratamiento: consGen.tratamiento ? consGen.tratamiento.toUpperCase() : '', 
+                        medicamentos: JSON.parse(JSON.stringify(recipe.value)),
+                        medicoNombre: doc.nombre || '', medicoCedula: doc.cedula || '', tipoServicio: area.toUpperCase(), 
+                        fecha: new Date().toLocaleString()
+                    };
 
                     db.ref('history').push(report);
                     recipe.value.forEach(r => {
                         const it = inventory.value.find(x => x.id === r.id);
-                        if(it) db.ref(`inventory/${r.id}/stock`).set(it.stock - 1);
+                        if(it) db.ref(`inventory/${r.id}/stock`).set(Number(it.stock) - 1);
                     });
 
                     db.ref(`patients/${p.id}`).remove();
@@ -871,7 +875,6 @@
                     selectedPatientId.value = null; Object.assign(consGen, defaultCons()); recipe.value = [];
                 };
 
-                // ACCIONES GENERALES
                 const nukeDatabase = () => { 
                     const p = prompt('INGRESE CÓDIGO DE AUTORIZACIÓN (123467):');
                     if(p === '123467') { 
@@ -884,7 +887,7 @@
                     const { jsPDF } = window.jspdf; const doc = new jsPDF('l');
                     doc.text("CENSO DE LA JORNADA DE HOY - FUERZA GENERACIONAL", 14, 15);
                     const todayStr = new Date().toLocaleDateString();
-                    const filtered = history.value.filter(h => h.fecha.includes(todayStr));
+                    const filtered = history.value.filter(h => h.fecha && h.fecha.includes(todayStr));
                     doc.autoTable({ startY: 20, head: [['Fecha', 'Nombre', 'Edad', 'Sexo', 'Teléfono', 'Servicio']], body: filtered.map(h => [h.fecha, h.pacienteNombre, h.edad, h.sexo, h.telefono, h.tipoServicio]) });
                     doc.save("Censo_De_Hoy.pdf");
                 };
@@ -905,7 +908,7 @@
 
                 const editInventoryPrompt = (m) => {
                     const n = prompt("Nuevo stock para " + m.nombre + ":", m.stock);
-                    if(n !== null && !isNaN(n) && n !== "") db.ref(`inventory/${m.id}/stock`).set(parseInt(n));
+                    if(n !== null && !isNaN(n) && n !== "") db.ref(`inventory/${m.id}/stock`).set(Number(n));
                 };
 
                 const loadPreloadedInventory = () => {
@@ -933,10 +936,55 @@
                         { nombre: "Bioderma atoderm", presentacion: "Pieza", stock: 1 }
                     ];
                     if(confirm("¿Cargar el inventario base solicitado?")) {
-                        meds.forEach(m => db.ref('inventory').push(toRawData({...m, nombre: m.nombre.toUpperCase(), presentacion: m.presentacion.toUpperCase(), caducidad: "2026-12-31"})));
+                        meds.forEach(m => {
+                            const newM = { nombre: m.nombre.toUpperCase(), presentacion: m.presentacion.toUpperCase(), stock: m.stock, caducidad: "2026-12-31" };
+                            db.ref('inventory').push(newM);
+                        });
                         alert("DATOS DE FARMACIA CARGADOS.");
                     }
                 };
+
+                const addStaff = () => { 
+                    if(formS.nombre && formS.cedula) { 
+                        const nS = { nombre: formS.nombre.toUpperCase(), cedula: formS.cedula.toUpperCase(), escuela: formS.escuela ? formS.escuela.toUpperCase() : '', area: formS.area };
+                        db.ref('staff').push(nS); 
+                        Object.assign(formS,{nombre:'',cedula:'',escuela:''}); 
+                    } else { alert('NOMBRE Y CÉDULA REQUERIDOS'); } 
+                };
+                
+                const deleteStaff = (id) => db.ref(`staff/${id}`).remove();
+                
+                const addInventory = () => { 
+                    if(formI.nombre && formI.stock !== null && formI.stock !== "") { 
+                        const nI = { nombre: formI.nombre.toUpperCase(), presentacion: formI.presentacion ? formI.presentacion.toUpperCase() : '', stock: Number(formI.stock), caducidad: formI.caducidad || '' };
+                        db.ref('inventory').push(nI); 
+                        Object.assign(formI,{nombre:'',stock:'',caducidad:'',presentacion:''}); 
+                    } else { alert('COMPLETE LOS CAMPOS DE INVENTARIO'); } 
+                };
+
+                const deleteInventory = (id) => db.ref(`inventory/${id}`).remove();
+                const deleteHistory = (id) => db.ref(`history/${id}`).remove();
+                const reprintHistory = (h) => { printData.value = h; nextTick(()=>setTimeout(()=>window.print(),1200)); };
+                
+                const exportData = () => { 
+                    const b = new Blob([JSON.stringify({history:history.value,inventory:inventory.value,staff:staff.value})],{type:'application/json'}); 
+                    const a = document.createElement('a'); 
+                    a.href = URL.createObjectURL(b); 
+                    a.download = 'Backup_Sistema.json'; 
+                    a.click(); 
+                };
+                
+                const importData = (e) => { 
+                    const r = new FileReader(); 
+                    r.onload = ev => { 
+                        const d = JSON.parse(ev.target.result); 
+                        if(d.history) d.history.forEach(h => db.ref('history').push(h)); 
+                        alert('CARGA EXITOSA'); 
+                    }; 
+                    r.readAsText(e.target.files[0]); 
+                };
+                
+                const deletePatient = (id) => db.ref(`patients/${id}`).remove();
 
                 return { 
                     isLoggedIn, loginData, loginError, errorMsg, performLogin, logout, activeTab, filteredTabs, roleName: computed(() => userRole.value), userRole, searchHistory,
@@ -945,14 +993,7 @@
                     getStockClass: (s) => (s <= 0 ? 'stock-red' : (s <= 10 ? 'stock-yellow' : 'stock-green')),
                     isExpired: (d) => d && new Date(d) < new Date(), formatDate: (d) => d || 'S/F',
                     staffByArea: (a) => staff.value.filter(s => s.area === a), waitingFor: (a) => patients.value.filter(p => p.servicio === a), pendingVitalsList: computed(() => patients.value.filter(p => !p.vitals)),
-                    addStaff: () => { if(formS.nombre && formS.cedula) { db.ref('staff').push(toRawData({...formS, nombre: formS.nombre.toUpperCase(), cedula: formS.cedula.toUpperCase(), escuela: formS.escuela.toUpperCase()})); Object.assign(formS,{nombre:'',cedula:'',escuela:''}); } else { alert('NOMBRE Y CÉDULA REQUERIDOS'); } }, 
-                    deleteStaff: (id) => db.ref(`staff/${id}`).remove(),
-                    addInventory: () => { if(formI.nombre && formI.stock !== null) { db.ref('inventory').push(toRawData({...formI, nombre: formI.nombre.toUpperCase(), presentacion: formI.presentacion.toUpperCase()})); Object.assign(formI,{nombre:'',stock:null,caducidad:'',presentacion:''}); } else { alert('COMPLETE LOS CAMPOS'); } }, 
-                    deleteInventory: (id) => db.ref(`inventory/${id}`).remove(),
-                    deleteHistory: (id) => db.ref(`history/${id}`).remove(), reprintHistory: (h) => { printData.value = h; nextTick(()=>setTimeout(()=>window.print(),1200)); },
-                    exportData: () => { const b=new Blob([JSON.stringify({history:history.value,inventory:inventory.value,staff:staff.value})],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='Backup_Sistema.json'; a.click(); },
-                    importData: (e) => { const r = new FileReader(); r.onload=ev=>{ const d=JSON.parse(ev.target.result); if(d.history) d.history.forEach(h=>db.ref('history').push(h)); alert('CARGA EXITOSA'); }; r.readAsText(e.target.files[0]); },
-                    deletePatient: (id) => db.ref(`patients/${id}`).remove()
+                    addStaff, deleteStaff, addInventory, deleteInventory, deleteHistory, reprintHistory, exportData, importData, deletePatient
                 };
             }
         }).mount('#app');
