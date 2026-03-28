@@ -594,7 +594,7 @@
                 <div class="receta-header">
                     <h1 class="print-brand-1">FUERZA GENERACIONAL</h1>
                     <h2 class="print-brand-2">JORNADAS DE SALUD</h2>
-                    <p style="font-size: 11px; font-weight: 900; letter-spacing: 5px; color: #444; margin-top: 5px;">CFMM | ATLIXCO, PUEBLA</p>
+                    <p style="font-size: 11px; font-weight: 900; letter-spacing: 5px; color: #444; margin-top: 5px;">CFMM | PUEBLA</p>
                 </div>
                 
                 <div style="text-align: center; margin-bottom: 25px;">
@@ -659,16 +659,16 @@
         const db = firebase.database();
         const auth = firebase.auth();
 
-        // Encriptación simple en frontend de contraseñas requeridas
         const HASH_DB = {
-            "UFJFU0lERU5URUZHOlBSRVNJRw==": "SUPER", // PRESIDENTEFG:PRESIG
-            "QURNSU5GRzpIVUVWT1Mx": "ADMIN",         // ADMINFG:HUEVOS1
-            "TcVDRElDT1NGRzpNRURGVUVSWkFH": "MEDICO", // MÉDICOSFG:MEDFUERZAG
-            "SU5URVJOT1NGRzpGVUVSWkFH": "INTERNO",    // INTERNOSFG:FUERZAG
-            "QUJPR0FET0ZHOkFCT0dGVUVSWkFH": "JURIDICO",// ABOGADOFG:ABOGFUERZAG
-            "UFNJQ8NMT0dPRkc6UFNJQ0ZVRVJaQUc=": "PSICO",// PSICÓLOGOFG:PSICFUERZAG
-            "RklTSU9URVJBUElBRkc6RklTSU9H": "FISIO",   // FISIOTERAPIAFG:FISIOG
-            "Q09TTUVGRzpDT1NNRUZVRVJaQUc=": "COSME"   // COSMEFG:COSMEFUERZAG
+            "UFJFU0lERU5URUZHOlBSRVNJRw==": "SUPER",
+            "QURNSU5GRzpIVUVWT1Mx": "ADMIN",
+            "TUVESUNPU0ZHOk1FREZVRVJaQUc=": "MEDICO",
+            "SU5URVJOT1NGRzpGVUVSWkFH": "INTERNO",
+            "QUJPR0FET0ZHOkFCT0dGVUVSWkFH": "JURIDICO",
+            "UFNJQ09MT0dPRkc6UFNJQ0ZVRVJaQUc=": "PSICO",
+            "RklTSU9URVJBUElBRkc6RklTSU9H": "FISIO",
+            "Q09TTUVGRzpDT1NNRUZVRVJaQUc=": "COSME",
+            "QURNSU4wODUyOkFETUlORkcxMg==": "ADM_ONLY"
         };
 
         const { createApp, ref, reactive, computed, onMounted, nextTick } = Vue;
@@ -717,27 +717,41 @@
 
                 const filteredDisplayHistory = computed(() => { 
                     let list = [...history.value].reverse();
+                    
+                    if (userRole.value !== 'SUPER' && userRole.value !== 'ADMIN') {
+                        const areaMap = {
+                            'MEDICO': 'medico',
+                            'JURIDICO': 'juridico',
+                            'PSICO': 'psicologia',
+                            'COSME': 'cosmetologia',
+                            'FISIO': 'fisioterapia'
+                        };
+                        const myArea = areaMap[userRole.value];
+                        if (myArea) {
+                            list = list.filter(h => h.tipoServicio.toLowerCase() === myArea);
+                        }
+                    }
+
                     if(searchHistory.value) list = list.filter(h => h.pacienteNombre.includes(searchHistory.value.toUpperCase()));
                     return list.slice(0, historyLimit.value); 
                 });
 
                 const performLogin = () => {
-                    const u = loginData.user.toUpperCase().trim();
-                    const p = loginData.pass.toUpperCase().trim();
-                    const hash = btoa(u + ":" + p); // Encriptación en Base64 para ocultar credenciales en el DOM
+                    const normalizeStr = (str) => str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+                    const u = normalizeStr(loginData.user).toUpperCase().trim();
+                    const p = normalizeStr(loginData.pass).toUpperCase().trim();
+                    const hash = btoa(u + ":" + p); 
                     
                     if(HASH_DB[hash]) {
                         userRole.value = HASH_DB[hash];
                         
-                        // Determinar pestaña inicial según rol
                         if(userRole.value === 'MEDICO') activeTab.value = 'medico';
                         else if(userRole.value === 'JURIDICO') activeTab.value = 'juridico';
                         else if(userRole.value === 'PSICO') activeTab.value = 'psicologia';
                         else if(userRole.value === 'COSME') activeTab.value = 'cosmetologia';
                         else if(userRole.value === 'FISIO') activeTab.value = 'fisioterapia';
-                        else activeTab.value = 'recepcion'; // SUPER, ADMIN, INTERNO
+                        else activeTab.value = 'recepcion'; 
                         
-                        // Bypass seguro para Firebase (logueo anónimo estricto para mantener sesión)
                         auth.signInAnonymously().then(() => {
                             isLoggedIn.value = true; loginError.value = false;
                         }).catch(err => {
@@ -752,7 +766,7 @@
 
                 const filteredTabs = computed(() => {
                     const all = [
-                        { id: 'recepcion', name: 'Admisión', icon: 'fas fa-address-book', roles: ['SUPER', 'ADMIN', 'INTERNO', 'JURIDICO', 'PSICO', 'FISIO', 'COSME'] },
+                        { id: 'recepcion', name: 'Admisión', icon: 'fas fa-address-book', roles: ['SUPER', 'ADMIN', 'INTERNO', 'JURIDICO', 'PSICO', 'FISIO', 'COSME', 'ADM_ONLY'] },
                         { id: 'signos', name: 'Signos Vitales', icon: 'fas fa-heartbeat', roles: ['SUPER', 'INTERNO', 'MEDICO', 'PSICO', 'FISIO', 'COSME'] },
                         { id: 'historia_clinica', name: 'Historia Clínica', icon: 'fas fa-notes-medical', roles: ['SUPER', 'INTERNO', 'MEDICO', 'PSICO'] },
                         { id: 'medico', name: 'Medicina', icon: 'fas fa-stethoscope', roles: ['SUPER', 'MEDICO', 'INTERNO'] },
@@ -763,7 +777,7 @@
                         { id: 'farmacia', name: 'Farmacia', icon: 'fas fa-pills', roles: ['SUPER', 'ADMIN', 'MEDICO', 'COSME', 'FISIO', 'INTERNO'] },
                         { id: 'beneficiarios', name: 'Censo', icon: 'fas fa-table', roles: ['SUPER', 'ADMIN'] },
                         { id: 'config', name: 'Personal', icon: 'fas fa-user-md', roles: ['SUPER'] },
-                        { id: 'historial', name: 'Historial DB', icon: 'fas fa-folder-open', roles: ['SUPER', 'JURIDICO', 'PSICO'] },
+                        { id: 'historial', name: 'Historial DB', icon: 'fas fa-folder-open', roles: ['SUPER', 'JURIDICO', 'PSICO', 'MEDICO', 'FISIO', 'COSME'] },
                         { id: 'data', name: 'Datos', icon: 'fas fa-database', roles: ['SUPER', 'ADMIN'] }
                     ];
                     return all.filter(t => t.roles.includes(userRole.value));
