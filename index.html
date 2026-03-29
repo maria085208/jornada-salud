@@ -69,10 +69,10 @@
                 
                 <form @submit.prevent="performLogin" class="space-y-6">
                     <div class="relative">
-                        <input v-model="loginData.user" type="text" class="input-std text-center tracking-[0.2em]" placeholder="ID USUARIO" style="border: 3px solid #000;" required>
+                        <input v-model="loginData.user" type="password" class="input-std text-center tracking-[0.2em]" placeholder="ID USUARIO" style="border: 3px solid #000;">
                     </div>
                     <div class="relative">
-                        <input v-model="loginData.pass" type="password" class="input-std text-center tracking-[0.2em]" placeholder="CONTRASEÑA" style="border: 3px solid #000;" required>
+                        <input v-model="loginData.pass" type="password" class="input-std text-center tracking-[0.2em]" placeholder="CONTRASEÑA" style="border: 3px solid #000;">
                     </div>
                     
                     <div v-if="loginError" class="bg-red-50 text-red-700 p-4 rounded-xl text-xs font-black uppercase border-2 border-red-200 animate-pulse">
@@ -768,7 +768,7 @@
         if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
         const db = firebase.database();
 
-        const { createApp, ref, reactive, computed, onMounted, nextTick } = Vue;
+        const { createApp, ref, reactive, computed } = Vue;
 
         createApp({
             setup() {
@@ -785,7 +785,6 @@
                 const printData = ref(null);
                 const showHistoriaCompleta = ref(false);
             
-                // FORMULARIOS
                 const formP = reactive({ nombre: '', edad: null, sexo: 'MUJER', domicilio: '', telefono: '', servicio: 'medico' });
                 const formS = reactive({ nombre: '', area: 'medico', cedula: '', escuela: '' });
                 const formI = reactive({ nombre: '', stock: null, caducidad: '', presentacion: '' });
@@ -799,22 +798,29 @@
                 
                 const recipe = ref([]); const tempMed = ref(null); const tempDosis = ref('');
 
-                // MAPA MAESTRO
+                // TU MAPA ORIGINAL EN BASE64 EXACTAMENTE COMO LO TENÍAS
                 const authMap = {
-                    'PRESIDENTEFG': { role: 'SUPER', pass: 'PRESIG', account: 'jorgev0852@gmail.com' },
-                    'ADMIN0852': { role: 'ADMIN', pass: 'ADMINFG12', account: 'jorgev0852@gmail.com' },
-                    'MEDICOSFG': { role: 'medico', pass: 'MEDFUERZAG', account: 'especialistasfg@gmail.com' },
-                    'INTERNOSFG': { role: 'INTERNO', pass: 'FUERZAG', account: 'jornadasdesaludfg@gmail.com' },
-                    'ABOGADOFG': { role: 'juridico', pass: 'ABOGFUERZAG', account: 'especialistasfg@gmail.com' },
-                    'PSICOLOGOFG': { role: 'psicologia', pass: 'PSICFUERZAG', account: 'especialistasfg@gmail.com' },
-                    'FISIOTERAPIAFG': { role: 'fisioterapia', pass: 'FISIOG', account: 'especialistasfg@gmail.com' },
-                    'COSMEFG': { role: 'cosmetologia', pass: 'COSMEFUERZAG', account: 'especialistasfg@gmail.com' }
+                    'UFJFU0lERU5URUZH|UFJFU0lH': 'SUPER',
+                    'QURNSU4wODUy|QURNSU5GRzEy': 'ADMIN',
+                    'TUVESUNPU0ZH|TUVERlVFUlpBRw==': 'medico',
+                    'SU5URVJOT1NGRw==|RlVFUlpBRw==': 'INTERNO',
+                    'QUJPR0FET0ZH|QUJPR0ZVRVJaQUc=': 'juridico',
+                    'UFNJQ09MT0dPRkc=|UFNJQ0ZVRVJaQUc=': 'psicologia',
+                    'RklTSU9URVJBUElBRkc=|RklTSU9H': 'fisioterapia',
+                    'Q09TTUVGRw==|Q09TTUVGVUVSWkFH': 'cosmetologia'
                 };
 
-                onMounted(() => {
-                    // Limpiamos cualquier sesión colgada al refrescar para evitar choques
-                    firebase.auth().signOut();
-                });
+                // MAPA DE CORREOS PARA CONECTAR LA BASE DE DATOS
+                const roleEmailMap = {
+                    'SUPER': 'jorgev0852@gmail.com',
+                    'ADMIN': 'jorgev0852@gmail.com',
+                    'medico': 'especialistasfg@gmail.com',
+                    'juridico': 'especialistasfg@gmail.com',
+                    'psicologia': 'especialistasfg@gmail.com',
+                    'fisioterapia': 'especialistasfg@gmail.com',
+                    'cosmetologia': 'especialistasfg@gmail.com',
+                    'INTERNO': 'jornadasdesaludfg@gmail.com'
+                };
 
                 const sortedInventory = computed(() => { return [...inventory.value].sort((a,b) => a.nombre.localeCompare(b.nombre)); });
 
@@ -830,52 +836,55 @@
                     return history.value.filter(h => h.tipoServicio === userRole.value || (userRole.value === 'INTERNO' && ['medico','psicologia'].includes(h.tipoServicio)));
                 });
 
-                // INICIO DE SESIÓN LIMPIO Y DIRECTO (Elimina cualquier conflicto)
+                // INICIO DE SESIÓN IDÉNTICO A TU VERSIÓN ORIGINAL
                 const performLogin = async () => {
-                    try {
-                        loginError.value = false;
-                        const userId = loginData.user.trim().toUpperCase();
-                        const userPass = loginData.pass.trim().toUpperCase(); 
-                        const userData = authMap[userId];
+                    // Ciframos lo que escriben para compararlo con tu mapa
+                    const u = btoa(loginData.user.toUpperCase().trim());
+                    const p = btoa(loginData.pass.trim().toUpperCase());
+                    const key = `${u}|${p}`;
 
-                        if (userData && userData.pass === userPass) {
-                            
-                            // 1. Desconecta todo lo viejo
-                            await firebase.auth().signOut();
-                            db.ref('patients').off(); db.ref('staff').off(); db.ref('inventory').off(); db.ref('history').off();
+                    if(authMap[key]) {
+                        const role = authMap[key];
+                        const emailToUse = roleEmailMap[role];
 
-                            // 2. Conecta la bóveda de forma segura
-                            await firebase.auth().signInWithEmailAndPassword(userData.account, "FuerzaG2026!");
+                        try {
+                            // Desbloqueamos la base de datos con Firebase
+                            await firebase.auth().signInWithEmailAndPassword(emailToUse, "FuerzaG2026!");
                             
-                            // 3. Forzamos UI
-                            userRole.value = userData.role;
+                            // Activamos las pestañas exactamente como lo hacías tú
+                            userRole.value = role;
                             isLoggedIn.value = true; 
-                            activeTab.value = (userData.role === 'SUPER' || userData.role === 'ADMIN') ? 'nosotros' : 'recepcion';
-                            
-                            // 4. Enchufamos los datos en tiempo real de forma garantizada
+                            loginError.value = false;
+                            activeTab.value = (role === 'SUPER' || role === 'ADMIN') ? 'nosotros' : 'recepcion';
+
+                            // CONECTAMOS LOS DATOS DIRECTAMENTE AQUÍ
                             db.ref('patients').on('value', s => { patients.value = s.exists() ? Object.entries(s.val()).map(([id,v])=>({id,...v})) : []; });
                             db.ref('staff').on('value', s => { staff.value = s.exists() ? Object.entries(s.val()).map(([id,v])=>({id,...v})) : []; });
                             db.ref('inventory').on('value', s => { inventory.value = s.exists() ? Object.entries(s.val()).map(([id,v])=>({id,...v})) : []; });
                             db.ref('history').on('value', s => { history.value = s.exists() ? Object.entries(s.val()).map(([id,v])=>({id,...v})) : []; });
-                            
-                        } else {
+
+                        } catch(e) {
                             loginError.value = true; 
-                            errorMsg.value = 'CREDENCIALES INVÁLIDAS. VERIFIQUE ID USUARIO Y CONTRASEÑA.';
+                            errorMsg.value = 'ERROR DE SEGURIDAD. VERIFICA LOS CORREOS EN FIREBASE.';
+                            console.error(e);
                         }
-                    } catch (error) {
+                    } else {
                         loginError.value = true; 
-                        errorMsg.value = 'ERROR DE CONEXIÓN CON LA BASE DE DATOS SEGURA.';
-                        console.error(error);
+                        errorMsg.value = 'CREDENCIALES INVÁLIDAS O NO AUTORIZADAS';
                     }
                 };
 
                 const logout = async () => { 
-                    await firebase.auth().signOut();
-                    db.ref('patients').off(); db.ref('staff').off(); db.ref('inventory').off(); db.ref('history').off();
                     isLoggedIn.value = false; 
                     userRole.value = ''; 
-                    loginData.user = ''; 
-                    loginData.pass = ''; 
+                    loginData.user=''; 
+                    loginData.pass='';
+                    // Desconectamos los datos al salir por seguridad
+                    db.ref('patients').off(); 
+                    db.ref('staff').off(); 
+                    db.ref('inventory').off(); 
+                    db.ref('history').off();
+                    await firebase.auth().signOut();
                 };
 
                 const filteredTabs = computed(() => {
@@ -974,7 +983,8 @@
                     db.ref(`patients/${p.id}`).remove();
                     printData.value = report;
                     
-                    nextTick(() => { 
+                    // Aquí usamos Vue.nextTick normal sin problemas
+                    Vue.nextTick(() => { 
                         setTimeout(() => { 
                             window.print(); 
                             printData.value = null; 
@@ -1057,7 +1067,7 @@
                     addInventory: () => { db.ref('inventory').push({...formI}).catch(e => alert(e.message)); Object.assign(formI,{nombre:'',stock:null,caducidad:'',presentacion:''}); }, 
                     deleteInventory: (id) => db.ref(`inventory/${id}`).remove(),
                     deleteHistory: (id) => db.ref(`history/${id}`).remove(), 
-                    reprintHistory: (h) => { printData.value = h; nextTick(()=>setTimeout(()=>window.print(),1500)); },
+                    reprintHistory: (h) => { printData.value = h; Vue.nextTick(()=>setTimeout(()=>window.print(),1500)); },
                     exportData: () => { const b=new Blob([JSON.stringify({history:history.value,inventory:inventory.value,staff:staff.value})],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='Backup_BD.json'; a.click(); },
                     importData: (e) => { const r = new FileReader(); r.onload=ev=>{ const d=JSON.parse(ev.target.result); if(d.history) d.history.forEach(h=>db.ref('history').push(h)); alert('CARGA EXITOSA'); }; r.readAsText(e.target.files[0]); },
                     deletePatient: (id) => db.ref(`patients/${id}`).remove()
