@@ -31,13 +31,76 @@
         .excel-table { width: 100%; border-collapse: collapse; font-size: 11px; background: white; }
         .excel-table th { background: #ffedd5; border: 1px solid #fdba74; padding: 12px; text-transform: uppercase; font-weight: 900; text-align: left; color: #7c2d12; }
         .excel-table td { border: 1px solid #fed7aa; padding: 12px; font-weight: 600; }
+        
         #login-overlay { position: fixed; inset: 0; background-color: #fffbeb; display: flex; align-items: center; justify-content: center; z-index: 1000; flex-direction: column; }
         .login-box { width: 100%; max-width: 460px; text-align: center; padding: 2rem; }
         .brand-title { font-weight: 900; text-transform: uppercase; color: #000; line-height: 1; letter-spacing: -2px; font-size: 3rem; }
         .brand-subtitle { font-weight: 900; text-transform: uppercase; color: #b45309; line-height: 1; letter-spacing: -1px; font-size: 3rem; margin-top: 8px; }
-        #print-zone { display: none; }
         
-        /* CORRECCIÓN DE PDF: Se eliminó el overflow: hidden y las alturas fijas para que no se corte */
+        /* ==========================================================
+           ESTILOS LITERALES - FORMATO DE HISTORIA CLÍNICA
+           ========================================================== */
+        .bg-grid-paper {
+            background-size: 20px 20px;
+            background-image: linear-gradient(to right, rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.05) 1px, transparent 1px);
+        }
+        
+        /* Campo de texto de línea (Label para colocar texto) */
+        .input-line {
+            border: none !important;
+            border-bottom: 2px solid #b45309 !important;
+            background: transparent !important;
+            color: #fff !important;
+            font-weight: 700;
+            font-size: 12px;
+            padding: 2px 5px !important;
+            border-radius: 0 !important;
+            outline: none !important;
+            box-shadow: none !important;
+            text-transform: uppercase;
+            width: auto;
+            flex-grow: 1;
+        }
+        .input-line:focus { border-bottom-color: #fff !important; }
+
+        /* Cuadro de opción múltiple (Sólido - Sí/No) */
+        .box-solid {
+            appearance: none;
+            width: 16px; height: 16px;
+            border: 2px solid #71717a;
+            border-radius: 2px;
+            background-color: transparent;
+            cursor: pointer;
+            position: relative;
+            top: 3px;
+            transition: all 0.2s;
+        }
+        .box-solid:checked {
+            background-color: #b45309;
+            border-color: #b45309;
+        }
+
+        /* Cuadro de opción múltiple (Vacío - Opciones) */
+        .box-empty {
+            appearance: none;
+            width: 18px; height: 18px;
+            border: 2px solid #f59e0b;
+            border-radius: 2px;
+            background-color: transparent;
+            cursor: pointer;
+            position: relative;
+            top: 4px;
+            transition: all 0.2s;
+        }
+        .box-empty:checked {
+            background-color: #fff;
+            box-shadow: inset 0 0 0 3px #18181b;
+        }
+
+        .clin-label { font-size: 12px; font-weight: 700; color: #e2e8f0; display: inline-flex; align-items: center; gap: 4px; cursor: pointer; text-transform: uppercase; }
+        .clin-title { font-size: 18px; font-weight: 900; border-bottom: 1px solid #3f3f46; margin-bottom: 10px; padding-bottom: 4px; color: #f59e0b; }
+        
+        #print-zone { display: none; }
         @media print {
             #app-container, #login-overlay, header, nav, .no-print { display: none !important; }
             body { background: white; margin: 0; padding: 0; }
@@ -48,7 +111,7 @@
             .print-brand-2 { font-size: 22px; font-weight: 900; color: #d97706; margin: 5px 0 0 0; line-height: 1; }
             .firma-container { margin-top: 40px; margin-bottom: 20px; text-align: center; width: 100%; page-break-inside: avoid; }
             .firma-linea { width: 300px; border-top: 2px solid #000; margin: 0 auto 8px auto; }
-            p, td, th, div { page-break-inside: avoid; } /* Evita que los parrafos se corten a la mitad en el salto de pagina */
+            p, td, th, div { page-break-inside: avoid; }
             @page { size: letter; margin: 5mm; }
         }
         [v-cloak] { display: none; }
@@ -127,6 +190,7 @@
                         </div>
                     </div>
                 </section>
+
                 <section v-if="activeTab === 'recepcion'" class="grid grid-cols-1 lg:grid-cols-3 gap-10 animate-fade-in">
                     <div class="bg-zinc-900 p-10 rounded-[3rem] border border-zinc-800 shadow-2xl h-fit">
                         <h3 class="font-black text-sm uppercase mb-8 text-amber-500 border-b-2 border-zinc-800 pb-2 italic">REGISTRO BENEFICIARIO</h3>
@@ -208,56 +272,136 @@
                     </div>
                 </section>
 
-                <section v-if="activeTab === 'historia'" class="max-w-6xl mx-auto animate-fade-in">
-                    <div class="bg-zinc-900 p-12 rounded-[4rem] border border-zinc-800 shadow-2xl">
-                        <div class="flex justify-between items-center mb-10 border-b border-zinc-800 pb-6">
-                            <h3 class="font-black text-2xl uppercase text-white italic">HISTORIA CLÍNICA INTEGRAL</h3>
-                            <span class="bg-amber-600 px-6 py-2 rounded-full text-xs font-black uppercase tracking-widest">{{ currP.historia?.nombre || 'SIN PACIENTE' }}</span>
-                        </div>
-
-                        <div v-if="currP.historia" class="space-y-8">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                <div>
-                                    <label class="text-[11px] font-black uppercase text-amber-500 block mb-2 ml-3">MOTIVO DE CONSULTA</label>
-                                    <textarea v-model="historiaForm.motivo" class="input-std h-28 bg-zinc-800 text-white border-zinc-700 focus:border-amber-500 uppercase" placeholder="DESCRIPCIÓN BREVE DEL PADECIMIENTO..."></textarea>
+                <section v-if="activeTab === 'historia'" class="max-w-5xl mx-auto animate-fade-in">
+                    <div v-if="currP.historia" class="bg-[#18181b] bg-grid-paper p-8 md:p-12 rounded-[3rem] border-2 border-zinc-700 shadow-2xl relative">
+                        <h2 class="text-center text-4xl font-black text-white uppercase tracking-widest mb-8 border-b-2 border-amber-600 pb-4">HISTORIAL CLÍNICO</h2>
+                        
+                        <div class="mb-6">
+                            <h3 class="clin-title">Datos Personales</h3>
+                            <div class="flex flex-wrap gap-x-6 gap-y-3 mb-3">
+                                <div class="flex items-end flex-grow min-w-[200px]">
+                                    <span class="clin-label">Nombre</span>
+                                    <input :value="currP.historia.nombre" readonly class="input-line text-amber-500 cursor-not-allowed">
                                 </div>
-                                <div>
-                                    <label class="text-[11px] font-black uppercase text-amber-500 block mb-2 ml-3">PADECIMIENTO ACTUAL</label>
-                                    <textarea v-model="historiaForm.padecimiento" class="input-std h-28 bg-zinc-800 text-white border-zinc-700 focus:border-amber-500 uppercase" placeholder="INICIO, EVOLUCIÓN Y ESTADO ACTUAL..."></textarea>
+                                <div class="flex items-center gap-3 bg-black/30 px-3 py-1 rounded-lg border border-zinc-800">
+                                    <span class="clin-label">Estado Civil</span>
+                                    <label class="flex items-center gap-1 text-[11px] font-bold text-zinc-300"><input type="radio" value="Soltero" v-model="historiaForm.estadoCivil" class="box-empty"> Soltero</label>
+                                    <label class="flex items-center gap-1 text-[11px] font-bold text-zinc-300"><input type="radio" value="Casado" v-model="historiaForm.estadoCivil" class="box-empty"> Casado</label>
+                                    <label class="flex items-center gap-1 text-[11px] font-bold text-zinc-300"><input type="radio" value="Divorciado" v-model="historiaForm.estadoCivil" class="box-empty"> Divorciado</label>
                                 </div>
-                                <div>
-                                    <label class="text-[11px] font-black uppercase text-amber-500 block mb-2 ml-3">ANTECEDENTES HEREDOFAMILIARES (AHF)</label>
-                                    <textarea v-model="historiaForm.ahf" class="input-std h-28 bg-zinc-800 text-white border-zinc-700 focus:border-amber-500 uppercase" placeholder="DIABETES, HIPERTENSIÓN, ENFERMEDADES CARDIOVASCULARES..."></textarea>
+                                <div class="flex items-end flex-grow">
+                                    <span class="clin-label">Religión</span>
+                                    <input v-model="historiaForm.religion" class="input-line">
                                 </div>
-                                <div>
-                                    <label class="text-[11px] font-black uppercase text-amber-500 block mb-2 ml-3">ANTECEDENTES PATOLÓGICOS (APP)</label>
-                                    <textarea v-model="historiaForm.app" class="input-std h-28 bg-zinc-800 text-white border-zinc-700 focus:border-amber-500 uppercase" placeholder="CIRUGÍAS, HOSPITALIZACIONES, ENFERMEDADES CRÓNICAS..."></textarea>
-                                </div>
-                                <div>
-                                    <label class="text-[11px] font-black uppercase text-amber-500 block mb-2 ml-3">PERSONALES NO PATOLÓGICOS (APNP)</label>
-                                    <textarea v-model="historiaForm.apnp" class="input-std h-28 bg-zinc-800 text-white border-zinc-700 focus:border-amber-500 uppercase" placeholder="TABAQUISMO, ALCOHOLISMO, TOXICOMANÍAS, ALIMENTACIÓN, ETC..."></textarea>
-                                </div>
-                                <div>
-                                    <label class="text-[11px] font-black uppercase text-amber-500 block mb-2 ml-3">GINECO-OBSTÉTRICOS (AGO)</label>
-                                    <textarea v-model="historiaForm.ago" class="input-std h-28 bg-zinc-800 text-white border-zinc-700 focus:border-amber-500 uppercase" placeholder="MENARCA, FUM, GESTAS, PARTOS, ABORTOS... (ESCRIBIR N/A SI NO APLICA)"></textarea>
+                                <div class="flex items-end w-24">
+                                    <span class="clin-label">Edad</span>
+                                    <input :value="currP.historia.edad" readonly class="input-line text-center text-amber-500 cursor-not-allowed">
                                 </div>
                             </div>
-                            <div>
-                                <label class="text-[11px] font-black uppercase text-amber-500 block mb-2 ml-3">EXPLORACIÓN FÍSICA</label>
-                                <textarea v-model="historiaForm.exploracion" class="input-std h-32 bg-zinc-800 text-white border-zinc-700 focus:border-amber-500 uppercase" placeholder="CABEZA, CUELLO, TÓRAX, ABDOMEN, EXTREMIDADES, NEUROLÓGICO..."></textarea>
+                            <div class="flex flex-wrap gap-x-6 gap-y-3">
+                                <div class="flex items-end w-64">
+                                    <span class="clin-label">Fecha de nacimiento</span>
+                                    <input v-model="historiaForm.fechaNacimiento" type="date" class="input-line" style="color-scheme: dark;">
+                                </div>
+                                <div class="flex items-end flex-grow">
+                                    <span class="clin-label">Ocupación</span>
+                                    <input v-model="historiaForm.ocupacion" class="input-line">
+                                </div>
                             </div>
+                            <div class="flex items-end w-full mt-4">
+                                <span class="clin-label text-amber-500 text-[14px]">Motivo de Consulta:</span>
+                                <input v-model="historiaForm.motivo" class="input-line">
+                            </div>
+                        </div>
 
-                            <button @click="saveHistoriaClinica" class="w-full bg-amber-600 text-white py-8 rounded-[2.5rem] font-black uppercase text-sm mt-8 shadow-2xl hover:bg-amber-500 transition-all active:scale-95 flex items-center justify-center gap-4">
-                                <i class="fas fa-save text-xl"></i> GUARDAR Y ENVIAR A CONSULTORIO
-                            </button>
+                        <div class="mb-6">
+                            <h3 class="clin-title">Antecedentes Personales Patológicos</h3>
+                            <div class="flex flex-wrap gap-x-6 gap-y-3 mb-3">
+                                <label class="clin-label">Diabetes <input type="checkbox" v-model="historiaForm.app_diabetes" class="box-solid ml-1"><span class="text-[9px] text-zinc-500 font-black">SÍ/NO</span></label>
+                                <label class="clin-label">Hipertensión <input type="checkbox" v-model="historiaForm.app_hipertension" class="box-solid ml-1"><span class="text-[9px] text-zinc-500 font-black">SÍ/NO</span></label>
+                                <label class="clin-label">Nefropatías <input type="checkbox" v-model="historiaForm.app_nefropatias" class="box-solid ml-1"><span class="text-[9px] text-zinc-500 font-black">SÍ/NO</span></label>
+                                <label class="clin-label">Enfermedades renales <input type="checkbox" v-model="historiaForm.app_renales" class="box-solid ml-1"><span class="text-[9px] text-zinc-500 font-black">SÍ/NO</span></label>
+                                <label class="clin-label">Alergias <input type="checkbox" v-model="historiaForm.app_alergias" class="box-solid ml-1"><span class="text-[9px] text-zinc-500 font-black">SÍ/NO</span></label>
+                                <label class="clin-label">Tuberculosis <input type="checkbox" v-model="historiaForm.app_tuberculosis" class="box-solid ml-1"><span class="text-[9px] text-zinc-500 font-black">SÍ/NO</span></label>
+                                <label class="clin-label">Cáncer <input type="checkbox" v-model="historiaForm.app_cancer" class="box-solid ml-1"><span class="text-[9px] text-zinc-500 font-black">SÍ/NO</span></label>
+                                <label class="clin-label">EPOC <input type="checkbox" v-model="historiaForm.app_epoc" class="box-solid ml-1"><span class="text-[9px] text-zinc-500 font-black">SÍ/NO</span></label>
+                                <label class="clin-label">Enfermedad Cardíaca <input type="checkbox" v-model="historiaForm.app_cardiaca" class="box-solid ml-1"><span class="text-[9px] text-zinc-500 font-black">SÍ/NO</span></label>
+                                <label class="clin-label">ASMA <input type="checkbox" v-model="historiaForm.app_asma" class="box-solid ml-1"><span class="text-[9px] text-zinc-500 font-black">SÍ/NO</span></label>
+                            </div>
+                            <div class="flex items-end w-full">
+                                <span class="clin-label">Toma medicamentos:</span><input v-model="historiaForm.app_medicamentos" class="input-line">
+                            </div>
                         </div>
-                        <div v-else class="text-center py-20 text-zinc-500 font-black uppercase">
-                            <i class="fas fa-file-medical text-6xl mb-6"></i>
-                            <p>NO HAY PACIENTE SELECCIONADO DESDE TRIAGE</p>
+
+                        <div class="mb-6">
+                            <h3 class="clin-title">Antecedentes Heredofamiliares</h3>
+                            <div class="flex flex-wrap gap-x-6 gap-y-3 mb-3">
+                                <label class="clin-label">Asma <input type="checkbox" v-model="historiaForm.ahf_asma" class="box-solid ml-1"><span class="text-[9px] text-zinc-500 font-black">SÍ/NO</span></label>
+                                <label class="clin-label">EPOC <input type="checkbox" v-model="historiaForm.ahf_epoc" class="box-solid ml-1"><span class="text-[9px] text-zinc-500 font-black">SÍ/NO</span></label>
+                                <label class="clin-label">Hipertensión <input type="checkbox" v-model="historiaForm.ahf_hipertension" class="box-solid ml-1"><span class="text-[9px] text-zinc-500 font-black">SÍ/NO</span></label>
+                                <label class="clin-label">Nefropatías <input type="checkbox" v-model="historiaForm.ahf_nefropatias" class="box-solid ml-1"><span class="text-[9px] text-zinc-500 font-black">SÍ/NO</span></label>
+                                <label class="clin-label">Tuberculosis <input type="checkbox" v-model="historiaForm.ahf_tuberculosis" class="box-solid ml-1"><span class="text-[9px] text-zinc-500 font-black">SÍ/NO</span></label>
+                                <label class="clin-label">Cáncer <input type="checkbox" v-model="historiaForm.ahf_cancer" class="box-solid ml-1"><span class="text-[9px] text-zinc-500 font-black">SÍ/NO</span></label>
+                                <label class="clin-label">Cardiopatías <input type="checkbox" v-model="historiaForm.ahf_cardiopatias" class="box-solid ml-1"><span class="text-[9px] text-zinc-500 font-black">SÍ/NO</span></label>
+                            </div>
+                            <div class="flex items-end w-full">
+                                <span class="clin-label">Otros:</span><input v-model="historiaForm.ahf_otros" class="input-line">
+                            </div>
                         </div>
+
+                        <div class="mb-6">
+                            <h3 class="clin-title">Hábitos y Exposiciones</h3>
+                            <div class="flex flex-wrap gap-x-6 gap-y-3 mb-3">
+                                <div class="flex items-end flex-grow"><span class="clin-label">Tabaquismo:</span><input v-model="historiaForm.hab_tabaquismo" class="input-line"></div>
+                                <div class="flex items-end flex-grow"><span class="clin-label">Alcohol:</span><input v-model="historiaForm.hab_alcohol" class="input-line"></div>
+                                <div class="flex items-end flex-grow"><span class="clin-label">Actividad física</span><input v-model="historiaForm.hab_actividad" class="input-line"></div>
+                            </div>
+                            <div class="flex flex-wrap gap-x-6 gap-y-3 mb-3">
+                                <div class="flex items-end flex-grow"><span class="clin-label">Cirugías previas:</span><input v-model="historiaForm.hab_cirugias" class="input-line"></div>
+                                <div class="flex items-end flex-grow"><span class="clin-label">Alimentación:</span><input v-model="historiaForm.hab_alimentacion" class="input-line"></div>
+                                <div class="flex items-end flex-grow"><span class="clin-label">Convivencia con animales:</span><input v-model="historiaForm.hab_animales" class="input-line"></div>
+                            </div>
+                            <div class="flex flex-wrap gap-x-6 gap-y-3">
+                                <div class="flex items-end flex-grow"><span class="clin-label">Biomasa (humo de leña):</span><input v-model="historiaForm.hab_biomasa" class="input-line"></div>
+                                <div class="flex items-end flex-grow"><span class="clin-label">Polvo:</span><input v-model="historiaForm.hab_polvo" class="input-line"></div>
+                            </div>
+                        </div>
+
+                        <div class="mb-8">
+                            <h3 class="clin-title">Gineco-Obstétrica</h3>
+                            <div class="flex flex-wrap gap-x-6 gap-y-3 mb-3">
+                                <div class="flex items-end w-32"><span class="clin-label">Menarca:</span><input v-model="historiaForm.go_menarca" class="input-line text-center"><span class="clin-label ml-1">años</span></div>
+                                <div class="flex items-center gap-4 bg-black/30 px-3 py-1 rounded-lg border border-zinc-800">
+                                    <label class="clin-label">Ciclo regular: <input type="checkbox" v-model="historiaForm.go_ciclo_regular" class="box-solid ml-1"><span class="text-[9px] text-zinc-500 font-black">SÍ/NO</span></label>
+                                    <label class="clin-label">Dismenorrea: <input type="checkbox" v-model="historiaForm.go_dismenorrea" class="box-solid ml-1"><span class="text-[9px] text-zinc-500 font-black">SÍ/NO</span></label>
+                                </div>
+                            </div>
+                            <div class="flex flex-wrap gap-x-6 gap-y-3 mb-3">
+                                <div class="flex items-end w-72"><span class="clin-label">IVSA (Inicio de Vida Sexual Activa):</span><input v-model="historiaForm.go_ivsa" class="input-line text-center"><span class="clin-label ml-1">años</span></div>
+                            </div>
+                            <div class="flex flex-wrap gap-x-6 gap-y-3 mb-3">
+                                <div class="flex items-end flex-grow"><span class="clin-label">Gestas:</span><input v-model="historiaForm.go_gestas" class="input-line text-center"></div>
+                                <div class="flex items-end flex-grow"><span class="clin-label">Partos:</span><input v-model="historiaForm.go_partos" class="input-line text-center"></div>
+                                <div class="flex items-end flex-grow"><span class="clin-label">Abortos:</span><input v-model="historiaForm.go_abortos" class="input-line text-center"></div>
+                                <div class="flex items-end flex-grow"><span class="clin-label">Cesáreas:</span><input v-model="historiaForm.go_cesareas" class="input-line text-center"></div>
+                            </div>
+                            <div class="flex flex-wrap gap-x-6 gap-y-3">
+                                <div class="flex items-end w-full md:w-1/2"><span class="clin-label">FUM (Última Menstruación):</span><input v-model="historiaForm.go_fum" type="date" class="input-line" style="color-scheme: dark;"></div>
+                                <div class="flex items-end w-full"><span class="clin-label">Métodos anticonceptivos:</span><input v-model="historiaForm.go_metodos" class="input-line"></div>
+                                <div class="flex items-end w-full"><span class="clin-label">Menopausia:</span><input v-model="historiaForm.go_menopausia" class="input-line"></div>
+                            </div>
+                        </div>
+
+                        <button @click="saveHistoriaClinica" class="w-full bg-amber-600 text-white py-6 rounded-[2rem] font-black uppercase text-sm mt-8 shadow-2xl hover:bg-amber-500 transition-all active:scale-95 flex items-center justify-center gap-4 border-2 border-amber-400">
+                            <i class="fas fa-save text-xl"></i> GUARDAR HISTORIAL Y ENVIAR A CONSULTORIO
+                        </button>
+                    </div>
+                    
+                    <div v-else class="text-center py-20 bg-zinc-900 rounded-[3rem] border border-zinc-800 text-zinc-500 font-black uppercase shadow-2xl">
+                        <i class="fas fa-file-medical text-6xl mb-6 text-amber-900"></i>
+                        <p>NO HAY PACIENTE SELECCIONADO DESDE TRIAGE</p>
                     </div>
                 </section>
-
                 <section v-if="activeTab === 'medico'" class="max-w-6xl mx-auto space-y-8 animate-fade-in">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <div class="bg-zinc-900 p-8 border border-zinc-800 rounded-[2.5rem] shadow-xl">
@@ -289,13 +433,50 @@
                         </div>
 
                         <div v-if="showHistoriaCompleta && currP['medico'].historia" class="bg-zinc-800 p-8 rounded-3xl border border-zinc-700 text-xs font-bold text-zinc-300 uppercase space-y-4">
-                            <p><span class="text-amber-500">MOTIVO:</span> {{ currP['medico'].historia.motivo }}</p>
-                            <p><span class="text-amber-500">PADECIMIENTO:</span> {{ currP['medico'].historia.padecimiento }}</p>
-                            <p><span class="text-amber-500">AHF:</span> {{ currP['medico'].historia.ahf }}</p>
-                            <p><span class="text-amber-500">APP:</span> {{ currP['medico'].historia.app }}</p>
-                            <p><span class="text-amber-500">APNP:</span> {{ currP['medico'].historia.apnp }}</p>
-                            <p><span class="text-amber-500">AGO:</span> {{ currP['medico'].historia.ago }}</p>
-                            <p><span class="text-amber-500">EXPLORACIÓN:</span> {{ currP['medico'].historia.exploracion }}</p>
+                            <p><span class="text-amber-500 font-black">DATOS PERSONALES:</span> Ocupación: {{ currP['medico'].historia.ocupacion || 'N/A' }}, Edo. Civil: {{ currP['medico'].historia.estadoCivil || 'N/A' }}, Religión: {{ currP['medico'].historia.religion || 'N/A' }}</p>
+                            <p><span class="text-amber-500 font-black">MOTIVO:</span> {{ currP['medico'].historia.motivo }}</p>
+                            
+                            <div class="border-t border-zinc-600 pt-2">
+                                <span class="text-amber-500 font-black">APP (PATOLÓGICOS):</span>
+                                Diabetes: {{ currP['medico'].historia.app_diabetes ? 'SÍ' : 'NO' }} |
+                                Hipertensión: {{ currP['medico'].historia.app_hipertension ? 'SÍ' : 'NO' }} |
+                                Asma: {{ currP['medico'].historia.app_asma ? 'SÍ' : 'NO' }} |
+                                Cardíaca: {{ currP['medico'].historia.app_cardiaca ? 'SÍ' : 'NO' }} |
+                                Alergias: {{ currP['medico'].historia.app_alergias ? 'SÍ' : 'NO' }} |
+                                Renales/Nefropatías: {{ currP['medico'].historia.app_renales || currP['medico'].historia.app_nefropatias ? 'SÍ' : 'NO' }} |
+                                Cáncer: {{ currP['medico'].historia.app_cancer ? 'SÍ' : 'NO' }} |
+                                EPOC: {{ currP['medico'].historia.app_epoc ? 'SÍ' : 'NO' }}<br>
+                                <span class="text-zinc-400">Medicamentos actuales:</span> {{ currP['medico'].historia.app_medicamentos || 'Ninguno' }}
+                            </div>
+
+                            <div class="border-t border-zinc-600 pt-2">
+                                <span class="text-amber-500 font-black">AHF (HEREDOFAMILIARES):</span>
+                                Asma: {{ currP['medico'].historia.ahf_asma ? 'SÍ' : 'NO' }} |
+                                Hipertensión: {{ currP['medico'].historia.ahf_hipertension ? 'SÍ' : 'NO' }} |
+                                Cardiopatías: {{ currP['medico'].historia.ahf_cardiopatias ? 'SÍ' : 'NO' }} |
+                                Cáncer: {{ currP['medico'].historia.ahf_cancer ? 'SÍ' : 'NO' }} |
+                                EPOC: {{ currP['medico'].historia.ahf_epoc ? 'SÍ' : 'NO' }} |
+                                Nefropatías: {{ currP['medico'].historia.ahf_nefropatias ? 'SÍ' : 'NO' }}<br>
+                                <span class="text-zinc-400">Otros:</span> {{ currP['medico'].historia.ahf_otros || 'N/A' }}
+                            </div>
+
+                            <div class="border-t border-zinc-600 pt-2">
+                                <span class="text-amber-500 font-black">HÁBITOS:</span>
+                                Tabaquismo: {{ currP['medico'].historia.hab_tabaquismo || 'N/A' }} | 
+                                Alcohol: {{ currP['medico'].historia.hab_alcohol || 'N/A' }} | 
+                                Cirugías: {{ currP['medico'].historia.hab_cirugias || 'N/A' }} | 
+                                Alimentación: {{ currP['medico'].historia.hab_alimentacion || 'N/A' }}
+                            </div>
+
+                            <div class="border-t border-zinc-600 pt-2" v-if="currP['medico'].sexo === 'MUJER'">
+                                <span class="text-amber-500 font-black">GINECO-OBSTÉTRICOS:</span>
+                                Menarca: {{ currP['medico'].historia.go_menarca || 'N/A' }} años | 
+                                Gestas: {{ currP['medico'].historia.go_gestas || 0 }} | 
+                                Partos: {{ currP['medico'].historia.go_partos || 0 }} | 
+                                Abortos: {{ currP['medico'].historia.go_abortos || 0 }} | 
+                                FUM: {{ currP['medico'].historia.go_fum || 'N/A' }} | 
+                                Métodos: {{ currP['medico'].historia.go_metodos || 'N/A' }}
+                            </div>
                         </div>
 
                         <div>
@@ -334,6 +515,7 @@
                         </button>
                     </div>
                 </section>
+
                 <section v-if="activeTab === 'fisioterapia'" class="max-w-6xl mx-auto space-y-8 animate-fade-in">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <div class="bg-zinc-900 p-8 border border-zinc-800 rounded-[2.5rem] shadow-xl">
@@ -431,11 +613,8 @@
 
                         <div v-if="showHistoriaCompleta && currP['psicologia'].historia" class="bg-zinc-800 p-8 rounded-3xl border border-zinc-700 text-xs font-bold text-zinc-300 uppercase space-y-4">
                             <p><span class="text-purple-500">MOTIVO:</span> {{ currP['psicologia'].historia.motivo }}</p>
-                            <p><span class="text-purple-500">PADECIMIENTO:</span> {{ currP['psicologia'].historia.padecimiento }}</p>
-                            <p><span class="text-purple-500">AHF:</span> {{ currP['psicologia'].historia.ahf }}</p>
-                            <p><span class="text-purple-500">APP:</span> {{ currP['psicologia'].historia.app }}</p>
-                            <p><span class="text-purple-500">APNP:</span> {{ currP['psicologia'].historia.apnp }}</p>
-                            <p><span class="text-purple-500">AGO:</span> {{ currP['psicologia'].historia.ago }}</p>
+                            <p><span class="text-purple-500">ESTADO CIVIL:</span> {{ currP['psicologia'].historia.estadoCivil || 'N/A' }} | <span class="text-purple-500">OCUPACIÓN:</span> {{ currP['psicologia'].historia.ocupacion || 'N/A' }}</p>
+                            <p><span class="text-purple-500">HÁBITOS:</span> Tabaco: {{ currP['psicologia'].historia.hab_tabaquismo || 'N/A' }} | Alcohol: {{ currP['psicologia'].historia.hab_alcohol || 'N/A' }}</p>
                         </div>
 
                         <div class="space-y-6">
@@ -501,9 +680,7 @@
                             <i class="fas fa-print mr-3"></i> GUARDAR E IMPRIMIR REPORTE COSMETOLÓGICO
                         </button>
                     </div>
-                </section>
-
-                <section v-if="activeTab === 'farmacia'" class="grid grid-cols-1 lg:grid-cols-3 gap-10 animate-fade-in">
+                </section                <section v-if="activeTab === 'farmacia'" class="grid grid-cols-1 lg:grid-cols-3 gap-10 animate-fade-in">
                     <div class="bg-zinc-900 p-10 rounded-[3rem] border border-zinc-800 shadow-2xl h-fit">
                         <h3 class="font-black text-xs uppercase mb-8 text-amber-500 border-b border-zinc-800 pb-2 italic">ENTRADA DE INSUMOS</h3>
                         <div class="space-y-5">
@@ -716,11 +893,12 @@
 
                 <div v-if="printData.historia && printData.tipoServicio !== 'juridico'" style="margin-bottom: 20px; border: 2px solid #ccc; padding: 15px; border-radius: 10px; font-size: 11px;">
                     <h3 style="font-size: 12px; font-weight: 900; margin-top: 0; text-transform: uppercase;">RESUMEN DE HISTORIA CLÍNICA:</h3>
+                    <p><strong>DATOS PERSONALES:</strong> Ocupación: {{ printData.historia.ocupacion || 'N/A' }}, Edo. Civil: {{ printData.historia.estadoCivil || 'N/A' }}, Religión: {{ printData.historia.religion || 'N/A' }}</p>
                     <p><strong>MOTIVO:</strong> {{ printData.historia.motivo }}</p>
-                    <p><strong>PADECIMIENTO:</strong> {{ printData.historia.padecimiento }}</p>
-                    <p><strong>AHF / APP:</strong> {{ printData.historia.ahf || 'N/A' }} / {{ printData.historia.app || 'N/A' }}</p>
-                    <p><strong>APNP / AGO:</strong> {{ printData.historia.apnp || 'N/A' }} / {{ printData.historia.ago || 'N/A' }}</p>
-                    <p v-if="printData.historia.exploracion"><strong>EXPLORACIÓN:</strong> {{ printData.historia.exploracion }}</p>
+                    <p><strong>APP:</strong> Diabetes ({{ printData.historia.app_diabetes ? 'SÍ':'NO' }}), HTA ({{ printData.historia.app_hipertension ? 'SÍ':'NO' }}), Asma ({{ printData.historia.app_asma ? 'SÍ':'NO' }}), Alergias ({{ printData.historia.app_alergias ? 'SÍ':'NO' }}). Meds: {{ printData.historia.app_medicamentos || 'Ninguno' }}</p>
+                    <p><strong>AHF:</strong> Asma ({{ printData.historia.ahf_asma ? 'SÍ':'NO' }}), HTA ({{ printData.historia.ahf_hipertension ? 'SÍ':'NO' }}), Cardiopatías ({{ printData.historia.ahf_cardiopatias ? 'SÍ':'NO' }}). Otros: {{ printData.historia.ahf_otros || 'N/A' }}</p>
+                    <p><strong>HÁBITOS:</strong> Tabaco: {{ printData.historia.hab_tabaquismo || 'N/A' }}, Alcohol: {{ printData.historia.hab_alcohol || 'N/A' }}, Cirugías: {{ printData.historia.hab_cirugias || 'N/A' }}</p>
+                    <p v-if="printData.sexo === 'MUJER'"><strong>GINECO:</strong> Menarca: {{ printData.historia.go_menarca || 'N/A' }}, Gestas: {{ printData.historia.go_gestas || 0 }}, Partos: {{ printData.historia.go_partos || 0 }}, Abortos: {{ printData.historia.go_abortos || 0 }}</p>
                 </div>
 
                 <div style="flex-grow: 1; font-size: 14px; line-height: 1.8; text-transform: uppercase;">
@@ -758,6 +936,7 @@
         </div>
 
     </div>
+
     <script>
         /* ==========================================================
             KILL-SWITCH DE SEGURIDAD
@@ -801,8 +980,15 @@
                 const formP = reactive({ nombre: '', edad: null, sexo: 'MUJER', domicilio: '', telefono: '', servicio: 'medico' });
                 const formS = reactive({ nombre: '', area: 'medico', cedula: '', escuela: '' });
                 const formI = reactive({ nombre: '', stock: null, caducidad: '', presentacion: '' });
-                // SE AÑADIERON APNP Y AGO AL FORMULARIO
-                const historiaForm = reactive({ motivo: '', padecimiento: '', ahf: '', app: '', apnp: '', ago: '', exploracion: '' });
+                
+                // AQUÍ DECLARAMOS TODAS LAS VARIABLES DE LA NUEVA HOJA LITERARIA
+                const historiaForm = reactive({ 
+                    estadoCivil: '', religion: '', fechaNacimiento: '', ocupacion: '', motivo: '',
+                    app_diabetes: false, app_hipertension: false, app_nefropatias: false, app_renales: false, app_alergias: false, app_tuberculosis: false, app_cancer: false, app_epoc: false, app_cardiaca: false, app_asma: false, app_medicamentos: '',
+                    ahf_asma: false, ahf_epoc: false, ahf_hipertension: false, ahf_nefropatias: false, ahf_tuberculosis: false, ahf_cancer: false, ahf_cardiopatias: false, ahf_otros: '',
+                    hab_tabaquismo: '', hab_alcohol: '', hab_actividad: '', hab_cirugias: '', hab_alimentacion: '', hab_animales: '', hab_biomasa: '', hab_polvo: '',
+                    go_menarca: '', go_ciclo_regular: false, go_dismenorrea: false, go_ivsa: '', go_gestas: '', go_partos: '', go_abortos: '', go_cesareas: '', go_fum: '', go_metodos: '', go_menopausia: ''
+                });
 
                 const selectedPatientId = ref(null);
                 const currP = reactive({ enfermeria: null, historia: null, medico: null, juridico: null, psicologia: null, cosmetologia: null, fisioterapia: null });
@@ -942,8 +1128,10 @@
                 const saveHistoriaClinica = () => {
                     if(!currP.historia) return;
                     db.ref(`patients/${currP.historia.id}`).update({ historia: { ...historiaForm } }).catch(err => alert("Error: " + err.message));
-                    alert("HISTORIA CLÍNICA GUARDADA. EL PACIENTE YA ESTÁ DISPONIBLE EN EL CONSULTORIO.");
-                    currP.historia = null; Object.keys(historiaForm).forEach(k => historiaForm[k] = '');
+                    alert("HISTORIAL CLÍNICO GUARDADO. EL PACIENTE YA ESTÁ DISPONIBLE EN EL CONSULTORIO.");
+                    currP.historia = null; 
+                    // Limpia tanto strings como checkboxes
+                    Object.keys(historiaForm).forEach(k => historiaForm[k] = (typeof historiaForm[k] === 'boolean' ? false : ''));
                     activeTab.value = 'recepcion';
                 };
 
@@ -1025,7 +1213,7 @@
                     } else { alert("CONTRASEÑA INCORRECTA"); }
                 };
 
-                const loadExampleData = () => {
+                const loadExampleData = async () => {
                     if(confirm("¿INYECCIÓN MASIVA DE INVENTARIO? (Esto añadirá todos los medicamentos exactos solicitados al stock)")) {
                         const meds = [
                             {nombre:"INCRESINA DÚO", stock: 19, presentacion: "4 TABLETAS"}, 
@@ -1073,8 +1261,15 @@
                             {nombre:"ISISPHARMA CONTORNO DE OJOS", stock: 1, presentacion: "PIEZA"}, 
                             {nombre:"BIODERMA ATODERM", stock: 1, presentacion: "PIEZA"}
                         ];
-                        meds.forEach(m => db.ref('inventory').push({...m, caducidad: "2027-12-31"}));
-                        alert("LISTA COMPLETA EXACTA DE MEDICAMENTOS INYECTADA EN INVENTARIO.");
+                        
+                        try {
+                            for(let i = 0; i < meds.length; i++) {
+                                await db.ref('inventory').push({...meds[i], caducidad: "2027-12-31"});
+                            }
+                            alert("LISTA COMPLETA EXACTA DE MEDICAMENTOS INYECTADA EN INVENTARIO CORRECTAMENTE.");
+                        } catch(error) {
+                            alert("ERROR AL ESCRIBIR EN FIREBASE (Revisa tus reglas de Realtime Database): " + error.message);
+                        }
                     }
                 };
 
@@ -1103,3 +1298,4 @@
     </script>
 </body>
 </html>
+
