@@ -1,4 +1,4 @@
-                <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -35,6 +35,197 @@
         .login-box { width: 100%; max-width: 460px; text-align: center; padding: 2rem; }
         .brand-title { font-weight: 900; text-transform: uppercase; color: #000; line-height: 1; letter-spacing: -2px; font-size: 3rem; }
         .brand-subtitle { font-weight: 900; text-transform: uppercase; color: #b45309; line-height: 1; letter-spacing: -1px; font-size: 3rem; margin-top: 8px; }
+        #print-zone { display: none; }
+        @media print {
+            #app-container, #login-overlay, header, nav, .no-print { display: none !important; }
+            body { background: white; margin: 0; padding: 0; }
+            #print-zone { display: block !important; position: absolute; top: 0; left: 0; width: 21.59cm; height: 27.94cm; z-index: 9999; padding: 1.2cm; box-sizing: border-box; overflow: hidden; }
+            .receta-maestra { width: 100%; height: 100%; border: 3px solid #000; color: #000; padding: 35px; position: relative; box-sizing: border-box; display: flex; flex-direction: column; }
+            .receta-header { text-align: center; border-bottom: 5px solid #d97706; padding-bottom: 15px; margin-bottom: 20px; }
+            .print-brand-1 { font-size: 26px; font-weight: 900; color: #000; margin: 0; line-height: 1; }
+            .print-brand-2 { font-size: 26px; font-weight: 900; color: #d97706; margin: 5px 0 0 0; line-height: 1; }
+            .firma-container { margin-top: auto; margin-bottom: 30px; text-align: center; width: 100%; }
+            .firma-linea { width: 350px; border-top: 2px solid #000; margin: 0 auto 8px auto; }
+            @page { size: letter; margin: 0; }
+        }
+        [v-cloak] { display: none; }
+    </style>
+</head>
+<body>
+
+    <div id="app" v-cloak>
+
+        <div id="login-overlay" v-if="!isLoggedIn">
+            <div class="login-box">
+                <div class="mb-12">
+                    <div class="bg-amber-100 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner">
+                        <i class="fas fa-hand-holding-heart text-5xl text-amber-700"></i>
+                    </div>
+                    <div class="brand-title">FUERZA</div>
+                    <div class="brand-title">GENERACIONAL</div>
+                    <div class="brand-subtitle">JORNADAS DE SALUD</div>
+                    <p class="text-[10px] font-black mt-4 text-gray-400 tracking-[0.3em]">CFMM - SISTEMA ONLINE</p>
+                </div>
+                
+                <form @submit.prevent="performLogin" class="space-y-6">
+                    <div class="relative">
+                        <input v-model="loginData.user" type="password" class="input-std text-center tracking-[0.2em]" placeholder="ID USUARIO" style="border: 3px solid #000;" required>
+                    </div>
+                    <div class="relative">
+                        <input v-model="loginData.pass" type="password" class="input-std text-center tracking-[0.2em]" placeholder="CONTRASEÑA" style="border: 3px solid #000;" required>
+                    </div>
+                    
+                    <div v-if="loginError" class="bg-red-50 text-red-700 p-4 rounded-xl text-xs font-black uppercase border-2 border-red-200 animate-pulse">
+                        <i class="fas fa-shield-alt mr-2"></i> {{ errorMsg }}
+                    </div>
+                    
+                    <button type="submit" class="w-full bg-black text-white py-5 rounded-2xl font-black uppercase shadow-2xl hover:bg-zinc-800 transition-all text-sm tracking-widest active:scale-95">
+                        ENTRAR AL PANEL
+                    </button>
+                </form>
+            </div>
+        </div>
+        
+        <div v-else id="app-container" class="min-h-screen pb-20 bg-black text-white">
+            
+            <header class="bg-zinc-900 border-b-4 border-amber-600 sticky top-0 z-40 shadow-xl no-print">
+                <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+                    <div class="flex items-center gap-5">
+                        <div class="bg-amber-700 text-white p-4 rounded-3xl shadow-lg"><i class="fas fa-hospital-user text-2xl"></i></div>
+                        <div>
+                            <h1 class="text-xl font-black uppercase text-white leading-none">FUERZA GENERACIONAL</h1>
+                            <h2 class="text-xl font-black uppercase text-amber-500 leading-none mt-1">JORNADAS DE SALUD</h2>
+                            <p class="text-[10px] text-zinc-400 font-bold uppercase tracking-widest mt-1 italic">CFMM | SESIÓN: {{ roleName }}</p>
+                        </div>
+                    </div>
+                    <button @click="logout" class="bg-red-600 text-white px-8 py-3 rounded-2xl font-black uppercase text-[10px] shadow-lg hover:bg-red-700 transition-all">CERRAR SESIÓN</button>
+                </div>
+                
+                <nav class="flex overflow-x-auto bg-zinc-800 border-t border-zinc-700 no-scrollbar shadow-inner">
+                    <button v-for="t in filteredTabs" :key="t.id" @click="changeTab(t.id)" 
+                        :class="['px-8 py-5 text-[10px] font-black uppercase border-r border-zinc-700 flex items-center gap-3 transition-all whitespace-nowrap', activeTab === t.id ? 'bg-amber-600 text-white' : 'text-zinc-400 hover:bg-zinc-700 hover:text-white']">
+                        <i :class="t.icon"></i> {{ t.name }}
+                    </button>
+                </nav>
+            </header>
+
+            <main class="container mx-auto px-6 py-10 no-print">
+                <section v-if="activeTab === 'nosotros'" class="max-w-5xl mx-auto space-y-10 animate-fade-in">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                        <div class="bg-zinc-900 p-12 rounded-[3.5rem] border border-zinc-800 shadow-2xl relative overflow-hidden">
+                            <div class="absolute top-0 left-0 w-2 h-full bg-amber-600"></div>
+                            <h2 class="text-4xl font-black text-amber-500 uppercase mb-8 italic">NOSOTROS</h2>
+                            <p class="text-lg font-bold text-zinc-300 leading-relaxed uppercase text-justify">SOMOS UNA PLATAFORMA CIUDADANA QUE BUSCA CONVERTIRSE EN UN REFERENTE EN LA EJECUCIÓN DE PROYECTOS DE CIUDADANÍA ACTIVA Y ORGANIZADA.</p>
+                        </div>
+                        <div class="bg-zinc-900 p-12 rounded-[3.5rem] shadow-2xl relative overflow-hidden border border-zinc-800">
+                            <div class="absolute top-0 right-0 w-2 h-full bg-red-600"></div>
+                            <h2 class="text-4xl font-black uppercase mb-8 italic text-red-500">VISIÓN</h2>
+                            <p class="text-lg font-bold leading-relaxed uppercase text-justify text-zinc-300">CONVERTIRNOS EN UN REFERENTE DE PARTICIPACIÓN CIUDADANA ACTIVA Y ORGANIZADA PARA GENERAR CAMBIOS SOSTENIBLES Y POSITIVOS EN PUEBLA.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section v-if="activeTab === 'recepcion'" class="grid grid-cols-1 lg:grid-cols-3 gap-10 animate-fade-in">
+                    <div class="bg-zinc-900 p-10 rounded-[3rem] border border-zinc-800 shadow-2xl h-fit">
+                        <h3 class="font-black text-sm uppercase mb-8 text-amber-500 border-b-2 border-zinc-800 pb-2 italic">REGISTRO BENEFICIARIO</h3>
+                        <div class="space-y-5">
+                            <input v-model="formP.nombre" placeholder="NOMBRE COMPLETO" class="input-std bg-zinc-800 text-white border-zinc-700 focus:border-amber-500">
+                            <div class="grid grid-cols-2 gap-5">
+                                <input v-model.number="formP.edad" type="number" placeholder="EDAD" class="input-std bg-zinc-800 text-white border-zinc-700 focus:border-amber-500">
+                                <select v-model="formP.sexo" class="input-std bg-zinc-800 text-white border-zinc-700 focus:border-amber-500">
+                                    <option value="HOMBRE">HOMBRE</option>
+                                    <option value="MUJER">MUJER</option>
+                                </select>
+                            </div>
+                            <input v-model="formP.domicilio" placeholder="DOMICILIO COMPLETO" class="input-std bg-zinc-800 text-white border-zinc-700 focus:border-amber-500">
+                            <input v-model="formP.telefono" placeholder="TELÉFONO DE CONTACTO (10 DÍGITOS)" class="input-std bg-zinc-800 text-white border-zinc-700 focus:border-amber-500">
+                            <select v-model="formP.servicio" class="input-std bg-amber-600 text-white font-black border-amber-500 focus:border-white">
+                                <option value="medico">MÉDICO GENERAL</option>
+                                <option value="psicologia">PSICOLOGÍA</option>
+                                <option value="juridico">ASESORÍA JURÍDICA</option>
+                                <option value="cosmetologia">COSMETOLOGÍA</option>
+                                <option value="fisioterapia">FISIOTERAPIA</option>
+                            </select>
+                            <button @click="registerPatient" class="w-full bg-white text-black py-6 rounded-2xl font-black uppercase text-xs shadow-xl hover:bg-zinc-200 active:scale-95 transition-all">GUARDAR EN LISTA DE ESPERA</button>
+                        </div>
+                    </div>
+                    <div class="lg:col-span-2 bg-zinc-900 rounded-[3rem] border border-zinc-800 h-[750px] flex flex-col shadow-2xl overflow-hidden">
+                        <div class="bg-black p-8 text-white font-black uppercase text-xs flex justify-between items-center border-b border-zinc-800">
+                            <span>FILA DE ESPERA GLOBAL</span>
+                            <span class="bg-amber-600 px-5 py-2 rounded-full">{{patients.length}} PACIENTES</span>
+                        </div>
+                        <div class="overflow-y-auto p-6 space-y-4">
+                            <div v-for="p in patients" :key="p.id" class="flex justify-between items-center p-6 border border-zinc-800 rounded-[2.5rem] bg-zinc-800 hover:bg-zinc-700 transition-all shadow-sm">
+                                <div>
+                                    <p class="font-black text-base uppercase text-white">{{ p.nombre }}</p>
+                                    <span class="text-[9px] font-black bg-amber-900 text-amber-100 px-3 py-1 rounded-full uppercase tracking-tighter">{{ p.servicio }}</span>
+                                </div>
+                                <button @click="deletePatient(p.id)" class="text-red-500 hover:text-red-400 p-3"><i class="fas fa-trash-alt text-2xl"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section v-if="activeTab === 'signos'" class="max-w-4xl mx-auto animate-fade-in">
+                    <div class="bg-zinc-900 p-12 rounded-[4rem] border border-zinc-800 shadow-2xl text-center">
+                        <h3 class="font-black text-2xl uppercase mb-10 text-white italic">ENFERMERÍA Y TRIAGE</h3>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+                            <div>
+                                <label class="text-[11px] font-black uppercase text-zinc-400 block mb-2 text-left ml-3">INTERNO EN TURNO</label>
+                                <select v-model="vitalsForm.interno" class="input-std h-16 text-sm bg-zinc-800 text-white border-zinc-700 focus:border-amber-500">
+                                    <option :value="null">-- SELECCIONAR INTERNO --</option>
+                                    <option v-for="s in staffByArea('internos')" :key="s.id" :value="s.id">{{ s.nombre }}</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="text-[11px] font-black uppercase text-zinc-400 block mb-2 text-left ml-3">PACIENTE</label>
+                                <select v-model="selectedPatientId" @change="loadPatientForVitals" class="input-std h-16 text-sm bg-zinc-800 text-white border-zinc-700 focus:border-amber-500">
+                                    <option :value="null">-- SELECCIONAR PACIENTE --</option>
+                                    <option v-for="p in pendingVitalsList" :key="p.id" :value="p.id">{{ p.nombre }} ({{p.servicio}})</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div v-if="currP.enfermeria" class="bg-black p-12 rounded-[4rem] border border-zinc-800 text-left space-y-8 shadow-inner">
+                            <p class="text-center font-black text-2xl uppercase text-amber-500 underline">{{ currP.enfermeria.nombre }}</p>
+                            <div class="grid grid-cols-2 md:grid-cols-3 gap-8">
+                                <div v-for="(label, key) in {fc:'FREC. CARD. (FC)', ta:'PRESIÓN (PA)', spo2:'OXÍGENO (SPO2)', peso:'PESO (KG)', temp:'TEMP (°C)', talla:'ESTATURA (M)'}" :key="key">
+                                    <label class="text-[11px] font-black uppercase text-zinc-400 block mb-2 ml-3">{{ label }}</label>
+                                    <input v-model="vitalsForm[key]" class="input-std text-center text-xl shadow-sm h-16 bg-zinc-800 text-white border-zinc-700 focus:border-amber-500">
+                                </div>
+                                <div class="col-span-2 md:col-span-3">
+                                    <label class="text-[11px] font-black uppercase text-red-500 block mb-2 ml-3 italic">ALERGIAS DETECTADAS</label>
+                                    <input v-model="vitalsForm.alergias" placeholder="ESCRIBIR NEGADAS O DETALLAR" class="input-std text-center text-xl shadow-sm h-16 bg-red-900/20 text-red-400 border-red-900 focus:border-red-500">
+                                </div>
+                            </div>
+                            <button @click="saveVitalsAndContinue" class="w-full bg-amber-600 text-white py-8 rounded-[2.5rem] font-black uppercase text-sm mt-8 shadow-2xl hover:bg-amber-500 transition-all active:scale-95 flex items-center justify-center gap-4">
+                                CONTINUAR CON EL PROCESO <i class="fas fa-arrow-right text-xl"></i>
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <section v-if="activeTab === 'historia'" class="max-w-5xl mx-auto animate-fade-in">
+                    <div class="bg-zinc-900 p-12 rounded-[4rem] border border-zinc-800 shadow-2xl">
+                        <div class="flex justify-between items-center mb-10 border-b border-zinc-800 pb-6">
+                            <h3 class="font-black text-2xl uppercase text-white italic">HISTORIA CLÍNICA INTEGRAL</h3>
+                            <span class="bg-amber-600 px-6 py-2 rounded-full text-xs font-black uppercase tracking-widest">{{ currP.historia?.nombre || 'SIN PACIENTE' }}</span>
+                        </div>
+
+                        <div v-if="currP.historia" class="space-y-8">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                <div>
+                                    <label class="text-[11px] font-black uppercase text-amber-500 block mb-2 ml-3">MOTIVO DE CONSULTA</label>
+                                    <textarea v-model="historiaForm.motivo" class="input-std h-32 bg-zinc-800 text-white border-zinc-700 focus:border-amber-500 uppercase" placeholder="DESCRIPCIÓN BREVE DEL PADECIMIENTO..."></textarea>
+                                </div>
+                                <div>
+                                    <label class="text-[11px] font-black uppercase text-amber-500 block mb-2 ml-3">PADECIMIENTO ACTUAL</label>
+                                    <textarea v-model="historiaForm.padecimiento" class="input-std h-32 bg-zinc-800 text-white border-zinc-700 focus:border-amber-500 uppercase" placeholder="INICIO, EVOLUCIÓN Y ESTADO ACTUAL..."></textarea>
+                                </div>
+                                <div>
+                                    <label class="text-[11px] font-black uppercase text-amber-500 block mb-2 ml-3">ANTECEDENTES HEREDOFAMILIARES (AHF)</label>
+                        .brand-subtitle { font-weight: 900; text-transform: uppercase; color: #b45309; line-height: 1; letter-spacing: -1px; font-size: 3rem; margin-top: 8px; }
         #print-zone { display: none; }
         @media print {
             #app-container, #login-overlay, header, nav, .no-print { display: none !important; }
