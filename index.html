@@ -18,103 +18,34 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     
     <style>
-        :root { 
-            --bg-color: #fffbeb; 
-            --text-main: #1e293b; 
-            --accent-main: #b45309; 
-            --primary-dark: #0f172a;
-        }
-        
-        body { 
-            background-color: var(--bg-color); 
-            color: var(--text-main); 
-            margin: 0; 
-            font-family: 'Inter', sans-serif; 
-            -webkit-print-color-adjust: exact; 
-            print-color-adjust: exact;
-        }
-
-        .input-std { 
-            width: 100%; 
-            padding: 15px; 
-            border: 2px solid #e2e8f0; 
-            border-radius: 12px; 
-            font-weight: 700; 
-            text-transform: uppercase; 
-            outline: none; 
-            background: #ffffff; 
-            font-size: 13px; 
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
-        }
-        .input-std:focus { 
-            border-color: var(--accent-main); 
-            box-shadow: 0 0 0 4px rgba(180, 83, 9, 0.1); 
-        }
-
-        .tab-active { 
-            background-color: var(--primary-dark) !important; 
-            color: white !important; 
-            font-weight: 900; 
-        }
-        .tab-inactive { 
-            color: #78350f; 
-            background-color: white; 
-            font-weight: 600; 
-            border-bottom: 2px solid #fed7aa; 
-        }
-
+        :root { --bg-color: #fffbeb; --text-main: #1e293b; --accent-main: #b45309; --primary-dark: #0f172a; }
+        body { background-color: var(--bg-color); color: var(--text-main); margin: 0; font-family: 'Inter', sans-serif; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        .input-std { width: 100%; padding: 15px; border: 2px solid #e2e8f0; border-radius: 12px; font-weight: 700; text-transform: uppercase; outline: none; background: #ffffff; font-size: 13px; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .input-std:focus { border-color: var(--accent-main); box-shadow: 0 0 0 4px rgba(180, 83, 9, 0.1); }
+        .tab-active { background-color: var(--primary-dark) !important; color: white !important; font-weight: 900; }
+        .tab-inactive { color: #78350f; background-color: white; font-weight: 600; border-bottom: 2px solid #fed7aa; }
         .stock-red { background: #fee2e2; border-left: 8px solid #ef4444; color: #991b1b; }
         .stock-yellow { background: #fefce8; border-left: 8px solid #eab308; color: #854d0e; }
         .stock-green { background: #f0fdf4; border-left: 8px solid #22c55e; color: #166534; }
         .stock-expired { background: #450a0a !important; color: white !important; border-left: 8px solid black; }
-
         .excel-table { width: 100%; border-collapse: collapse; font-size: 11px; background: white; }
         .excel-table th { background: #ffedd5; border: 1px solid #fdba74; padding: 12px; text-transform: uppercase; font-weight: 900; text-align: left; color: #7c2d12; }
         .excel-table td { border: 1px solid #fed7aa; padding: 12px; font-weight: 600; }
-
-        #login-overlay { 
-            position: fixed; inset: 0; 
-            background-color: #fffbeb; 
-            display: flex; align-items: center; justify-content: center; z-index: 1000; flex-direction: column; 
-        }
+        #login-overlay { position: fixed; inset: 0; background-color: #fffbeb; display: flex; align-items: center; justify-content: center; z-index: 1000; flex-direction: column; }
         .login-box { width: 100%; max-width: 460px; text-align: center; padding: 2rem; }
-        
         .brand-title { font-weight: 900; text-transform: uppercase; color: #000; line-height: 1; letter-spacing: -2px; font-size: 3rem; }
         .brand-subtitle { font-weight: 900; text-transform: uppercase; color: #b45309; line-height: 1; letter-spacing: -1px; font-size: 3rem; margin-top: 8px; }
-
         #print-zone { display: none; }
         @media print {
             #app-container, #login-overlay, header, nav, .no-print { display: none !important; }
             body { background: white; margin: 0; padding: 0; }
-            #print-zone { 
-                display: block !important; 
-                position: absolute; top: 0; left: 0; 
-                width: 21.59cm; height: 27.94cm;
-                z-index: 9999; padding: 1.2cm; box-sizing: border-box;
-                overflow: hidden;
-            }
-            .receta-maestra { 
-                width: 100%; height: 100%; 
-                border: 3px solid #000; color: #000; 
-                padding: 35px; position: relative;
-                box-sizing: border-box;
-                display: flex; flex-direction: column;
-            }
+            #print-zone { display: block !important; position: absolute; top: 0; left: 0; width: 21.59cm; height: 27.94cm; z-index: 9999; padding: 1.2cm; box-sizing: border-box; overflow: hidden; }
+            .receta-maestra { width: 100%; height: 100%; border: 3px solid #000; color: #000; padding: 35px; position: relative; box-sizing: border-box; display: flex; flex-direction: column; }
             .receta-header { text-align: center; border-bottom: 5px solid #d97706; padding-bottom: 15px; margin-bottom: 20px; }
             .print-brand-1 { font-size: 26px; font-weight: 900; color: #000; margin: 0; line-height: 1; }
             .print-brand-2 { font-size: 26px; font-weight: 900; color: #d97706; margin: 5px 0 0 0; line-height: 1; }
-            
-            .firma-container {
-                margin-top: auto; 
-                margin-bottom: 30px;
-                text-align: center;
-                width: 100%;
-            }
-            .firma-linea {
-                width: 350px;
-                border-top: 2px solid #000;
-                margin: 0 auto 8px auto;
-            }
+            .firma-container { margin-top: auto; margin-bottom: 30px; text-align: center; width: 100%; }
+            .firma-linea { width: 350px; border-top: 2px solid #000; margin: 0 auto 8px auto; }
             @page { size: letter; margin: 0; }
         }
         [v-cloak] { display: none; }
@@ -138,7 +69,7 @@
                 
                 <form @submit.prevent="performLogin" class="space-y-6">
                     <div class="relative">
-                        <input v-model="loginData.user" type="email" class="input-std text-center tracking-[0.2em]" placeholder="CORREO ELECTRÓNICO" style="border: 3px solid #000;" required>
+                        <input v-model="loginData.user" type="password" class="input-std text-center tracking-[0.2em]" placeholder="ID USUARIO" style="border: 3px solid #000;" required>
                     </div>
                     <div class="relative">
                         <input v-model="loginData.pass" type="password" class="input-std text-center tracking-[0.2em]" placeholder="CONTRASEÑA" style="border: 3px solid #000;" required>
@@ -816,7 +747,7 @@
 
     <script>
         /* ==========================================================
-            KILL-SWITCH DE SEGURIDAD (CORREGIDO PARA DESARROLLO LOCAL)
+            KILL-SWITCH DE SEGURIDAD
            ========================================================== */
         const host = window.location.hostname;
         if (host !== 'maria085208.github.io' && host !== '' && host !== 'localhost' && host !== '127.0.0.1') {
@@ -868,31 +799,35 @@
                 
                 const recipe = ref([]); const tempMed = ref(null); const tempDosis = ref('');
 
-                // MAPA DE ROLES (Ahora usamos correos electrónicos)
+                // MAPA MAESTRO: Detecta tu ID y Contraseña originales, y sabe qué correo de los 3 usar por detrás.
                 const authMap = {
-                    'super@fuerzageneracional.org': 'SUPER',
-                    'admin@fuerzageneracional.org': 'ADMIN',
-                    'medico@fuerzageneracional.org': 'medico',
-                    'interno@fuerzageneracional.org': 'INTERNO',
-                    'juridico@fuerzageneracional.org': 'juridico',
-                    'psicologia@fuerzageneracional.org': 'psicologia',
-                    'fisioterapia@fuerzageneracional.org': 'fisioterapia',
-                    'cosmetologia@fuerzageneracional.org': 'cosmetologia'
+                    'PRESIDENTEFG': { role: 'SUPER', pass: 'PRESIG', account: 'jorgev0852@gmail.com' },
+                    'ADMIN0852': { role: 'ADMIN', pass: 'ADMINFG12', account: 'jorgev0852@gmail.com' },
+                    'MEDICOSFG': { role: 'medico', pass: 'MEDFUERZAG', account: 'especialistasfg@gmail.com' },
+                    'INTERNOSFG': { role: 'INTERNO', pass: 'FUERZAG', account: 'jornadasdesaludfg@gmail.com' },
+                    'ABOGADOFG': { role: 'juridico', pass: 'ABOGFUERZAG', account: 'especialistasfg@gmail.com' },
+                    'PSICOLOGOFG': { role: 'psicologia', pass: 'PSICFUERZAG', account: 'especialistasfg@gmail.com' },
+                    'FISIOTERAPIAFG': { role: 'fisioterapia', pass: 'FISIOG', account: 'especialistasfg@gmail.com' },
+                    'COSMEFG': { role: 'cosmetologia', pass: 'COSMEFUERZAG', account: 'especialistasfg@gmail.com' }
                 };
 
                 onMounted(() => {
-                    // Escuchador de sesión oficial de Firebase
+                    // Si recargan la página, recuperamos su sesión de la memoria
                     firebase.auth().onAuthStateChanged(user => {
-                        if (user && authMap[user.email.toLowerCase()]) {
-                            userRole.value = authMap[user.email.toLowerCase()];
-                            isLoggedIn.value = true;
-                            if(!activeTab.value) activeTab.value = (userRole.value === 'SUPER' || userRole.value === 'ADMIN') ? 'nosotros' : 'recepcion';
-                            
-                            // SOLO leemos la base de datos si Firebase confirma que el usuario es válido
-                            db.ref('patients').on('value', s => { patients.value = s.exists() ? Object.entries(s.val()).map(([id,v])=>({id,...v})) : []; });
-                            db.ref('staff').on('value', s => { staff.value = s.exists() ? Object.entries(s.val()).map(([id,v])=>({id,...v})) : []; });
-                            db.ref('inventory').on('value', s => { inventory.value = s.exists() ? Object.entries(s.val()).map(([id,v])=>({id,...v})) : []; });
-                            db.ref('history').on('value', s => { history.value = s.exists() ? Object.entries(s.val()).map(([id,v])=>({id,...v})) : []; });
+                        if (user) {
+                            const savedRole = sessionStorage.getItem('fg_user_role');
+                            if (savedRole) {
+                                userRole.value = savedRole;
+                                isLoggedIn.value = true;
+                                if(!activeTab.value) activeTab.value = (userRole.value === 'SUPER' || userRole.value === 'ADMIN') ? 'nosotros' : 'recepcion';
+                                
+                                db.ref('patients').on('value', s => { patients.value = s.exists() ? Object.entries(s.val()).map(([id,v])=>({id,...v})) : []; });
+                                db.ref('staff').on('value', s => { staff.value = s.exists() ? Object.entries(s.val()).map(([id,v])=>({id,...v})) : []; });
+                                db.ref('inventory').on('value', s => { inventory.value = s.exists() ? Object.entries(s.val()).map(([id,v])=>({id,...v})) : []; });
+                                db.ref('history').on('value', s => { history.value = s.exists() ? Object.entries(s.val()).map(([id,v])=>({id,...v})) : []; });
+                            } else {
+                                firebase.auth().signOut();
+                            }
                         } else {
                             isLoggedIn.value = false;
                         }
@@ -913,31 +848,38 @@
                     return history.value.filter(h => h.tipoServicio === userRole.value || (userRole.value === 'INTERNO' && ['medico','psicologia'].includes(h.tipoServicio)));
                 });
 
-                // NUEVO SISTEMA DE INICIO DE SESIÓN
+                // NUEVO INICIO DE SESIÓN INVISIBLE
                 const performLogin = async () => {
                     try {
-                        const emailIngresado = loginData.user.trim().toLowerCase();
-                        
-                        // 1. Firebase valida el correo y contraseña en su servidor
-                        await firebase.auth().signInWithEmailAndPassword(emailIngresado, loginData.pass.trim());
-                        
-                        // 2. Si pasa, le damos su rol en el panel
-                        if(authMap[emailIngresado]) {
-                            userRole.value = authMap[emailIngresado];
+                        const userId = loginData.user.trim().toUpperCase();
+                        const userPass = loginData.pass.trim();
+                        const userData = authMap[userId];
+
+                        // Si el usuario y contraseña escrita coinciden con tu configuración
+                        if (userData && userData.pass === userPass) {
+                            
+                            // 1. Conectamos la app a Firebase usando la contraseña maestra global
+                            await firebase.auth().signInWithEmailAndPassword(userData.account, "FuerzaG2026!");
+                            
+                            // 2. Guardamos la identidad localmente
+                            sessionStorage.setItem('fg_user_role', userData.role);
+                            
+                            userRole.value = userData.role;
                             isLoggedIn.value = true; loginError.value = false;
                             activeTab.value = (userRole.value === 'SUPER' || userRole.value === 'ADMIN') ? 'nosotros' : 'recepcion';
                         } else {
-                            await firebase.auth().signOut();
-                            loginError.value = true; errorMsg.value = 'CORREO SIN ROL ASIGNADO EN EL SISTEMA';
+                            loginError.value = true; 
+                            errorMsg.value = 'CREDENCIALES INVÁLIDAS. VERIFIQUE ID USUARIO Y CONTRASEÑA.';
                         }
                     } catch (error) {
                         loginError.value = true; 
-                        errorMsg.value = 'CREDENCIALES INVÁLIDAS. VERIFIQUE CORREO Y CONTRASEÑA.';
+                        errorMsg.value = 'ERROR DE CONEXIÓN CON LA BASE DE DATOS SEGURA.';
                         console.error(error);
                     }
                 };
 
                 const logout = async () => { 
+                    sessionStorage.removeItem('fg_user_role');
                     await firebase.auth().signOut();
                     isLoggedIn.value = false; userRole.value = ''; loginData.user=''; loginData.pass=''; 
                 };
