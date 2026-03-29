@@ -138,10 +138,10 @@
                 
                 <form @submit.prevent="performLogin" class="space-y-6">
                     <div class="relative">
-                        <input v-model="loginData.user" type="password" class="input-std text-center tracking-[0.2em]" placeholder="ID USUARIO" style="border: 3px solid #000;">
+                        <input v-model="loginData.user" type="email" class="input-std text-center tracking-[0.2em]" placeholder="CORREO ELECTRÓNICO" style="border: 3px solid #000;" required>
                     </div>
                     <div class="relative">
-                        <input v-model="loginData.pass" type="password" class="input-std text-center tracking-[0.2em]" placeholder="CONTRASEÑA" style="border: 3px solid #000;">
+                        <input v-model="loginData.pass" type="password" class="input-std text-center tracking-[0.2em]" placeholder="CONTRASEÑA" style="border: 3px solid #000;" required>
                     </div>
                     
                     <div v-if="loginError" class="bg-red-50 text-red-700 p-4 rounded-xl text-xs font-black uppercase border-2 border-red-200 animate-pulse">
@@ -846,7 +846,7 @@
                 const loginData = reactive({ user: '', pass: '' }); 
                 const loginError = ref(false);
                 const errorMsg = ref('');
-                const activeTab = ref('recepcion'); 
+                const activeTab = ref(''); 
                 const historyLimit = ref(50);
                 const searchQuery = ref('');
                 
@@ -866,14 +866,37 @@
                 const consGen = reactive({ diagnostico: '', tratamiento: '' });
                 const selStaffId = reactive({ medico: null, juridico: null, psicologia: null, cosmetologia: null, fisioterapia: null });
                 
-                // MEJORA: Solo guardamos el ID para evitar romper la reactividad de Vue
                 const recipe = ref([]); const tempMed = ref(null); const tempDosis = ref('');
 
+                // MAPA DE ROLES (Ahora usamos correos electrónicos)
+                const authMap = {
+                    'super@fuerzageneracional.org': 'SUPER',
+                    'admin@fuerzageneracional.org': 'ADMIN',
+                    'medico@fuerzageneracional.org': 'medico',
+                    'interno@fuerzageneracional.org': 'INTERNO',
+                    'juridico@fuerzageneracional.org': 'juridico',
+                    'psicologia@fuerzageneracional.org': 'psicologia',
+                    'fisioterapia@fuerzageneracional.org': 'fisioterapia',
+                    'cosmetologia@fuerzageneracional.org': 'cosmetologia'
+                };
+
                 onMounted(() => {
-                    db.ref('patients').on('value', s => { patients.value = s.exists() ? Object.entries(s.val()).map(([id,v])=>({id,...v})) : []; });
-                    db.ref('staff').on('value', s => { staff.value = s.exists() ? Object.entries(s.val()).map(([id,v])=>({id,...v})) : []; });
-                    db.ref('inventory').on('value', s => { inventory.value = s.exists() ? Object.entries(s.val()).map(([id,v])=>({id,...v})) : []; });
-                    db.ref('history').on('value', s => { history.value = s.exists() ? Object.entries(s.val()).map(([id,v])=>({id,...v})) : []; });
+                    // Escuchador de sesión oficial de Firebase
+                    firebase.auth().onAuthStateChanged(user => {
+                        if (user && authMap[user.email.toLowerCase()]) {
+                            userRole.value = authMap[user.email.toLowerCase()];
+                            isLoggedIn.value = true;
+                            if(!activeTab.value) activeTab.value = (userRole.value === 'SUPER' || userRole.value === 'ADMIN') ? 'nosotros' : 'recepcion';
+                            
+                            // SOLO leemos la base de datos si Firebase confirma que el usuario es válido
+                            db.ref('patients').on('value', s => { patients.value = s.exists() ? Object.entries(s.val()).map(([id,v])=>({id,...v})) : []; });
+                            db.ref('staff').on('value', s => { staff.value = s.exists() ? Object.entries(s.val()).map(([id,v])=>({id,...v})) : []; });
+                            db.ref('inventory').on('value', s => { inventory.value = s.exists() ? Object.entries(s.val()).map(([id,v])=>({id,...v})) : []; });
+                            db.ref('history').on('value', s => { history.value = s.exists() ? Object.entries(s.val()).map(([id,v])=>({id,...v})) : []; });
+                        } else {
+                            isLoggedIn.value = false;
+                        }
+                    });
                 });
 
                 const sortedInventory = computed(() => { return [...inventory.value].sort((a,b) => a.nombre.localeCompare(b.nombre)); });
@@ -890,32 +913,34 @@
                     return history.value.filter(h => h.tipoServicio === userRole.value || (userRole.value === 'INTERNO' && ['medico','psicologia'].includes(h.tipoServicio)));
                 });
 
-                const authMap = {
-                    'UFJFU0lERU5URUZH|UFJFU0lH': 'SUPER',
-                    'QURNSU4wODUy|QURNSU5GRzEy': 'ADMIN',
-                    'TUVESUNPU0ZH|TUVERlVFUlpBRw==': 'medico',
-                    'SU5URVJOT1NGRw==|RlVFUlpBRw==': 'INTERNO',
-                    'QUJPR0FET0ZH|QUJPR0ZVRVJaQUc=': 'juridico',
-                    'UFNJQ09MT0dPRkc=|UFNJQ0ZVRVJaQUc=': 'psicologia',
-                    'RklTSU9URVJBUElBRkc=|RklTSU9H': 'fisioterapia',
-                    'Q09TTUVGRw==|Q09TTUVGVUVSWkFH': 'cosmetologia'
-                };
-
-                const performLogin = () => {
-                    const u = btoa(loginData.user.toUpperCase().trim());
-                    const p = btoa(loginData.pass.trim().toUpperCase());
-                    const key = `${u}|${p}`;
-
-                    if(authMap[key]) {
-                        userRole.value = authMap[key];
-                        isLoggedIn.value = true; loginError.value = false;
-                        activeTab.value = (userRole.value === 'SUPER' || userRole.value === 'ADMIN') ? 'nosotros' : 'recepcion';
-                    } else {
-                        loginError.value = true; errorMsg.value = 'CREDENCIALES INVÁLIDAS O NO AUTORIZADAS';
+                // NUEVO SISTEMA DE INICIO DE SESIÓN
+                const performLogin = async () => {
+                    try {
+                        const emailIngresado = loginData.user.trim().toLowerCase();
+                        
+                        // 1. Firebase valida el correo y contraseña en su servidor
+                        await firebase.auth().signInWithEmailAndPassword(emailIngresado, loginData.pass.trim());
+                        
+                        // 2. Si pasa, le damos su rol en el panel
+                        if(authMap[emailIngresado]) {
+                            userRole.value = authMap[emailIngresado];
+                            isLoggedIn.value = true; loginError.value = false;
+                            activeTab.value = (userRole.value === 'SUPER' || userRole.value === 'ADMIN') ? 'nosotros' : 'recepcion';
+                        } else {
+                            await firebase.auth().signOut();
+                            loginError.value = true; errorMsg.value = 'CORREO SIN ROL ASIGNADO EN EL SISTEMA';
+                        }
+                    } catch (error) {
+                        loginError.value = true; 
+                        errorMsg.value = 'CREDENCIALES INVÁLIDAS. VERIFIQUE CORREO Y CONTRASEÑA.';
+                        console.error(error);
                     }
                 };
 
-                const logout = () => { isLoggedIn.value = false; userRole.value = ''; loginData.user=''; loginData.pass=''; };
+                const logout = async () => { 
+                    await firebase.auth().signOut();
+                    isLoggedIn.value = false; userRole.value = ''; loginData.user=''; loginData.pass=''; 
+                };
 
                 const filteredTabs = computed(() => {
                     const all = [
@@ -937,7 +962,6 @@
                     return all.filter(t => t.roles.includes(userRole.value));
                 });
 
-                // MEJORA: Manejo de errores en Firebase
                 const registerPatient = () => {
                     if(!formP.nombre || !formP.edad || !formP.telefono) return alert("LLENE LOS DATOS PRINCIPALES");
                     db.ref('patients').push({ ...formP, fecha: new Date().toLocaleString() }).catch(err => alert("Error al guardar: " + err.message));
@@ -973,7 +997,6 @@
                     activeTab.value = 'recepcion';
                 };
 
-                // MEJORA: Limpiar consGen al cambiar de paciente para no mezclar diagnósticos
                 const loadSelectedPatient = (area) => { 
                     currP[area] = patients.value.find(x => x.id === selectedPatientId.value); 
                     showHistoriaCompleta.value = false;
