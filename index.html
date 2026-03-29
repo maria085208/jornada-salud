@@ -811,50 +811,9 @@
                     'COSMEFG': { role: 'cosmetologia', pass: 'COSMEFUERZAG', account: 'especialistasfg@gmail.com' }
                 };
 
-                let listenersAttached = false;
-                
-                // Función que ENCHUFA la base de datos solo 1 vez
-                const attachListeners = () => {
-                    if (listenersAttached) return;
-                    listenersAttached = true;
-                    
-                    db.ref('patients').on('value', s => { patients.value = s.exists() ? Object.entries(s.val()).map(([id,v])=>({id,...v})) : []; }, e => alert('Error BD: ' + e.message));
-                    db.ref('staff').on('value', s => { staff.value = s.exists() ? Object.entries(s.val()).map(([id,v])=>({id,...v})) : []; });
-                    db.ref('inventory').on('value', s => { inventory.value = s.exists() ? Object.entries(s.val()).map(([id,v])=>({id,...v})) : []; });
-                    db.ref('history').on('value', s => { history.value = s.exists() ? Object.entries(s.val()).map(([id,v])=>({id,...v})) : []; });
-                };
-
-                // Función que DESENCHUFA la base de datos al salir
-                const detachListeners = () => {
-                    if (!listenersAttached) return;
-                    db.ref('patients').off();
-                    db.ref('staff').off();
-                    db.ref('inventory').off();
-                    db.ref('history').off();
-                    listenersAttached = false;
-                };
-
                 onMounted(() => {
-                    // Solo revisa si hay sesión activa al refrescar la página
-                    firebase.auth().onAuthStateChanged(user => {
-                        if (user) {
-                            const savedRole = sessionStorage.getItem('fg_user_role');
-                            if (savedRole) {
-                                userRole.value = savedRole;
-                                if(!activeTab.value) {
-                                    activeTab.value = (savedRole === 'SUPER' || savedRole === 'ADMIN') ? 'nosotros' : 'recepcion';
-                                }
-                                isLoggedIn.value = true;
-                                attachListeners();
-                            } else {
-                                firebase.auth().signOut();
-                            }
-                        } else {
-                            isLoggedIn.value = false;
-                            userRole.value = '';
-                            detachListeners();
-                        }
-                    });
+                    // Limpiamos cualquier sesión colgada al refrescar para evitar choques
+                    firebase.auth().signOut();
                 });
 
                 const sortedInventory = computed(() => { return [...inventory.value].sort((a,b) => a.nombre.localeCompare(b.nombre)); });
@@ -871,7 +830,7 @@
                     return history.value.filter(h => h.tipoServicio === userRole.value || (userRole.value === 'INTERNO' && ['medico','psicologia'].includes(h.tipoServicio)));
                 });
 
-                // INICIO DE SESIÓN CUIDADOSO
+                // INICIO DE SESIÓN LIMPIO Y DIRECTO (Elimina cualquier conflicto)
                 const performLogin = async () => {
                     try {
                         loginError.value = false;
@@ -881,19 +840,23 @@
 
                         if (userData && userData.pass === userPass) {
                             
-                            // 1. Guardamos la identidad localmente
-                            sessionStorage.setItem('fg_user_role', userData.role);
-                            
-                            // 2. Conectamos silenciosamente con Firebase
+                            // 1. Desconecta todo lo viejo
+                            await firebase.auth().signOut();
+                            db.ref('patients').off(); db.ref('staff').off(); db.ref('inventory').off(); db.ref('history').off();
+
+                            // 2. Conecta la bóveda de forma segura
                             await firebase.auth().signInWithEmailAndPassword(userData.account, "FuerzaG2026!");
                             
-                            // 3. Forzamos que la pantalla cargue la info y las pestañas exactas
+                            // 3. Forzamos UI
                             userRole.value = userData.role;
                             isLoggedIn.value = true; 
-                            activeTab.value = (userRole.value === 'SUPER' || userRole.value === 'ADMIN') ? 'nosotros' : 'recepcion';
+                            activeTab.value = (userData.role === 'SUPER' || userData.role === 'ADMIN') ? 'nosotros' : 'recepcion';
                             
-                            // 4. Enchufamos los datos a la fuerza
-                            attachListeners();
+                            // 4. Enchufamos los datos en tiempo real de forma garantizada
+                            db.ref('patients').on('value', s => { patients.value = s.exists() ? Object.entries(s.val()).map(([id,v])=>({id,...v})) : []; });
+                            db.ref('staff').on('value', s => { staff.value = s.exists() ? Object.entries(s.val()).map(([id,v])=>({id,...v})) : []; });
+                            db.ref('inventory').on('value', s => { inventory.value = s.exists() ? Object.entries(s.val()).map(([id,v])=>({id,...v})) : []; });
+                            db.ref('history').on('value', s => { history.value = s.exists() ? Object.entries(s.val()).map(([id,v])=>({id,...v})) : []; });
                             
                         } else {
                             loginError.value = true; 
@@ -901,14 +864,16 @@
                         }
                     } catch (error) {
                         loginError.value = true; 
-                        errorMsg.value = 'ERROR DE SEGURIDAD. VERIFIQUE QUE CREÓ LAS CUENTAS EN FIREBASE.';
+                        errorMsg.value = 'ERROR DE CONEXIÓN CON LA BASE DE DATOS SEGURA.';
                         console.error(error);
                     }
                 };
 
                 const logout = async () => { 
-                    sessionStorage.removeItem('fg_user_role');
                     await firebase.auth().signOut();
+                    db.ref('patients').off(); db.ref('staff').off(); db.ref('inventory').off(); db.ref('history').off();
+                    isLoggedIn.value = false; 
+                    userRole.value = ''; 
                     loginData.user = ''; 
                     loginData.pass = ''; 
                 };
