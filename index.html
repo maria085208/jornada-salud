@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+                <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -799,7 +799,7 @@
                 
                 const recipe = ref([]); const tempMed = ref(null); const tempDosis = ref('');
 
-                // MAPA MAESTRO: Detecta tu ID y Contraseña originales, y sabe qué correo de los 3 usar por detrás.
+                // MAPA MAESTRO
                 const authMap = {
                     'PRESIDENTEFG': { role: 'SUPER', pass: 'PRESIG', account: 'jorgev0852@gmail.com' },
                     'ADMIN0852': { role: 'ADMIN', pass: 'ADMINFG12', account: 'jorgev0852@gmail.com' },
@@ -848,14 +848,13 @@
                     return history.value.filter(h => h.tipoServicio === userRole.value || (userRole.value === 'INTERNO' && ['medico','psicologia'].includes(h.tipoServicio)));
                 });
 
-                // NUEVO INICIO DE SESIÓN INVISIBLE
+                // NUEVO INICIO DE SESIÓN INVISIBLE CORREGIDO
                 const performLogin = async () => {
                     try {
                         const userId = loginData.user.trim().toUpperCase();
-                        const userPass = loginData.pass.trim();
+                        const userPass = loginData.pass.trim().toUpperCase(); // <-- Aquí estaba el detalle: convierte a mayúsculas para que encaje perfecto
                         const userData = authMap[userId];
 
-                        // Si el usuario y contraseña escrita coinciden con tu configuración
                         if (userData && userData.pass === userPass) {
                             
                             // 1. Conectamos la app a Firebase usando la contraseña maestra global
