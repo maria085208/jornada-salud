@@ -36,17 +36,20 @@
         .brand-title { font-weight: 900; text-transform: uppercase; color: #000; line-height: 1; letter-spacing: -2px; font-size: 3rem; }
         .brand-subtitle { font-weight: 900; text-transform: uppercase; color: #b45309; line-height: 1; letter-spacing: -1px; font-size: 3rem; margin-top: 8px; }
         #print-zone { display: none; }
+        
+        /* CORRECCIÓN DE PDF: Se eliminó el overflow: hidden y las alturas fijas para que no se corte */
         @media print {
             #app-container, #login-overlay, header, nav, .no-print { display: none !important; }
             body { background: white; margin: 0; padding: 0; }
-            #print-zone { display: block !important; position: absolute; top: 0; left: 0; width: 21.59cm; height: 27.94cm; z-index: 9999; padding: 1.2cm; box-sizing: border-box; overflow: hidden; }
-            .receta-maestra { width: 100%; height: 100%; border: 3px solid #000; color: #000; padding: 35px; position: relative; box-sizing: border-box; display: flex; flex-direction: column; }
-            .receta-header { text-align: center; border-bottom: 5px solid #d97706; padding-bottom: 15px; margin-bottom: 20px; }
-            .print-brand-1 { font-size: 26px; font-weight: 900; color: #000; margin: 0; line-height: 1; }
-            .print-brand-2 { font-size: 26px; font-weight: 900; color: #d97706; margin: 5px 0 0 0; line-height: 1; }
-            .firma-container { margin-top: auto; margin-bottom: 30px; text-align: center; width: 100%; }
-            .firma-linea { width: 350px; border-top: 2px solid #000; margin: 0 auto 8px auto; }
-            @page { size: letter; margin: 0; }
+            #print-zone { display: block !important; position: absolute; top: 0; left: 0; width: 100%; min-height: 100vh; z-index: 9999; padding: 1cm; box-sizing: border-box; }
+            .receta-maestra { width: 100%; min-height: 100%; border: 3px solid #000; color: #000; padding: 25px; box-sizing: border-box; display: flex; flex-direction: column; }
+            .receta-header { text-align: center; border-bottom: 5px solid #d97706; padding-bottom: 10px; margin-bottom: 15px; }
+            .print-brand-1 { font-size: 22px; font-weight: 900; color: #000; margin: 0; line-height: 1; }
+            .print-brand-2 { font-size: 22px; font-weight: 900; color: #d97706; margin: 5px 0 0 0; line-height: 1; }
+            .firma-container { margin-top: 40px; margin-bottom: 20px; text-align: center; width: 100%; page-break-inside: avoid; }
+            .firma-linea { width: 300px; border-top: 2px solid #000; margin: 0 auto 8px auto; }
+            p, td, th, div { page-break-inside: avoid; } /* Evita que los parrafos se corten a la mitad en el salto de pagina */
+            @page { size: letter; margin: 5mm; }
         }
         [v-cloak] { display: none; }
     </style>
@@ -124,7 +127,6 @@
                         </div>
                     </div>
                 </section>
-
                 <section v-if="activeTab === 'recepcion'" class="grid grid-cols-1 lg:grid-cols-3 gap-10 animate-fade-in">
                     <div class="bg-zinc-900 p-10 rounded-[3rem] border border-zinc-800 shadow-2xl h-fit">
                         <h3 class="font-black text-sm uppercase mb-8 text-amber-500 border-b-2 border-zinc-800 pb-2 italic">REGISTRO BENEFICIARIO</h3>
@@ -206,7 +208,7 @@
                     </div>
                 </section>
 
-                <section v-if="activeTab === 'historia'" class="max-w-5xl mx-auto animate-fade-in">
+                <section v-if="activeTab === 'historia'" class="max-w-6xl mx-auto animate-fade-in">
                     <div class="bg-zinc-900 p-12 rounded-[4rem] border border-zinc-800 shadow-2xl">
                         <div class="flex justify-between items-center mb-10 border-b border-zinc-800 pb-6">
                             <h3 class="font-black text-2xl uppercase text-white italic">HISTORIA CLÍNICA INTEGRAL</h3>
@@ -217,24 +219,32 @@
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                                 <div>
                                     <label class="text-[11px] font-black uppercase text-amber-500 block mb-2 ml-3">MOTIVO DE CONSULTA</label>
-                                    <textarea v-model="historiaForm.motivo" class="input-std h-32 bg-zinc-800 text-white border-zinc-700 focus:border-amber-500 uppercase" placeholder="DESCRIPCIÓN BREVE DEL PADECIMIENTO..."></textarea>
+                                    <textarea v-model="historiaForm.motivo" class="input-std h-28 bg-zinc-800 text-white border-zinc-700 focus:border-amber-500 uppercase" placeholder="DESCRIPCIÓN BREVE DEL PADECIMIENTO..."></textarea>
                                 </div>
                                 <div>
                                     <label class="text-[11px] font-black uppercase text-amber-500 block mb-2 ml-3">PADECIMIENTO ACTUAL</label>
-                                    <textarea v-model="historiaForm.padecimiento" class="input-std h-32 bg-zinc-800 text-white border-zinc-700 focus:border-amber-500 uppercase" placeholder="INICIO, EVOLUCIÓN Y ESTADO ACTUAL..."></textarea>
+                                    <textarea v-model="historiaForm.padecimiento" class="input-std h-28 bg-zinc-800 text-white border-zinc-700 focus:border-amber-500 uppercase" placeholder="INICIO, EVOLUCIÓN Y ESTADO ACTUAL..."></textarea>
                                 </div>
                                 <div>
                                     <label class="text-[11px] font-black uppercase text-amber-500 block mb-2 ml-3">ANTECEDENTES HEREDOFAMILIARES (AHF)</label>
-                                    <textarea v-model="historiaForm.ahf" class="input-std h-32 bg-zinc-800 text-white border-zinc-700 focus:border-amber-500 uppercase" placeholder="DIABETES, HIPERTENSIÓN, ETC..."></textarea>
+                                    <textarea v-model="historiaForm.ahf" class="input-std h-28 bg-zinc-800 text-white border-zinc-700 focus:border-amber-500 uppercase" placeholder="DIABETES, HIPERTENSIÓN, ENFERMEDADES CARDIOVASCULARES..."></textarea>
                                 </div>
                                 <div>
                                     <label class="text-[11px] font-black uppercase text-amber-500 block mb-2 ml-3">ANTECEDENTES PATOLÓGICOS (APP)</label>
-                                    <textarea v-model="historiaForm.app" class="input-std h-32 bg-zinc-800 text-white border-zinc-700 focus:border-amber-500 uppercase" placeholder="CIRUGÍAS, HOSPITALIZACIONES, ENFERMEDADES..."></textarea>
+                                    <textarea v-model="historiaForm.app" class="input-std h-28 bg-zinc-800 text-white border-zinc-700 focus:border-amber-500 uppercase" placeholder="CIRUGÍAS, HOSPITALIZACIONES, ENFERMEDADES CRÓNICAS..."></textarea>
+                                </div>
+                                <div>
+                                    <label class="text-[11px] font-black uppercase text-amber-500 block mb-2 ml-3">PERSONALES NO PATOLÓGICOS (APNP)</label>
+                                    <textarea v-model="historiaForm.apnp" class="input-std h-28 bg-zinc-800 text-white border-zinc-700 focus:border-amber-500 uppercase" placeholder="TABAQUISMO, ALCOHOLISMO, TOXICOMANÍAS, ALIMENTACIÓN, ETC..."></textarea>
+                                </div>
+                                <div>
+                                    <label class="text-[11px] font-black uppercase text-amber-500 block mb-2 ml-3">GINECO-OBSTÉTRICOS (AGO)</label>
+                                    <textarea v-model="historiaForm.ago" class="input-std h-28 bg-zinc-800 text-white border-zinc-700 focus:border-amber-500 uppercase" placeholder="MENARCA, FUM, GESTAS, PARTOS, ABORTOS... (ESCRIBIR N/A SI NO APLICA)"></textarea>
                                 </div>
                             </div>
                             <div>
                                 <label class="text-[11px] font-black uppercase text-amber-500 block mb-2 ml-3">EXPLORACIÓN FÍSICA</label>
-                                <textarea v-model="historiaForm.exploracion" class="input-std h-32 bg-zinc-800 text-white border-zinc-700 focus:border-amber-500 uppercase" placeholder="CABEZA, CUELLO, TÓRAX, ABDOMEN, EXTREMIDADES..."></textarea>
+                                <textarea v-model="historiaForm.exploracion" class="input-std h-32 bg-zinc-800 text-white border-zinc-700 focus:border-amber-500 uppercase" placeholder="CABEZA, CUELLO, TÓRAX, ABDOMEN, EXTREMIDADES, NEUROLÓGICO..."></textarea>
                             </div>
 
                             <button @click="saveHistoriaClinica" class="w-full bg-amber-600 text-white py-8 rounded-[2.5rem] font-black uppercase text-sm mt-8 shadow-2xl hover:bg-amber-500 transition-all active:scale-95 flex items-center justify-center gap-4">
@@ -283,6 +293,8 @@
                             <p><span class="text-amber-500">PADECIMIENTO:</span> {{ currP['medico'].historia.padecimiento }}</p>
                             <p><span class="text-amber-500">AHF:</span> {{ currP['medico'].historia.ahf }}</p>
                             <p><span class="text-amber-500">APP:</span> {{ currP['medico'].historia.app }}</p>
+                            <p><span class="text-amber-500">APNP:</span> {{ currP['medico'].historia.apnp }}</p>
+                            <p><span class="text-amber-500">AGO:</span> {{ currP['medico'].historia.ago }}</p>
                             <p><span class="text-amber-500">EXPLORACIÓN:</span> {{ currP['medico'].historia.exploracion }}</p>
                         </div>
 
@@ -322,7 +334,6 @@
                         </button>
                     </div>
                 </section>
-
                 <section v-if="activeTab === 'fisioterapia'" class="max-w-6xl mx-auto space-y-8 animate-fade-in">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <div class="bg-zinc-900 p-8 border border-zinc-800 rounded-[2.5rem] shadow-xl">
@@ -423,6 +434,8 @@
                             <p><span class="text-purple-500">PADECIMIENTO:</span> {{ currP['psicologia'].historia.padecimiento }}</p>
                             <p><span class="text-purple-500">AHF:</span> {{ currP['psicologia'].historia.ahf }}</p>
                             <p><span class="text-purple-500">APP:</span> {{ currP['psicologia'].historia.app }}</p>
+                            <p><span class="text-purple-500">APNP:</span> {{ currP['psicologia'].historia.apnp }}</p>
+                            <p><span class="text-purple-500">AGO:</span> {{ currP['psicologia'].historia.ago }}</p>
                         </div>
 
                         <div class="space-y-6">
@@ -705,7 +718,8 @@
                     <h3 style="font-size: 12px; font-weight: 900; margin-top: 0; text-transform: uppercase;">RESUMEN DE HISTORIA CLÍNICA:</h3>
                     <p><strong>MOTIVO:</strong> {{ printData.historia.motivo }}</p>
                     <p><strong>PADECIMIENTO:</strong> {{ printData.historia.padecimiento }}</p>
-                    <p><strong>AHF / APP:</strong> {{ printData.historia.ahf }} / {{ printData.historia.app }}</p>
+                    <p><strong>AHF / APP:</strong> {{ printData.historia.ahf || 'N/A' }} / {{ printData.historia.app || 'N/A' }}</p>
+                    <p><strong>APNP / AGO:</strong> {{ printData.historia.apnp || 'N/A' }} / {{ printData.historia.ago || 'N/A' }}</p>
                     <p v-if="printData.historia.exploracion"><strong>EXPLORACIÓN:</strong> {{ printData.historia.exploracion }}</p>
                 </div>
 
@@ -744,7 +758,6 @@
         </div>
 
     </div>
-
     <script>
         /* ==========================================================
             KILL-SWITCH DE SEGURIDAD
@@ -788,7 +801,8 @@
                 const formP = reactive({ nombre: '', edad: null, sexo: 'MUJER', domicilio: '', telefono: '', servicio: 'medico' });
                 const formS = reactive({ nombre: '', area: 'medico', cedula: '', escuela: '' });
                 const formI = reactive({ nombre: '', stock: null, caducidad: '', presentacion: '' });
-                const historiaForm = reactive({ motivo: '', padecimiento: '', ahf: '', app: '', exploracion: '' });
+                // SE AÑADIERON APNP Y AGO AL FORMULARIO
+                const historiaForm = reactive({ motivo: '', padecimiento: '', ahf: '', app: '', apnp: '', ago: '', exploracion: '' });
 
                 const selectedPatientId = ref(null);
                 const currP = reactive({ enfermeria: null, historia: null, medico: null, juridico: null, psicologia: null, cosmetologia: null, fisioterapia: null });
@@ -798,7 +812,6 @@
                 
                 const recipe = ref([]); const tempMed = ref(null); const tempDosis = ref('');
 
-                // TU MAPA ORIGINAL EN BASE64 EXACTAMENTE COMO LO TENÍAS
                 const authMap = {
                     'UFJFU0lERU5URUZH|UFJFU0lH': 'SUPER',
                     'QURNSU4wODUy|QURNSU5GRzEy': 'ADMIN',
@@ -810,7 +823,6 @@
                     'Q09TTUVGRw==|Q09TTUVGVUVSWkFH': 'cosmetologia'
                 };
 
-                // MAPA DE CORREOS PARA CONECTAR LA BASE DE DATOS
                 const roleEmailMap = {
                     'SUPER': 'jorgev0852@gmail.com',
                     'ADMIN': 'jorgev0852@gmail.com',
@@ -836,9 +848,7 @@
                     return history.value.filter(h => h.tipoServicio === userRole.value || (userRole.value === 'INTERNO' && ['medico','psicologia'].includes(h.tipoServicio)));
                 });
 
-                // INICIO DE SESIÓN IDÉNTICO A TU VERSIÓN ORIGINAL
                 const performLogin = async () => {
-                    // Ciframos lo que escriben para compararlo con tu mapa
                     const u = btoa(loginData.user.toUpperCase().trim());
                     const p = btoa(loginData.pass.trim().toUpperCase());
                     const key = `${u}|${p}`;
@@ -848,16 +858,12 @@
                         const emailToUse = roleEmailMap[role];
 
                         try {
-                            // Desbloqueamos la base de datos con Firebase
                             await firebase.auth().signInWithEmailAndPassword(emailToUse, "FuerzaG2026!");
-                            
-                            // Activamos las pestañas exactamente como lo hacías tú
                             userRole.value = role;
                             isLoggedIn.value = true; 
                             loginError.value = false;
                             activeTab.value = (role === 'SUPER' || role === 'ADMIN') ? 'nosotros' : 'recepcion';
 
-                            // CONECTAMOS LOS DATOS DIRECTAMENTE AQUÍ
                             db.ref('patients').on('value', s => { patients.value = s.exists() ? Object.entries(s.val()).map(([id,v])=>({id,...v})) : []; });
                             db.ref('staff').on('value', s => { staff.value = s.exists() ? Object.entries(s.val()).map(([id,v])=>({id,...v})) : []; });
                             db.ref('inventory').on('value', s => { inventory.value = s.exists() ? Object.entries(s.val()).map(([id,v])=>({id,...v})) : []; });
@@ -879,7 +885,6 @@
                     userRole.value = ''; 
                     loginData.user=''; 
                     loginData.pass='';
-                    // Desconectamos los datos al salir por seguridad
                     db.ref('patients').off(); 
                     db.ref('staff').off(); 
                     db.ref('inventory').off(); 
@@ -983,7 +988,6 @@
                     db.ref(`patients/${p.id}`).remove();
                     printData.value = report;
                     
-                    // Aquí usamos Vue.nextTick normal sin problemas
                     Vue.nextTick(() => { 
                         setTimeout(() => { 
                             window.print(); 
@@ -1022,33 +1026,55 @@
                 };
 
                 const loadExampleData = () => {
-                    if(confirm("¿INYECCIÓN MASIVA DE INVENTARIO? (Esto añadirá todos los medicamentos al stock)")) {
+                    if(confirm("¿INYECCIÓN MASIVA DE INVENTARIO? (Esto añadirá todos los medicamentos exactos solicitados al stock)")) {
                         const meds = [
-                            {nombre:"INCRESINA DÚO", stock: 19, presentacion: "4 TABLETAS"}, {nombre:"METFORMINA 850MG", stock: 4, presentacion: "30 TABLETAS (CAJA)"},
-                            {nombre:"FERRICOL SUSPENSIÓN", stock: 1, presentacion: "CAJA"}, {nombre:"SUCRALFATO 1G", stock: 1, presentacion: "40 TABLETAS (CAJA)"},
-                            {nombre:"FLUOXETINA 20MG", stock: 2, presentacion: "CAJA"}, {nombre:"BILASTINA 20MG", stock: 1, presentacion: "2 TABLETAS (CAJA)"},
-                            {nombre:"FUROSEMIDA 40MG", stock: 1, presentacion: "20 TABLETAS (CAJA)"}, {nombre:"RADIANCE", stock: 2, presentacion: "CAJA"},
-                            {nombre:"ALIREN SOLUCIÓN", stock: 1, presentacion: "CAJA"}, {nombre:"LORATADINA JARABE", stock: 1, presentacion: "CAJA"},
-                            {nombre:"ESCITALOPRAM 10MG", stock: 1, presentacion: "28 TABLETAS (CAJA)"}, {nombre:"PRAVASTATINA 10MG", stock: 1, presentacion: "30 TABLETAS (CAJA)"},
-                            {nombre:"ÁCIDO FÓLICO", stock: 1, presentacion: "CAJA"}, {nombre:"PLENAFEM", stock: 2, presentacion: "4 CÁPSULAS (CAJA)"},
-                            {nombre:"MICROBIOT SOLUCIÓN", stock: 1, presentacion: "CAJA"}, {nombre:"ALMAX", stock: 18, presentacion: "SOBRES"},
-                            {nombre:"HIDRASEC 30MG", stock: 1, presentacion: "SOBRES (CAJA)"}, {nombre:"CIPROFLOXACINO", stock: 1, presentacion: "CAJA"},
-                            {nombre:"PROBIÓTICOS", stock: 1, presentacion: "CAJA"}, {nombre:"LUMINANCE", stock: 1, presentacion: "CAJA"}, {nombre:"TRIVISOL PEDIÁTRICO", stock: 1, presentacion: "CAJA"},
+                            {nombre:"INCRESINA DÚO", stock: 19, presentacion: "4 TABLETAS"}, 
+                            {nombre:"METFORMINA 850MG", stock: 4, presentacion: "30 TABLETAS (CAJA)"},
+                            {nombre:"FERRICOL SUSPENSIÓN", stock: 1, presentacion: "CAJA"}, 
+                            {nombre:"SUCRALFATO 1G", stock: 1, presentacion: "40 TABLETAS (CAJA)"},
+                            {nombre:"FLUOXETINA 20MG", stock: 2, presentacion: "CAJA"}, 
+                            {nombre:"BILASTINA 20MG", stock: 1, presentacion: "2 TABLETAS (CAJA)"},
+                            {nombre:"FUROSEMIDA 40MG", stock: 1, presentacion: "20 TABLETAS (CAJA)"}, 
+                            {nombre:"RADIANCE", stock: 2, presentacion: "CAJA"},
+                            {nombre:"ALIREN SOLUCIÓN", stock: 1, presentacion: "CAJA"}, 
+                            {nombre:"LORATADINA JARABE", stock: 1, presentacion: "CAJA"},
+                            {nombre:"ESCITALOPRAM 10MG", stock: 1, presentacion: "28 TABLETAS (CAJA)"}, 
+                            {nombre:"PRAVASTATINA 10MG", stock: 1, presentacion: "30 TABLETAS (CAJA)"},
+                            {nombre:"ÁCIDO FÓLICO", stock: 1, presentacion: "CAJA"}, 
+                            {nombre:"LOPERAMIDA", stock: 1, presentacion: "CAJA"},
+                            {nombre:"PLENAFEM", stock: 2, presentacion: "4 CÁPSULAS (CAJA)"}, 
+                            {nombre:"MICROBIOT SOLUCIÓN", stock: 1, presentacion: "CAJA"}, 
+                            {nombre:"ALMAX", stock: 18, presentacion: "SOBRES"},
+                            {nombre:"HIDRASEC 30MG", stock: 1, presentacion: "SOBRES (CAJA)"}, 
+                            {nombre:"CIPROFLOXACINO", stock: 1, presentacion: "CAJA"},
+                            {nombre:"PROBIÓTICOS", stock: 1, presentacion: "CAJA"}, 
+                            {nombre:"LUMINANCE", stock: 1, presentacion: "CAJA"}, 
+                            {nombre:"TRIVISOL PEDIÁTRICO", stock: 1, presentacion: "CAJA"},
                             
                             // DERMATOLOGICOS
-                            {nombre:"ISDIN BABY NATURALS", stock: 20, presentacion: "SOBRES"}, {nombre:"PROAVENAL", stock: 2, presentacion: "SOBRES"},
-                            {nombre:"LA ROCHE POSAY EFFACLAR DUO", stock: 3, presentacion: "SOBRES"}, {nombre:"ACTINE JABÓN", stock: 2, presentacion: "SOBRES"},
-                            {nombre:"ISDIN HYDRATATIO UREADIN", stock: 11, presentacion: "GEL"}, {nombre:"GERMAINE FOR MEN ANTIEDAD", stock: 2, presentacion: "SOBRES"},
-                            {nombre:"BLOQUEADOR ISDIN COLOR", stock: 2, presentacion: "SOBRES"}, {nombre:"GERMAINE CREMA ANTI ARRUGAS", stock: 1, presentacion: "SOBRES"},
-                            {nombre:"ISDIN ACNIVEN DÍA", stock: 1, presentacion: "SOBRE"}, {nombre:"ISDIN ACNIVEN NOCHE", stock: 1, presentacion: "SOBRE"},
-                            {nombre:"SHAMPOO ANTI CASPA", stock: 2, presentacion: "SOBRES"}, {nombre:"CETAPHIL PIEL GRASA Y SENSIBLE", stock: 5, presentacion: "PIEZA"},
-                            {nombre:"CETAPHIL ESPUMOSO", stock: 4, presentacion: "PIEZA"}, {nombre:"CETAPHIL SENSIBLE NORMAL", stock: 9, presentacion: "PIEZA"},
-                            {nombre:"ISISPHARMA TEEN DERM", stock: 3, presentacion: "PIEZA"}, {nombre:"BIODERMA SEBIUM HYDRA", stock: 6, presentacion: "PIEZA"},
-                            {nombre:"BIRETRIX ANTI IMPERFECCIONES", stock: 3, presentacion: "PIEZA"}, {nombre:"ENDOCARE CONTORNO", stock: 2, presentacion: "PIEZA"},
-                            {nombre:"ISISPHARMA CONTORNO", stock: 1, presentacion: "PIEZA"}, {nombre:"BIODERMA ATODERM", stock: 1, presentacion: "PIEZA"}
+                            {nombre:"ISDIN BABY NATURALS LOCIÓN CORPORAL", stock: 20, presentacion: "SOBRES"}, 
+                            {nombre:"PROAVENAL", stock: 2, presentacion: "SOBRES"},
+                            {nombre:"LA ROCHE POSAY EFFACLAR DUO", stock: 5, presentacion: "SOBRES"}, 
+                            {nombre:"ACTINE JABÓN", stock: 2, presentacion: "SOBRES"},
+                            {nombre:"ISDIN HYDRATATIO UREADIN SHOWER GEL", stock: 11, presentacion: "GEL"}, 
+                            {nombre:"GERMAINE FOR MEN ANTIEDAD", stock: 2, presentacion: "SOBRES"},
+                            {nombre:"BLOQUEADOR ISDIN COLOR", stock: 2, presentacion: "SOBRES"}, 
+                            {nombre:"GERMAINE CREMA ANTI ARRUGAS", stock: 1, presentacion: "SOBRES"},
+                            {nombre:"ISDIN ACNIVEN DÍA", stock: 1, presentacion: "SOBRE"}, 
+                            {nombre:"ISDIN ACNIVEN NOCHE", stock: 1, presentacion: "SOBRE"},
+                            {nombre:"SHAMPOO ANTI CASPA", stock: 2, presentacion: "SOBRES"}, 
+                            {nombre:"CETAPHIL PIEL GRASA Y SENSIBLE", stock: 5, presentacion: "PIEZA"},
+                            {nombre:"CETAPHIL ESPUMOSO TODO TIPO DE PIEL", stock: 4, presentacion: "PIEZA"}, 
+                            {nombre:"CETAPHIL SENSIBLE NORMAL A SECA", stock: 9, presentacion: "PIEZA"},
+                            {nombre:"ISISPHARMA TEEN DERM", stock: 3, presentacion: "PIEZA"}, 
+                            {nombre:"BIODERMA SEBIUM HYDRA", stock: 6, presentacion: "PIEZA"},
+                            {nombre:"BIRETRIX ANTI IMPERFECCIONES SERUM", stock: 3, presentacion: "PIEZA"}, 
+                            {nombre:"ENDOCARE CONTORNO DE OJOS", stock: 2, presentacion: "PIEZA"},
+                            {nombre:"ISISPHARMA CONTORNO DE OJOS", stock: 1, presentacion: "PIEZA"}, 
+                            {nombre:"BIODERMA ATODERM", stock: 1, presentacion: "PIEZA"}
                         ];
                         meds.forEach(m => db.ref('inventory').push({...m, caducidad: "2027-12-31"}));
-                        alert("LISTA COMPLETA DE MEDICAMENTOS INYECTADA EN INVENTARIO.");
+                        alert("LISTA COMPLETA EXACTA DE MEDICAMENTOS INYECTADA EN INVENTARIO.");
                     }
                 };
 
