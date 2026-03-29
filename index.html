@@ -812,7 +812,7 @@
                 };
 
                 onMounted(() => {
-                    // Si recargan la página, recuperamos su sesión de la memoria
+                    // Escuchador general de la sesión
                     firebase.auth().onAuthStateChanged(user => {
                         if (user) {
                             const savedRole = sessionStorage.getItem('fg_user_role');
@@ -821,6 +821,7 @@
                                 isLoggedIn.value = true;
                                 if(!activeTab.value) activeTab.value = (userRole.value === 'SUPER' || userRole.value === 'ADMIN') ? 'nosotros' : 'recepcion';
                                 
+                                // CARGA DE DATOS EN TIEMPO REAL
                                 db.ref('patients').on('value', s => { patients.value = s.exists() ? Object.entries(s.val()).map(([id,v])=>({id,...v})) : []; });
                                 db.ref('staff').on('value', s => { staff.value = s.exists() ? Object.entries(s.val()).map(([id,v])=>({id,...v})) : []; });
                                 db.ref('inventory').on('value', s => { inventory.value = s.exists() ? Object.entries(s.val()).map(([id,v])=>({id,...v})) : []; });
@@ -848,24 +849,24 @@
                     return history.value.filter(h => h.tipoServicio === userRole.value || (userRole.value === 'INTERNO' && ['medico','psicologia'].includes(h.tipoServicio)));
                 });
 
-                // NUEVO INICIO DE SESIÓN INVISIBLE CORREGIDO
+                // NUEVO INICIO DE SESIÓN CORREGIDO (RESUELVE CONDICIÓN DE CARRERA)
                 const performLogin = async () => {
                     try {
                         const userId = loginData.user.trim().toUpperCase();
-                        const userPass = loginData.pass.trim().toUpperCase(); // <-- Aquí estaba el detalle: convierte a mayúsculas para que encaje perfecto
+                        const userPass = loginData.pass.trim().toUpperCase(); 
                         const userData = authMap[userId];
 
                         if (userData && userData.pass === userPass) {
                             
-                            // 1. Conectamos la app a Firebase usando la contraseña maestra global
-                            await firebase.auth().signInWithEmailAndPassword(userData.account, "FuerzaG2026!");
-                            
-                            // 2. Guardamos la identidad localmente
+                            // 1. Guardamos la identidad localmente PRIMERO
                             sessionStorage.setItem('fg_user_role', userData.role);
                             
-                            userRole.value = userData.role;
-                            isLoggedIn.value = true; loginError.value = false;
-                            activeTab.value = (userRole.value === 'SUPER' || userRole.value === 'ADMIN') ? 'nosotros' : 'recepcion';
+                            // 2. Conectamos a la bóveda de Firebase SEGUNDO
+                            await firebase.auth().signInWithEmailAndPassword(userData.account, "FuerzaG2026!");
+                            
+                            // El listener onAuthStateChanged (arriba) detectará que ya entramos
+                            // y se encargará de conectar los datos de los pacientes.
+                            
                         } else {
                             loginError.value = true; 
                             errorMsg.value = 'CREDENCIALES INVÁLIDAS. VERIFIQUE ID USUARIO Y CONTRASEÑA.';
