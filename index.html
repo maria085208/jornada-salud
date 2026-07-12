@@ -36,6 +36,28 @@ button,input,select,textarea{font:inherit}button{cursor:pointer}[hidden]{display
 @media(max-width:920px){.loginShell{grid-template-columns:1fr}.hero{min-height:390px;padding:35px}.loginPanel{padding:35px}.app{grid-template-columns:1fr}.sidebar{position:fixed;left:0;top:0;width:min(86vw,310px);transform:translateX(-105%);transition:.22s;box-shadow:var(--shadow)}body.menuOpen .sidebar{transform:none}.overlay{position:fixed;inset:0;background:rgba(0,0,0,.42);z-index:35}body.menuOpen .overlay{display:block}.menu{display:inline-flex}.clockPill{display:none}}
 @media(max-width:700px){.content{padding:18px 13px 28px}.topbar{height:68px;padding:0 13px}.syncText,.userCopy{display:none}.g2,.g3,.g4{grid-template-columns:1fr}.span2{grid-column:auto}.stats{grid-template-columns:1fr 1fr}.card{padding:16px}.viewHead,.cardHead{flex-direction:column}.login{padding:0}.loginShell{border-radius:0;min-height:100vh}.hero{min-height:330px;padding:27px}.loginPanel{padding:27px}.heroFeatures{grid-template-columns:1fr}.medLine{grid-template-columns:1fr;border:1px solid var(--line);padding:11px;border-radius:12px}.backupGrid{grid-template-columns:1fr}}
 @media(max-width:430px){.stats,.vitals{grid-template-columns:1fr}}
+
+/* Mejoras de conexión, PDF e importación XLSX */
+.orb.good{background:var(--ok);box-shadow:0 0 0 12px rgba(47,123,89,.09)}
+.muted{color:var(--muted)}
+.importPanel{border:1px solid #ddcbd2;background:linear-gradient(145deg,#fff,#fbf6f8);border-radius:16px;padding:17px}
+.importToolbar{display:flex;flex-wrap:wrap;gap:9px;align-items:end}
+.dropZone{border:2px dashed #c8aab5;border-radius:14px;padding:20px;text-align:center;background:#fff;transition:.18s}
+.dropZone.drag{border-color:var(--brand);background:var(--brandSoft)}
+.dropZone input{max-width:540px;margin:auto}
+.importStatus{margin-top:12px;border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--surface2);font-size:13px}
+.importStatus strong{display:block;margin-bottom:4px}
+.inventoryStats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:14px}
+.inventoryStat{border:1px solid var(--line);border-radius:12px;padding:12px;background:#fff}
+.inventoryStat span{font-size:11px;color:var(--muted);font-weight:800;text-transform:uppercase}.inventoryStat strong{display:block;font-size:24px;margin-top:4px}
+.pdfPreview{min-height:65vh;display:grid;grid-template-rows:1fr auto;gap:10px}
+.pdfPreview object,.pdfPreview iframe{width:100%;height:65vh;border:1px solid var(--line);border-radius:13px;background:#f5f3f0}
+.pdfFallback{padding:15px;border:1px dashed var(--line);border-radius:12px;background:var(--surface2);color:var(--muted)}
+.connectionGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.connectionItem{border:1px solid var(--line);border-radius:12px;padding:12px;background:#fff}.connectionItem span{display:block;color:var(--muted);font-size:11px;text-transform:uppercase;font-weight:900}.connectionItem strong{display:block;margin-top:4px;word-break:break-word}.connectionItem code{font-size:11px;word-break:break-all}
+.codeBox{white-space:pre-wrap;word-break:break-word;background:#211b1e;color:#f7edf1;border-radius:12px;padding:14px;font:12px/1.55 ui-monospace,SFMono-Regular,Consolas,monospace;max-height:300px;overflow:auto}
+.setupSteps{counter-reset:step;display:grid;gap:9px}.setupStep{counter-increment:step;border:1px solid var(--line);border-radius:12px;padding:12px 12px 12px 48px;position:relative;background:#fff}.setupStep:before{content:counter(step);position:absolute;left:13px;top:11px;width:25px;height:25px;border-radius:50%;display:grid;place-items:center;background:var(--brand);color:#fff;font-weight:900;font-size:12px}
+@media(max-width:700px){.connectionGrid,.inventoryStats{grid-template-columns:1fr}.pdfPreview object,.pdfPreview iframe{height:58vh}}
+
 </style>
 </head>
 <body>
@@ -98,13 +120,32 @@ button,input,select,textarea{font:inherit}button{cursor:pointer}[hidden]{display
 <script>
 'use strict';
 
-const APP_VERSION='2.2.0';
+const APP_VERSION='3.0.0';
 const DB_NAME='fg_brigadas_secure_v1',DB_VERSION=1,STATE_KEY='state',SESSION_KEY='fg_session';
 const FALLBACK_KEY='fg_fallback_key',FALLBACK_STATE='fg_fallback_state';
 const PASS_ITER=210000,IDLE_MS=30*60*1000;
-const FIREBASE_INIT_URLS=['https://jornada-de-salud-mvcfg.web.app/__/firebase/init.js','https://jornada-de-salud-mvcfg.firebaseapp.com/__/firebase/init.js'];
+const FIREBASE_SDK_VERSION='12.16.0';
 const FIREBASE_DOC_PATH='brigadas_salud/estado_principal';
+const FIREBASE_CONFIG={
+  apiKey:'AIzaSyDmwDq6hz83X6FoJ5EZEbiu9kRVfRpw-PcA',
+  authDomain:'jornada-de-salud-mvcfg.firebaseapp.com',
+  projectId:'jornada-de-salud-mvcfg',
+  storageBucket:'jornada-de-salud-mvcfg.firebasestorage.app',
+  messagingSenderId:'629451505566',
+  appId:'1:629451505566:web:5ff6634288339299b8a08f',
+  measurementId:'G-5DX6BRFSR2'
+};
+const FIREBASE_RULES=`rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /brigadas_salud/{document=**} {
+      allow read, write: if request.auth != null;
+    }
+  }
+}`;
 const OFFICIAL_HOST='maria085208.github.io';
+const XLSX_SCRIPT_URLS=['https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js','https://unpkg.com/xlsx@0.18.5/dist/xlsx.full.min.js'];
+const JSPDF_SCRIPT_URLS=['https://cdnjs.cloudflare.com/ajax/libs/jspdf/3.0.2/jspdf.umd.min.js','https://cdn.jsdelivr.net/npm/jspdf@3.0.2/dist/jspdf.umd.min.js'];
 const SERVICES=['Medicina','Psicología','Fisioterapia','Cosmetología','Asesoría Jurídica','Vacunas'];
 const STAFF_AREAS=['Medicina','Signos vitales','Fisioterapia','Cosmetología','Asesoría Jurídica','Vacunas','Psicología','Farmacia','Admisión'];
 const ROLES={
@@ -137,8 +178,8 @@ const NAV=[
  ['Administración',[['farmacia','▣','Farmacia'],['base','▤','Base de datos'],['historial','◷','Historial'],['personal','♙','Personal'],['usuarios','⛨','Usuarios y perfiles'],['respaldo','⇅','Copia de seguridad'],['auditoria','≣','Auditoría']]]
 ];
 let state=defaultState(),user=null,currentView='dashboard',db=null,key=null,storageMode='pending',channel=null,saveTimer=null,cloudTimer=null,idleTimer=null,lastActivity=Date.now();
-let cloud={connected:false,connecting:false,unsubscribe:null,docRef:null,suppress:false,remoteRevision:0,lastError:'',sdkReady:false};
-let modalObjectUrl=null;
+let cloud={connected:false,connecting:false,unsubscribe:null,docRef:null,suppress:false,remoteRevision:0,lastError:'',lastCode:'',sdkReady:false,authReady:false,authWarning:'',lastSnapshotAt:null};
+let modalObjectUrl=null,inventoryImportRows=[],inventoryImportErrors=[],inventoryImportFileName='';
 
 const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
 const iso=()=>new Date().toISOString();
@@ -187,9 +228,9 @@ function viewsMarkup(){return `
 
 <section class="view" data-view="personal"><div class="viewHead"><div><div class="eyebrow">Equipo</div><h1>Personal de la brigada</h1><p>Registro y asignación a una o varias áreas.</p></div></div><div class="grid g2"><div class="card"><div class="cardHead"><div><h2>Agregar personal</h2><p>La información se reutiliza en cada módulo.</p></div></div><form id="staffForm" class="grid"><input id="staffEdit" type="hidden"><div class="field"><label>Nombre completo *</label><input id="staffName" required></div><div class="field"><label>Cédula profesional</label><input id="staffLicense"></div><div class="field"><label>Escuela o universidad de procedencia</label><input id="staffSchool"></div><div class="field"><span>Áreas *</span><div id="areaChecks" class="checkGrid"></div></div><div class="actions"><button class="btn btn-primary" type="submit">Guardar personal</button><button id="cancelStaff" class="btn btn-ghost" type="button" hidden>Cancelar edición</button></div></form></div><div class="card"><div class="cardHead"><div><h2>Personal agregado</h2><p>Actualización inmediata.</p></div><span id="staffCount" class="chip">0</span></div><div id="staffList" class="queue"></div></div></div></section>
 
-<section class="view" data-view="farmacia"><div class="viewHead"><div><div class="eyebrow">Inventario</div><h1>Farmacia</h1><p>Ingreso, búsqueda, edición y descuento automático.</p></div></div><div id="pharmEntryCard" class="card"><form id="pharmForm" class="grid g3"><input id="medEdit" type="hidden"><div class="field"><label>Nombre comercial *</label><input id="commercial" required></div><div class="field"><label>Nombre genérico *</label><input id="generic" required></div><div class="field"><label>Dosis / concentración *</label><input id="concentration" required></div><div class="field"><label>Vía de administración</label><input id="route"></div><div class="field"><label>Grupo terapéutico</label><input id="group"></div><div class="field"><label>Cantidad *</label><input id="quantity" type="number" min="0" step="1" required></div><div class="actions all"><button class="btn btn-primary" type="submit">Guardar y almacenar</button><button id="cancelMed" class="btn btn-ghost" type="button" hidden>Cancelar edición</button></div></form></div><div class="card" style="margin-top:18px"><div class="cardHead"><div><h2>Inventario existente</h2><p><span class="stock green"></span> 6 o más · <span class="stock yellow"></span> 1 a 5 · <span class="stock red"></span> 0</p></div><input id="pharmSearch" placeholder="Buscar medicamento..." style="max-width:260px"></div><div class="tableWrap"><table><thead><tr><th>Estado</th><th>Comercial</th><th>Genérico</th><th>Dosis</th><th>Vía</th><th>Grupo</th><th>Cantidad</th><th>Acciones</th></tr></thead><tbody id="pharmBody"></tbody></table></div></div></section>
+<section class="view" data-view="farmacia"><div class="viewHead"><div><div class="eyebrow">Inventario</div><h1>Farmacia</h1><p>Ingreso, importación XLSX, búsqueda, edición, PDF y descuento automático.</p></div><div class="actions"><button id="previewInventoryPdf" class="btn btn-secondary" type="button">Visualizar PDF</button><button id="exportInventoryPdf" class="btn btn-primary" type="button">Descargar PDF</button><button id="exportInventoryXlsx" class="btn btn-ghost" type="button">Exportar XLSX</button></div></div><div id="pharmEntryCard" class="card"><div class="cardHead"><div><h2>Ingreso manual</h2><p>Agrega o edita un medicamento de forma individual.</p></div></div><form id="pharmForm" class="grid g3"><input id="medEdit" type="hidden"><div class="field"><label>Nombre comercial *</label><input id="commercial" required></div><div class="field"><label>Nombre genérico *</label><input id="generic" required></div><div class="field"><label>Dosis / concentración *</label><input id="concentration" required></div><div class="field"><label>Vía de administración</label><input id="route"></div><div class="field"><label>Grupo terapéutico</label><input id="group"></div><div class="field"><label>Cantidad *</label><input id="quantity" type="number" min="0" step="1" required></div><div class="actions all"><button class="btn btn-primary" type="submit">Guardar y almacenar</button><button id="cancelMed" class="btn btn-ghost" type="button" hidden>Cancelar edición</button></div></form></div><div class="card" style="margin-top:18px"><div class="cardHead"><div><h2>Importar medicamentos desde Excel</h2><p>Admite XLSX, XLS y CSV. Reconoce encabezados aunque tengan mayúsculas, acentos o pequeñas variaciones.</p></div><button id="downloadInventoryTemplate" class="btn btn-secondary" type="button">Descargar plantilla XLSX</button></div><div id="inventoryDrop" class="dropZone"><strong>Selecciona o arrastra tu tabla de medicamentos</strong><p class="muted">Columnas esperadas: Nombre comercial, Nombre genérico, Dosis / concentración, Vía de administración, Grupo terapéutico y Cantidad.</p><input id="inventoryFile" type="file" accept=".xlsx,.xls,.csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,text/csv"></div><div class="importToolbar" style="margin-top:12px"><div class="field" style="min-width:250px"><label>Cómo tratar medicamentos repetidos</label><select id="inventoryImportMode"><option value="sum">Sumar la cantidad al inventario</option><option value="replace">Reemplazar la cantidad existente</option><option value="new">Importar solamente medicamentos nuevos</option></select></div><button id="previewInventoryImport" class="btn btn-ghost" type="button">Revisar tabla</button><button id="importInventory" class="btn btn-primary" type="button" disabled>Importar y sincronizar</button></div><div id="inventoryImportStatus" class="importStatus"><strong>Sin archivo seleccionado</strong><span>La importación mostrará una vista previa antes de guardar.</span></div></div><div class="card" style="margin-top:18px"><div class="cardHead"><div><h2>Inventario existente</h2><p><span class="stock green"></span> 6 o más · <span class="stock yellow"></span> 1 a 5 · <span class="stock red"></span> 0</p></div><input id="pharmSearch" placeholder="Buscar medicamento..." style="max-width:280px"></div><div class="inventoryStats"><div class="inventoryStat"><span>Medicamentos</span><strong id="invTotal">0</strong></div><div class="inventoryStat"><span>Con existencia</span><strong id="invAvailable">0</strong></div><div class="inventoryStat"><span>Agotados</span><strong id="invEmpty">0</strong></div></div><div class="tableWrap"><table><thead><tr><th>Estado</th><th>Comercial</th><th>Genérico</th><th>Dosis</th><th>Vía</th><th>Grupo</th><th>Cantidad</th><th>Acciones</th></tr></thead><tbody id="pharmBody"></tbody></table></div></div></section>
 
-<section class="view" data-view="base"><div class="viewHead"><div><div class="eyebrow">Control central</div><h1>Base de datos</h1><p>Filtros, historial autorizado y exportación.</p></div><div class="actions"><button id="exportDb" class="btn btn-primary">Exportar PDF horizontal</button><button id="saveDb" class="btn btn-secondary">Guardar datos</button></div></div><div class="card"><div class="grid g3" style="margin-bottom:16px"><div class="field"><label>Buscar</label><input id="dbSearch" placeholder="Nombre, teléfono, localidad..."></div><div class="field"><label>Área</label><select id="dbService"></select></div><div class="field"><label>Fecha</label><input id="dbDate" type="date"></div></div><div class="tableWrap"><table><thead><tr><th>Fecha y hora</th><th>Beneficiario</th><th>Teléfono</th><th>Localidad</th><th>Domicilio</th><th>Área</th><th id="histHead">Ver historial</th></tr></thead><tbody id="dbBody"></tbody></table></div></div></section>
+<section class="view" data-view="base"><div class="viewHead"><div><div class="eyebrow">Control central</div><h1>Base de datos</h1><p>Filtros, historial autorizado y exportación.</p></div><div class="actions"><button id="previewDbPdf" class="btn btn-secondary">Visualizar PDF</button><button id="exportDb" class="btn btn-primary">Descargar PDF horizontal</button><button id="saveDb" class="btn btn-ghost">Guardar datos</button></div></div><div class="card"><div class="grid g3" style="margin-bottom:16px"><div class="field"><label>Buscar</label><input id="dbSearch" placeholder="Nombre, teléfono, localidad..."></div><div class="field"><label>Área</label><select id="dbService"></select></div><div class="field"><label>Fecha</label><input id="dbDate" type="date"></div></div><div class="tableWrap"><table><thead><tr><th>Fecha y hora</th><th>Beneficiario</th><th>Teléfono</th><th>Localidad</th><th>Domicilio</th><th>Área</th><th id="histHead">Ver historial</th></tr></thead><tbody id="dbBody"></tbody></table></div></div></section>
 
 <section class="view" data-view="historial"><div class="viewHead"><div><div class="eyebrow">Expedientes</div><h1>Historial</h1><p>Búsqueda, visualización y PDF individual.</p></div></div><div class="card" style="margin-bottom:18px"><div class="grid g3"><div class="field span2"><label>Buscar persona</label><input id="histSearch"></div><div class="field"><label>Área</label><select id="histService"></select></div></div></div><div id="histCards" class="historyGrid"></div></section>
 
@@ -201,9 +242,9 @@ ${specialtyView('cosmetologia','Cosmetología','Cosmetología','Notas y recomend
 
 <section class="view" data-view="usuarios"><div class="viewHead"><div><div class="eyebrow">Seguridad</div><h1>Usuarios y perfiles</h1><p>Las nueve cuentas del PDF son permanentes y no se cambian, desactivan ni sustituyen.</p></div></div><div class="card"><div class="cardHead"><div><h2>Accesos permanentes</h2><p>Las contraseñas se validan con PBKDF2-SHA-256; no se guardan como texto visible.</p></div><span id="userCount" class="chip">9</span></div><div class="note" style="margin-bottom:14px"><strong>Regla de acceso:</strong> solo existen las cuentas definidas en el PDF. El personal de la brigada se registra por separado en el módulo Personal y no modifica estas credenciales.</div><div id="userList" class="queue"></div></div><div class="card" style="margin-top:18px"><div class="cardHead"><div><h2>Matriz de acceso</h2><p>Apartados habilitados para cada perfil según la guía.</p></div></div><div id="roleMatrix" class="tableWrap"></div></div></section>
 
-<section class="view" data-view="respaldo"><div class="viewHead"><div><div class="eyebrow">Continuidad operativa</div><h1>Copia de seguridad</h1><p>Estado de Firebase, respaldo cifrado e importación.</p></div></div><div class="backupGrid"><div class="statusPanel"><div id="cloudOrb" class="orb"></div><h3>Base de datos central</h3><p id="cloudText">Conectando a Firebase...</p></div><div class="statusPanel"><div id="saveOrb" class="orb"></div><h3>Datos en tiempo real</h3><p id="saveText">Esperando confirmación...</p></div></div><div class="grid g2" style="margin-top:18px"><div class="card"><div class="cardHead"><div><h2>Exportar respaldo cifrado</h2><p>Descarga todos los datos en un archivo JSON protegido.</p></div></div><button id="exportBackup" class="btn btn-primary">Exportar todo</button></div><div class="card"><div class="cardHead"><div><h2>Importar respaldo</h2><p>Restaura un archivo y lo sincroniza con todos los equipos.</p></div></div><input id="backupFile" type="file" accept=".json,application/json"><button id="importBackup" class="btn btn-secondary" style="margin-top:10px">Subir archivo</button></div></div><div class="card" style="margin-top:18px"><div class="cardHead"><div><h2>Sincronización automática</h2><p>Configuración tomada directamente del proyecto indicado en el PDF.</p></div><span id="cloudBadge" class="status waiting">Conectando</span></div><div class="grid g3"><div class="note"><strong>Proyecto</strong><br>jornada-de-salud-mvcfg</div><div class="note"><strong>Documento</strong><br>brigadas_salud / estado_principal</div><div class="note"><strong>Escucha</strong><br>Firestore onSnapshot</div></div><div class="privacy">La caché local se cifra con AES-GCM. Firebase es la fuente central y los cambios se reciben sin recargar la página.</div><div class="actions" style="margin-top:14px"><button id="retryCloud" class="btn btn-secondary" type="button">Reintentar conexión</button></div></div><div class="dangerZone" style="margin-top:18px"><h3>Borrar todo definitivamente</h3><p>Elimina beneficiarios, expedientes, personal, inventario y auditoría de la base central y de la caché del dispositivo. Las nueve cuentas permanentes del PDF se conservan.</p><button id="deleteAll" class="btn btn-danger">Estoy seguro: borrar datos clínicos</button></div></section>
+<section class="view" data-view="respaldo"><div class="viewHead"><div><div class="eyebrow">Continuidad operativa</div><h1>Copia de seguridad y conexión</h1><p>Estado de Firebase, diagnóstico, respaldo cifrado e importación.</p></div><div class="actions"><button id="retryCloud" class="btn btn-primary" type="button">Probar y reconectar</button><button id="copyRules" class="btn btn-ghost" type="button">Copiar reglas</button></div></div><div class="backupGrid"><div class="statusPanel"><div id="cloudOrb" class="orb"></div><h3>Base de datos central</h3><p id="cloudText">Conectando a Firebase...</p></div><div class="statusPanel"><div id="saveOrb" class="orb"></div><h3>Datos en tiempo real</h3><p id="saveText">Esperando confirmación...</p></div></div><div class="card" style="margin-top:18px"><div class="cardHead"><div><h2>Diagnóstico de conexión</h2><p>Muestra exactamente qué parte de Firebase necesita atención.</p></div><span id="cloudBadge" class="status waiting">Conectando</span></div><div id="connectionDiagnostics" class="connectionGrid"></div><div id="connectionAdvice" class="note" style="margin-top:12px">Comprobando configuración, autenticación y Firestore.</div></div><div class="card" style="margin-top:18px"><div class="cardHead"><div><h2>Configuración requerida en Firebase</h2><p>Estos pasos se realizan una sola vez en Firebase Console.</p></div></div><div class="setupSteps"><div class="setupStep"><strong>Crea o habilita Cloud Firestore</strong><br>Usa la base <code>(default)</code> del proyecto <code>jornada-de-salud-mvcfg</code>.</div><div class="setupStep"><strong>Activa Authentication anónima</strong><br>Authentication → Sign-in method → Anonymous → Enable. La página conserva sus perfiles internos del PDF.</div><div class="setupStep"><strong>Autoriza el dominio publicado</strong><br>Authentication → Settings → Authorized domains. Agrega <code id="currentHostText">—</code>.</div><div class="setupStep"><strong>Publica las reglas de Firestore</strong><br>Copia las reglas mostradas abajo y presiona Publicar.</div></div><pre id="rulesPreview" class="codeBox" style="margin-top:12px"></pre><div class="privacy"><strong>Importante para datos médicos:</strong> esta versión de un solo archivo usa autenticación anónima para conectar Firebase y perfiles internos para la interfaz. Para seguridad clínica de producción, conviene migrar las nueve cuentas a Firebase Authentication individual y aplicar reglas por usuario/área desde servidor.</div></div><div class="grid g2" style="margin-top:18px"><div class="card"><div class="cardHead"><div><h2>Exportar respaldo cifrado</h2><p>Descarga todos los datos en un archivo JSON protegido.</p></div></div><button id="exportBackup" class="btn btn-primary">Exportar todo</button></div><div class="card"><div class="cardHead"><div><h2>Importar respaldo</h2><p>Restaura un archivo y lo sincroniza con todos los equipos.</p></div></div><input id="backupFile" type="file" accept=".json,application/json"><button id="importBackup" class="btn btn-secondary" style="margin-top:10px">Subir archivo</button></div></div><div class="dangerZone" style="margin-top:18px"><h3>Borrar todo definitivamente</h3><p>Elimina beneficiarios, expedientes, personal, inventario y auditoría de la base central y de la caché del dispositivo. Las nueve cuentas permanentes del PDF se conservan.</p><button id="deleteAll" class="btn btn-danger">Estoy seguro: borrar datos clínicos</button></div></section>
 
-<section class="view" data-view="auditoria"><div class="viewHead"><div><div class="eyebrow">Trazabilidad</div><h1>Auditoría</h1><p>Accesos y modificaciones importantes.</p></div><button id="exportAudit" class="btn btn-secondary">Exportar PDF</button></div><div class="card"><div class="tableWrap"><table><thead><tr><th>Fecha y hora</th><th>Usuario</th><th>Acción</th><th>Detalle</th></tr></thead><tbody id="auditBody"></tbody></table></div></div></section>
+<section class="view" data-view="auditoria"><div class="viewHead"><div><div class="eyebrow">Trazabilidad</div><h1>Auditoría</h1><p>Accesos y modificaciones importantes.</p></div><div class="actions"><button id="previewAudit" class="btn btn-secondary">Visualizar PDF</button><button id="exportAudit" class="btn btn-primary">Descargar PDF</button></div></div><div class="card"><div class="tableWrap"><table><thead><tr><th>Fecha y hora</th><th>Usuario</th><th>Acción</th><th>Detalle</th></tr></thead><tbody id="auditBody"></tbody></table></div></div></section>
 `}
 
 function buildInterface(){
@@ -327,6 +368,8 @@ function syncComparable(source){
  const x=normalizeState(source);return stableValue({organization:x.meta.organization,tombstones:x.meta.tombstones,users:x.users,personnel:x.personnel,patients:x.patients,visits:x.visits,medicines:x.medicines,audit:x.audit,drafts:x.drafts});
 }
 function syncDifferent(a,b){return JSON.stringify(syncComparable(a))!==JSON.stringify(syncComparable(b))}
+function estimatedCloudBytes(source=state){try{return new Blob([JSON.stringify(source===state?publicCloudState():source)]).size}catch(_){return 0}}
+function formatBytes(n){if(n<1024)return `${n} B`;if(n<1048576)return `${(n/1024).toFixed(1)} KB`;return `${(n/1048576).toFixed(2)} MB`}
 
 async function persistState({broadcast=true,pushCloud=true,bump=true}={}){
  try{
@@ -494,6 +537,9 @@ function renderPharmacy(){
  const q=norm($('#pharmSearch')?.value||'');
  const list=state.medicines.filter(m=>!q||norm([m.commercial,m.generic,m.concentration,m.group].join(' ')).includes(q)).sort((a,b)=>a.commercial.localeCompare(b.commercial,'es'));
  $('#pharmBody').innerHTML=list.length?list.map(m=>`<tr><td><span class="stock ${stockClass(m.quantity)}"></span></td><td><strong>${esc(m.commercial)}</strong></td><td>${esc(m.generic)}</td><td>${esc(m.concentration)}</td><td>${esc(m.route||'—')}</td><td>${esc(m.group||'—')}</td><td><strong>${Number(m.quantity)||0}</strong></td><td>${canManageInventory()?`<div class="actions"><button class="btn btn-sm btn-secondary" data-edit-med="${m.id}">Editar</button><button class="btn btn-sm btn-ghost" data-delete-med="${m.id}">Eliminar</button></div>`:'<span class="muted">Solo lectura</span>'}</td></tr>`).join(''):`<tr><td colspan="8" class="empty">No hay medicamentos.</td></tr>`;
+ if($('#invTotal'))$('#invTotal').textContent=state.medicines.length;
+ if($('#invAvailable'))$('#invAvailable').textContent=state.medicines.filter(m=>Number(m.quantity)>0).length;
+ if($('#invEmpty'))$('#invEmpty').textContent=state.medicines.filter(m=>Number(m.quantity)<=0).length;
  refreshMedicineOptions();
 }
 function filteredPatients(searchId,serviceId,dateId){
@@ -513,7 +559,7 @@ function renderDatabase(){
 function renderHistory(){
  const q=norm($('#histSearch')?.value||''),service=$('#histService')?.value||'';
  const list=state.patients.filter(p=>{const vs=state.visits.filter(v=>v.patientId===p.id);return (!q||norm([p.name,p.phone,p.locality].join(' ')).includes(q))&&(!service||vs.some(v=>v.service===service))&&vs.some(canHistory)}).sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
- $('#histCards').innerHTML=list.length?list.map(p=>{const visible=state.visits.filter(v=>v.patientId===p.id&&canHistory(v));const areas=[...new Set(visible.map(v=>v.service))];return `<article class="historyCard"><div class="queueHead"><div><strong>${esc(p.name)}</strong><small>${esc(p.phone)} · ${esc(p.locality)}</small></div><span class="chip">${visible.length} atención${visible.length===1?'':'es'}</span></div><p>${esc(areas.join(' · '))}</p><div class="actions"><button class="btn btn-sm btn-secondary" data-history="${p.id}">Visualizar</button><button class="btn btn-sm btn-primary" data-pdf-patient="${p.id}">Exportar PDF</button></div></article>`}).join(''):`<div class="empty">No hay expedientes disponibles para este perfil.</div>`;
+ $('#histCards').innerHTML=list.length?list.map(p=>{const visible=state.visits.filter(v=>v.patientId===p.id&&canHistory(v));const areas=[...new Set(visible.map(v=>v.service))];return `<article class="historyCard"><div class="queueHead"><div><strong>${esc(p.name)}</strong><small>${esc(p.phone)} · ${esc(p.locality)}</small></div><span class="chip">${visible.length} atención${visible.length===1?'':'es'}</span></div><p>${esc(areas.join(' · '))}</p><div class="actions"><button class="btn btn-sm btn-ghost" data-history="${p.id}">Ver expediente</button><button class="btn btn-sm btn-secondary" data-preview-pdf-patient="${p.id}">Visualizar PDF</button><button class="btn btn-sm btn-primary" data-pdf-patient="${p.id}">Descargar PDF</button></div></article>`}).join(''):`<div class="empty">No hay expedientes disponibles para este perfil.</div>`;
 }
 function renderRoleOptions(){return}
 function renderRoleMatrix(){
@@ -688,84 +734,113 @@ function handlePharmacy(e){
 function editMedicine(mid){const x=med(mid);if(!x)return;$('#medEdit').value=x.id;$('#commercial').value=x.commercial;$('#generic').value=x.generic;$('#concentration').value=x.concentration;$('#route').value=x.route||'';$('#group').value=x.group||'';$('#quantity').value=x.quantity;$('#cancelMed').hidden=false;openView('farmacia');$('#commercial').focus()}
 function resetPharmForm(){$('#pharmForm').reset();$('#medEdit').value='';$('#cancelMed').hidden=true}
 async function deleteMedicine(mid){if(!canManageInventory())return toast('Acceso restringido','','error');const x=med(mid);if(!x||!await ask('Eliminar medicamento',`¿Eliminar ${x.commercial} del inventario?`,'Eliminar',true))return;state.meta.tombstones.medicines[mid]=iso();state.medicines=state.medicines.filter(m=>m.id!==mid);commit('MEDICAMENTO ELIMINADO',x.commercial)}
+
+function normalizeHeaderName(value){return norm(value).replace(/[^a-z0-9]+/g,' ').trim()}
+const INVENTORY_HEADER_ALIASES={
+ commercial:['nombre comercial','comercial','medicamento comercial','marca','nombre de marca'],
+ generic:['nombre generico','generico','principio activo','nombre del generico'],
+ concentration:['dosis concentracion','dosis y concentracion','dosis','concentracion','presentacion'],
+ route:['via de administracion','via administracion','via','administracion'],
+ group:['grupo terapeutico','grupo','categoria terapeutica','categoria'],
+ quantity:['cantidad','existencia','existencias','stock','inventario','unidades']
+};
+function inventoryColumnKey(header){const h=normalizeHeaderName(header);for(const [key,aliases] of Object.entries(INVENTORY_HEADER_ALIASES))if(aliases.some(a=>h===a||h.includes(a)))return key;return null}
+function medicineIdentity(x){return [x.commercial,x.generic,x.concentration].map(norm).join('|')}
+function parseQuantity(value){const clean=String(value??'').replace(/,/g,'').trim();const n=Number(clean);return Number.isFinite(n)&&n>=0?Math.floor(n):null}
+function loadScriptAny(urls,test){return new Promise(async(resolve,reject)=>{if(test())return resolve();let last=null;for(const url of urls){try{await loadScript(url);if(test())return resolve()}catch(err){last=err}}reject(last||new Error('No se pudo cargar la biblioteca necesaria.'))})}
+async function ensureXlsx(){await loadScriptAny(XLSX_SCRIPT_URLS,()=>!!window.XLSX)}
+async function ensureJsPdf(){await loadScriptAny(JSPDF_SCRIPT_URLS,()=>!!window.jspdf?.jsPDF)}
+function inventoryImportMessage(title,detail,type='info'){
+ const box=$('#inventoryImportStatus');if(!box)return;box.innerHTML=`<strong>${esc(title)}</strong><span>${esc(detail)}</span>`;box.style.borderColor=type==='error'?'#dfb4b4':type==='success'?'#b9d9ca':'var(--line)';box.style.background=type==='error'?'#fff4f4':type==='success'?'#f2fbf6':'var(--surface2)';
+}
+function rowsFromWorksheet(ws){
+ const raw=XLSX.utils.sheet_to_json(ws,{header:1,defval:'',raw:false,blankrows:false});
+ let headerIndex=-1,mapping={};
+ for(let i=0;i<Math.min(raw.length,15);i++){
+  const candidate={};raw[i].forEach((v,col)=>{const key=inventoryColumnKey(v);if(key&&candidate[key]===undefined)candidate[key]=col});
+  if(Object.keys(candidate).length>=3&&candidate.commercial!==undefined&&candidate.quantity!==undefined){headerIndex=i;mapping=candidate;break}
+ }
+ if(headerIndex<0)throw new Error('No encontré los encabezados. Usa la plantilla descargable o revisa los nombres de las columnas.');
+ const rows=[],errors=[];
+ for(let i=headerIndex+1;i<raw.length;i++){
+  const r=raw[i];if(!r.some(v=>String(v).trim()))continue;
+  const item={commercial:String(r[mapping.commercial]??'').trim(),generic:String(r[mapping.generic]??'').trim(),concentration:String(r[mapping.concentration]??'').trim(),route:String(r[mapping.route]??'').trim(),group:String(r[mapping.group]??'').trim(),quantity:parseQuantity(r[mapping.quantity]),sourceRow:i+1};
+  const missing=[];if(!item.commercial)missing.push('nombre comercial');if(!item.generic)missing.push('nombre genérico');if(!item.concentration)missing.push('dosis/concentración');if(item.quantity===null)missing.push('cantidad válida');
+  if(missing.length){errors.push(`Fila ${i+1}: falta ${missing.join(', ')}`);continue}
+  rows.push(item);
+ }
+ return{rows,errors,headerIndex:headerIndex+1};
+}
+async function readInventoryFile(file){
+ if(!file)throw new Error('Selecciona un archivo XLSX, XLS o CSV.');
+ await ensureXlsx();
+ const workbook=XLSX.read(await file.arrayBuffer(),{type:'array',cellDates:true});
+ if(!workbook.SheetNames.length)throw new Error('El archivo no contiene hojas.');
+ const result=rowsFromWorksheet(workbook.Sheets[workbook.SheetNames[0]]);inventoryImportRows=result.rows;inventoryImportErrors=result.errors;inventoryImportFileName=file.name;
+ $('#importInventory').disabled=!inventoryImportRows.length||!canManageInventory();
+ inventoryImportMessage(`${inventoryImportRows.length} medicamentos listos`,`${result.errors.length} filas se omitieron. Hoja: ${workbook.SheetNames[0]}. Encabezado detectado en la fila ${result.headerIndex}.`,result.errors.length?'info':'success');
+ return result;
+}
+function inventoryPreviewHtml(rows,errors){
+ const preview=rows.slice(0,50);return `<div class="note"><strong>${rows.length} filas válidas</strong> · ${errors.length} con observaciones.</div><div class="tableWrap" style="margin-top:12px"><table><thead><tr><th>Fila</th><th>Comercial</th><th>Genérico</th><th>Dosis</th><th>Vía</th><th>Grupo</th><th>Cantidad</th></tr></thead><tbody>${preview.map(r=>`<tr><td>${r.sourceRow}</td><td>${esc(r.commercial)}</td><td>${esc(r.generic)}</td><td>${esc(r.concentration)}</td><td>${esc(r.route||'—')}</td><td>${esc(r.group||'—')}</td><td>${r.quantity}</td></tr>`).join('')}</tbody></table></div>${rows.length>50?`<p class="muted">Se muestran las primeras 50 de ${rows.length} filas.</p>`:''}${errors.length?`<h3>Filas omitidas</h3><div class="codeBox">${esc(errors.slice(0,100).join('\n'))}</div>`:''}`;
+}
+async function previewInventoryImport(){
+ try{const file=$('#inventoryFile').files?.[0];if(file&&file.name!==inventoryImportFileName)await readInventoryFile(file);if(!inventoryImportRows.length)throw new Error('No hay filas válidas para mostrar.');openModal(`Vista previa · ${inventoryImportFileName}`,inventoryPreviewHtml(inventoryImportRows,inventoryImportErrors),'<button class="btn btn-ghost" data-close>Cerrar</button>')}catch(err){inventoryImportMessage('No se pudo leer la tabla',err.message,'error');toast('Importación XLSX',err.message,'error',6000)}
+}
+async function importInventoryRows(){
+ if(!canManageInventory())return toast('Acceso restringido','Solo administración puede importar inventario.','error');
+ try{
+  const file=$('#inventoryFile').files?.[0];if(file&&file.name!==inventoryImportFileName)await readInventoryFile(file);if(!inventoryImportRows.length)throw new Error('No hay medicamentos válidos para importar.');
+  const mode=$('#inventoryImportMode').value;let created=0,updated=0,skipped=0;const now=iso();
+  for(const item of inventoryImportRows){
+   const existing=state.medicines.find(m=>medicineIdentity(m)===medicineIdentity(item));
+   if(existing){
+    if(mode==='new'){skipped++;continue}
+    existing.quantity=mode==='sum'?Number(existing.quantity||0)+item.quantity:item.quantity;
+    if(item.route)existing.route=item.route;if(item.group)existing.group=item.group;existing.updatedAt=now;updated++;
+   }else{state.medicines.push({id:id('med'),commercial:item.commercial,generic:item.generic,concentration:item.concentration,route:item.route,group:item.group,quantity:item.quantity,createdAt:now,updatedAt:now});created++}
+  }
+  addAudit('IMPORTACIÓN DE INVENTARIO XLSX',`${inventoryImportFileName}: ${created} nuevos, ${updated} actualizados, ${skipped} omitidos`);await persistState();renderPharmacy();inventoryImportMessage('Importación terminada',`${created} nuevos · ${updated} actualizados · ${skipped} omitidos. Los cambios se guardaron y se sincronizarán con Firebase al estar conectado.`, 'success');toast('Inventario importado',`${created+updated} medicamentos procesados.`);inventoryImportRows=[];inventoryImportErrors=[];inventoryImportFileName='';$('#inventoryFile').value='';$('#importInventory').disabled=true;
+ }catch(err){inventoryImportMessage('No se pudo importar',err.message,'error');toast('Importación fallida',err.message,'error',6000)}
+}
+async function downloadInventoryTemplate(){
+ try{await ensureXlsx();const rows=[{'Nombre comercial':'Paracetamol','Nombre genérico':'Paracetamol','Dosis / concentración':'500 mg','Vía de administración':'Oral','Grupo terapéutico':'Analgésico / antipirético','Cantidad':30},{'Nombre comercial':'Ejemplo 2','Nombre genérico':'Principio activo','Dosis / concentración':'10 mg/mL','Vía de administración':'Oral','Grupo terapéutico':'Grupo','Cantidad':10}];const ws=XLSX.utils.json_to_sheet(rows);ws['!cols']=[{wch:24},{wch:24},{wch:24},{wch:24},{wch:28},{wch:12}];const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Medicamentos');XLSX.writeFile(wb,'plantilla_inventario_farmacia.xlsx')}catch(err){toast('No se pudo crear la plantilla',err.message,'error')}
+}
+async function exportInventoryXlsx(){
+ try{await ensureXlsx();const rows=state.medicines.sort((a,b)=>a.commercial.localeCompare(b.commercial,'es')).map(m=>({'Estado':Number(m.quantity)>=6?'Disponible':Number(m.quantity)>0?'Bajo':'Agotado','Nombre comercial':m.commercial,'Nombre genérico':m.generic,'Dosis / concentración':m.concentration,'Vía de administración':m.route||'','Grupo terapéutico':m.group||'','Cantidad':Number(m.quantity)||0,'Última actualización':dt(m.updatedAt,true)}));const ws=XLSX.utils.json_to_sheet(rows);ws['!cols']=[{wch:14},{wch:24},{wch:24},{wch:22},{wch:22},{wch:26},{wch:12},{wch:24}];const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Inventario');XLSX.writeFile(wb,`inventario_farmacia_${new Date().toISOString().slice(0,10)}.xlsx`);addAudit('EXPORTACIÓN XLSX DE FARMACIA',`${rows.length} medicamentos`);scheduleSave('',false)}catch(err){toast('No se pudo exportar XLSX',err.message,'error')}
+}
+function setupInventoryDrop(){const zone=$('#inventoryDrop');if(!zone)return;['dragenter','dragover'].forEach(ev=>zone.addEventListener(ev,e=>{e.preventDefault();zone.classList.add('drag')}));['dragleave','drop'].forEach(ev=>zone.addEventListener(ev,e=>{e.preventDefault();zone.classList.remove('drag')}));zone.addEventListener('drop',async e=>{const f=e.dataTransfer.files?.[0];if(!f)return;const input=$('#inventoryFile');try{const dt=new DataTransfer();dt.items.add(f);input.files=dt.files}catch(_){/* algunos navegadores no permiten asignar files */}try{await readInventoryFile(f)}catch(err){inventoryImportMessage('Archivo no válido',err.message,'error')}})}
+
 function showPatientHistory(pid){
  const p=patient(pid);if(!p)return;
- openModal(`Expediente · ${p.name}`,patientHistoryHtml(pid),`<button class="btn btn-ghost" data-close>Cerrar</button><button class="btn btn-primary" data-modal-pdf="${pid}">Exportar PDF</button>`);
+ openModal(`Expediente · ${p.name}`,patientHistoryHtml(pid),`<button class="btn btn-ghost" data-close>Cerrar</button><button class="btn btn-secondary" data-modal-preview-pdf="${pid}">Visualizar PDF</button><button class="btn btn-primary" data-modal-pdf="${pid}">Descargar PDF</button>`);
 }
-function pdfPlain(v){return String(v??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^\x20-\x7E]/g,' ')}
-function wrapText(text,max=92){
- const words=pdfPlain(text).replace(/\s+/g,' ').trim().split(' '),out=[];let line='';
- for(const w of words){if(!w)continue;if((line+' '+w).trim().length>max){if(line)out.push(line);line=w}else line=(line+' '+w).trim()}
- if(line)out.push(line);return out.length?out:[''];
-}
-function pdfEscape(s){return pdfPlain(s).replaceAll('\\','\\\\').replaceAll('(','\\(').replaceAll(')','\\)')}
-function buildPDF(title,sections,{landscape=false}={}){
- const W=landscape?792:612,H=landscape?612:792,margin=42,maxChars=landscape?124:92,lines=[];
- lines.push({text:title,bold:true,size:15});lines.push({text:state.meta.organization||'Brigadas de Salud Fuerza Generacional',bold:true,size:10});lines.push({text:`Generado: ${new Date().toLocaleString('es-MX')}`,size:8});lines.push({text:'',size:8});
- for(const sec of sections){
-  if(typeof sec==='string'){for(const l of wrapText(sec,maxChars))lines.push({text:l,size:9})}
-  else{
-   if(sec.heading){lines.push({text:'',size:5});for(const l of wrapText(sec.heading,maxChars))lines.push({text:l,bold:true,size:11})}
-   for(const item of (sec.lines||[]))for(const l of wrapText(item,maxChars))lines.push({text:l,size:9});
-  }
- }
- const pages=[];let page=[],y=H-margin;
- for(const line of lines){const step=(line.size||9)+4;if(y-step<margin){pages.push(page);page=[];y=H-margin}page.push({...line,y});y-=step}
- if(page.length||!pages.length)pages.push(page);
- const objects=[];const add=s=>{objects.push(s);return objects.length};
- const fontRegular=add('<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>');
- const fontBold=add('<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>');
- const pageIds=[],contentIds=[];
- for(const pg of pages){
-  let stream='q\n';
-  for(const l of pg){stream+=`BT /${l.bold?'F2':'F1'} ${l.size||9} Tf ${margin} ${l.y.toFixed(1)} Td (${pdfEscape(l.text)}) Tj ET\n`}
-  stream+='Q\n';
-  contentIds.push(add(`<< /Length ${stream.length} >>\nstream\n${stream}endstream`));
-  pageIds.push(add('PENDING_PAGE'));
- }
- const pagesId=add('PENDING_PAGES');
- const catalogId=add(`<< /Type /Catalog /Pages ${pagesId} 0 R >>`);
- pageIds.forEach((pid,i)=>{objects[pid-1]=`<< /Type /Page /Parent ${pagesId} 0 R /MediaBox [0 0 ${W} ${H}] /Resources << /Font << /F1 ${fontRegular} 0 R /F2 ${fontBold} 0 R >> >> /Contents ${contentIds[i]} 0 R >>`});
- objects[pagesId-1]=`<< /Type /Pages /Kids [${pageIds.map(x=>`${x} 0 R`).join(' ')}] /Count ${pageIds.length} >>`;
- let pdf='%PDF-1.4\n%\xE2\xE3\xCF\xD3\n',offsets=[0];
- objects.forEach((o,i)=>{offsets[i+1]=pdf.length;pdf+=`${i+1} 0 obj\n${o}\nendobj\n`});
- const xref=pdf.length;pdf+=`xref\n0 ${objects.length+1}\n0000000000 65535 f \n`;
- for(let i=1;i<=objects.length;i++)pdf+=String(offsets[i]).padStart(10,'0')+' 00000 n \n';
- pdf+=`trailer\n<< /Size ${objects.length+1} /Root ${catalogId} 0 R >>\nstartxref\n${xref}\n%%EOF`;
- return new Blob([new Uint8Array([...pdf].map(c=>c.charCodeAt(0)&255))],{type:'application/pdf'});
-}
-function downloadBlob(blob,name){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.append(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1200)}
-function patientPDFSections(pid,visitId=null){
- const p=patient(pid),visits=state.visits.filter(v=>v.patientId===pid&&canHistory(v)&&(visitId? v.id===visitId:true)).sort((a,b)=>new Date(a.createdAt)-new Date(b.createdAt));
- const sections=[{heading:'Datos del beneficiario',lines:[`Nombre: ${p?.name||''}`,`Telefono: ${p?.phone||''}`,`Localidad: ${p?.locality||''}`,`Domicilio: ${p?.address||''}`,`Registro: ${dt(p?.createdAt,true)}`]}];
- for(const v of visits){
-  const lines=[`Servicio: ${v.service}`,`Estado: ${STATUS[v.status]||v.status}`,`Inicio: ${dt(v.createdAt,true)}`];
-  if(v.vitals)lines.push('SIGNOS VITALES',...objectLines(v.vitals));
-  if(v.clinical)lines.push('HISTORIA CLINICA',...objectLines(v.clinical));
-  if(v.medical){
-   lines.push('CONSULTA MEDICA',`Diagnostico: ${v.medical.diagnosis||''}`,`Tratamiento: ${v.medical.treatment||''}`,`Recomendaciones generales: ${v.medical.generalRecommendations||''}`);
-   for(const x of v.medical.medications||[])lines.push(`Medicamento: ${med(x.medicineId)?.commercial||''}; dosis: ${x.dose}; cantidad: ${x.quantity}`);
-  }
-  if(v.specialty){lines.push('ATENCION ESPECIALIZADA',...objectLines(v.specialty))}
-  sections.push({heading:`Atencion · ${v.service} · ${dt(v.createdAt,true)}`,lines});
- }
- return sections;
-}
+function pdfValue(value){if(value===true)return'Sí';if(value===false)return'No';if(value===null||value===undefined||value==='')return'—';if(Array.isArray(value))return value.map(pdfValue).join(', ');if(typeof value==='object')return JSON.stringify(value);return String(value)}
+const PDF_LABELS={staffId:'Personal responsable',patientId:'Beneficiario',bloodPressure:'Tensión arterial',heartRate:'Frecuencia cardiaca',respiratoryRate:'Frecuencia respiratoria',temperature:'Temperatura',glucose:'Glucosa',spo2:'SpO₂',weight:'Peso',height:'Talla',hivTest:'Prueba VIH',hivResult:'Resultado VIH',capturedAt:'Capturado',name:'Nombre',civilStatus:'Estado civil',religion:'Religión',birthDate:'Fecha de nacimiento',age:'Edad',occupation:'Ocupación',consultReason:'Motivo de consulta',specificAllergies:'Alergias específicas',medicationWhich:'Medicamentos actuales',familyDetails:'Antecedentes familiares',diet:'Alimentación',exposureDetails:'Exposiciones',topic:'Punto a tratar',notes:'Notas',vaccinesGiven:'Vacunas colocadas',savedAt:'Guardado'};
+function objectLines(obj){return Object.entries(obj||{}).filter(([k,v])=>!['patientId','service','medications','inventoryApplied','_savedAt'].includes(k)&&v!==''&&v!==null&&v!==undefined&&v!==false).map(([k,v])=>`${PDF_LABELS[k]||k.replace(/([A-Z])/g,' $1')}: ${pdfValue(v)}`)}
+function pdfContext(doc,title){const pageSize=doc.internal.pageSize;return{doc,title,margin:42,width:pageSize.getWidth()-84,pageHeight:pageSize.getHeight(),y:82}}
+function pdfHeader(ctx){const {doc}=ctx;doc.setFillColor(108,32,56);doc.rect(0,0,doc.internal.pageSize.getWidth(),52,'F');doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');doc.setFontSize(15);doc.text(ctx.title,42,31);doc.setFontSize(8);doc.setFont('helvetica','normal');doc.text('Brigadas de Salud · Fuerza Generacional',doc.internal.pageSize.getWidth()-42,31,{align:'right'});doc.setTextColor(38,35,38);ctx.y=76}
+function pdfNewPage(ctx){ctx.doc.addPage();pdfHeader(ctx)}
+function pdfEnsure(ctx,needed=28){if(ctx.y+needed>ctx.pageHeight-42)pdfNewPage(ctx)}
+function pdfText(ctx,text,{size=9,bold=false,color=[38,35,38],gap=4,indent=0}={}){const {doc}=ctx;doc.setFont('helvetica',bold?'bold':'normal');doc.setFontSize(size);doc.setTextColor(...color);const lines=doc.splitTextToSize(pdfValue(text),ctx.width-indent);for(const line of lines){pdfEnsure(ctx,size+6);doc.text(line,ctx.margin+indent,ctx.y);ctx.y+=size+3}ctx.y+=gap}
+function pdfSection(ctx,heading,lines=[]){pdfEnsure(ctx,40);ctx.y+=5;ctx.doc.setFillColor(242,227,232);ctx.doc.roundedRect(ctx.margin,ctx.y-14,ctx.width,22,5,5,'F');pdfText(ctx,heading,{size:11,bold:true,color:[108,32,56],gap:8,indent:8});for(const line of lines)pdfText(ctx,line,{size:9,gap:2})}
+function pdfTable(ctx,headers,rows,widths=null){const {doc}=ctx;const total=ctx.width;const cols=widths||headers.map(()=>total/headers.length);const drawHeader=()=>{pdfEnsure(ctx,28);doc.setFillColor(108,32,56);doc.rect(ctx.margin,ctx.y-14,total,23,'F');doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');doc.setFontSize(7.5);let x=ctx.margin;headers.forEach((h,i)=>{doc.text(doc.splitTextToSize(String(h),cols[i]-8),x+4,ctx.y-3);x+=cols[i]});ctx.y+=16};drawHeader();for(const row of rows){const cellLines=row.map((v,i)=>doc.splitTextToSize(pdfValue(v),cols[i]-8));const lineCount=Math.max(1,...cellLines.map(a=>a.length));const height=Math.max(22,lineCount*9+8);if(ctx.y+height>ctx.pageHeight-42){pdfNewPage(ctx);drawHeader()}let x=ctx.margin;doc.setDrawColor(218,211,204);doc.setTextColor(38,35,38);doc.setFont('helvetica','normal');doc.setFontSize(7.5);row.forEach((v,i)=>{doc.rect(x,ctx.y-14,cols[i],height);doc.text(cellLines[i],x+4,ctx.y-3);x+=cols[i]});ctx.y+=height}}
+function pdfFooterAll(doc){const total=doc.getNumberOfPages();for(let i=1;i<=total;i++){doc.setPage(i);doc.setTextColor(113,107,104);doc.setFontSize(8);doc.setFont('helvetica','normal');doc.text(`Generado ${new Date().toLocaleString('es-MX')} · Página ${i} de ${total}`,42,doc.internal.pageSize.getHeight()-22);doc.text('Documento clínico confidencial',doc.internal.pageSize.getWidth()-42,doc.internal.pageSize.getHeight()-22,{align:'right'})}}
+async function createPdfDocument(title,landscape=false){await ensureJsPdf();const {jsPDF}=window.jspdf;const doc=new jsPDF({orientation:landscape?'landscape':'portrait',unit:'pt',format:'letter',compress:true,putOnlyUsedFonts:true});doc.setProperties({title,subject:'Brigadas de Salud Fuerza Generacional',author:'Fuerza Generacional',creator:`Sistema clínico integral ${APP_VERSION}`});const ctx=pdfContext(doc,title);pdfHeader(ctx);return ctx}
+function patientVisitsForPdf(pid,visitId=null){return state.visits.filter(v=>v.patientId===pid&&canHistory(v)&&(visitId?v.id===visitId:true)).sort((a,b)=>new Date(a.createdAt)-new Date(b.createdAt))}
+async function buildPatientPdf(pid,visitId=null){const p=patient(pid);if(!p)throw new Error('No se encontró al beneficiario.');const ctx=await createPdfDocument(`Expediente · ${p.name}`);pdfSection(ctx,'Datos del beneficiario',[`Nombre: ${p.name}`,`Teléfono: ${p.phone}`,`Localidad: ${p.locality}`,`Domicilio: ${p.address}`,`Registro: ${dt(p.createdAt,true)}`]);for(const v of patientVisitsForPdf(pid,visitId)){pdfSection(ctx,`Atención · ${v.service} · ${dt(v.createdAt,true)}`,[`Estado: ${STATUS[v.status]||v.status}`,`Inicio: ${dt(v.createdAt,true)}`,v.completedAt?`Finalización: ${dt(v.completedAt,true)}`:'']);if(v.vitals)pdfSection(ctx,'Signos vitales',objectLines(v.vitals));if(v.clinical)pdfSection(ctx,'Historia clínica',objectLines(v.clinical));if(v.medical){pdfSection(ctx,'Consulta médica',[`Diagnóstico: ${v.medical.diagnosis||'—'}`,`Tratamiento: ${v.medical.treatment||'—'}`,`Recomendaciones generales: ${v.medical.generalRecommendations||'—'}`]);if(v.medical.medications?.length)pdfTable(ctx,['Medicamento','Dosis / indicaciones','Cantidad'],v.medical.medications.map(x=>[med(x.medicineId)?.commercial||'Medicamento no disponible',x.dose||'—',x.quantity]),[190,260,70])}if(v.specialty){pdfSection(ctx,v.service,objectLines(v.specialty));if(v.specialty.medications?.length)pdfTable(ctx,['Medicamento','Dosis / indicaciones','Cantidad'],v.specialty.medications.map(x=>[med(x.medicineId)?.commercial||'Medicamento no disponible',x.dose||'—',x.quantity]),[190,260,70])}}pdfFooterAll(ctx.doc);return ctx.doc}
+async function buildDatabasePdf(){const list=filteredPatients('#dbSearch','#dbService','#dbDate');const ctx=await createPdfDocument('Base de datos de beneficiarios',true);pdfText(ctx,`Registros incluidos: ${list.length}`,{bold:true});pdfTable(ctx,['Fecha y hora','Beneficiario','Teléfono','Localidad','Domicilio','Área'],list.map(p=>{const v=latestVisit(p.id);return[dt(p.createdAt,true),p.name,p.phone,p.locality,p.address,v?.service||p.service]}),[92,145,78,115,185,93]);pdfFooterAll(ctx.doc);return ctx.doc}
+async function buildAuditPdf(){const ctx=await createPdfDocument('Auditoría del sistema',true);pdfTable(ctx,['Fecha y hora','Usuario','Acción','Detalle'],state.audit.map(a=>[dt(a.createdAt,true),a.username,a.action,a.detail]),[115,115,160,318]);pdfFooterAll(ctx.doc);return ctx.doc}
+async function buildInventoryPdf(){const ctx=await createPdfDocument('Inventario de farmacia',true);const list=[...state.medicines].sort((a,b)=>a.commercial.localeCompare(b.commercial,'es'));pdfText(ctx,`Medicamentos: ${list.length} · Con existencia: ${list.filter(m=>Number(m.quantity)>0).length} · Agotados: ${list.filter(m=>Number(m.quantity)<=0).length}`,{bold:true});pdfTable(ctx,['Estado','Comercial','Genérico','Dosis / concentración','Vía','Grupo','Cantidad'],list.map(m=>[Number(m.quantity)>=6?'Disponible':Number(m.quantity)>0?'Bajo':'Agotado',m.commercial,m.generic,m.concentration,m.route||'—',m.group||'—',Number(m.quantity)||0]),[58,122,122,126,88,140,52]);pdfFooterAll(ctx.doc);return ctx.doc}
+function downloadBlob(blob,name){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.append(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},5000)}
 function previewPDF(blob,name,title='Vista previa del PDF'){
- if(modalObjectUrl)URL.revokeObjectURL(modalObjectUrl);modalObjectUrl=URL.createObjectURL(blob);openModal(title,`<iframe title="Vista previa PDF" src="${modalObjectUrl}" style="width:100%;height:min(70vh,760px);border:1px solid var(--line);border-radius:12px"></iframe>`,`<button class="btn btn-ghost" data-close>Cerrar</button><a class="btn btn-primary" href="${modalObjectUrl}" download="${esc(name)}">Descargar PDF</a>`);
+ if(modalObjectUrl)URL.revokeObjectURL(modalObjectUrl);modalObjectUrl=URL.createObjectURL(blob);
+ openModal(title,`<div class="pdfPreview"><object data="${modalObjectUrl}" type="application/pdf"><div class="pdfFallback"><strong>El visor integrado de este navegador no puede mostrar el PDF.</strong><p>Usa “Abrir en otra pestaña” o “Descargar PDF”.</p></div></object><div class="pdfFallback">En algunos teléfonos Android el visor aparece mejor en una pestaña independiente.</div></div>`,`<button class="btn btn-ghost" data-close>Cerrar</button><a class="btn btn-secondary" href="${modalObjectUrl}" target="_blank" rel="noopener">Abrir en otra pestaña</a><a class="btn btn-primary" href="${modalObjectUrl}" download="${esc(name)}">Descargar PDF</a>`);
 }
-function exportPatientPDF(pid,visitId=null,preview=false){
- const p=patient(pid);if(!p)return;const name=`expediente_${norm(p.name).replace(/\s+/g,'_')||'beneficiario'}.pdf`,blob=buildPDF(`Expediente de ${p.name}`,patientPDFSections(pid,visitId));if(preview)previewPDF(blob,name,`PDF · ${p.name}`);else downloadBlob(blob,name);addAudit('PDF DE EXPEDIENTE',p.name);scheduleSave('',false);
-}
-function exportDatabasePDF(){
- const list=filteredPatients('#dbSearch','#dbService','#dbDate');
- const sections=[{heading:'Base de datos',lines:list.map(p=>{const v=latestVisit(p.id);return `${dt(p.createdAt,true)} | ${p.name} | ${p.phone} | ${p.locality} | ${p.address} | ${v?.service||p.service}`})}];
- downloadBlob(buildPDF('Base de datos de beneficiarios',sections,{landscape:true}),'base_brigada_salud.pdf');addAudit('EXPORTACIÓN DE BASE DE DATOS',`${list.length} registros`);scheduleSave('',false);
-}
-function exportAuditPDF(){
- const sections=[{heading:'Eventos',lines:state.audit.map(a=>`${dt(a.createdAt,true)} | ${a.username} | ${a.action} | ${a.detail}`)}];
- downloadBlob(buildPDF('Auditoria del sistema',sections,{landscape:true}),'auditoria_brigada_salud.pdf');
-}
+async function exportPatientPDF(pid,visitId=null,preview=false){try{const p=patient(pid);if(!p)throw new Error('No se encontró el expediente.');const doc=await buildPatientPdf(pid,visitId),name=`expediente_${norm(p.name).replace(/\s+/g,'_')||'beneficiario'}.pdf`,blob=doc.output('blob');if(preview)previewPDF(blob,name,`PDF · ${p.name}`);else downloadBlob(blob,name);addAudit('PDF DE EXPEDIENTE',p.name);scheduleSave('',false)}catch(err){console.error(err);toast('No se pudo generar el PDF',err.message||'Error desconocido','error',6000)}}
+async function exportDatabasePDF(preview=false){try{const doc=await buildDatabasePdf(),blob=doc.output('blob'),name='base_brigada_salud.pdf';if(preview)previewPDF(blob,name,'PDF · Base de datos');else downloadBlob(blob,name);addAudit('EXPORTACIÓN DE BASE DE DATOS',`${filteredPatients('#dbSearch','#dbService','#dbDate').length} registros`);scheduleSave('',false)}catch(err){toast('No se pudo generar el PDF',err.message,'error')}}
+async function exportAuditPDF(preview=false){try{const doc=await buildAuditPdf(),blob=doc.output('blob'),name='auditoria_brigada_salud.pdf';if(preview)previewPDF(blob,name,'PDF · Auditoría');else downloadBlob(blob,name)}catch(err){toast('No se pudo generar el PDF',err.message,'error')}}
+async function exportInventoryPDF(preview=false){try{const doc=await buildInventoryPdf(),blob=doc.output('blob'),name=`inventario_farmacia_${new Date().toISOString().slice(0,10)}.pdf`;if(preview)previewPDF(blob,name,'PDF · Inventario de farmacia');else downloadBlob(blob,name);addAudit('PDF DE INVENTARIO',`${state.medicines.length} medicamentos`);scheduleSave('',false)}catch(err){toast('No se pudo generar el PDF de farmacia',err.message,'error',6000)}}
 
 /* ===== Respaldos cifrados y base central Firebase ===== */
 function requestSecret(title,description='',showRules=false){
@@ -800,66 +875,93 @@ async function importEncryptedBackup(){
   state=restored;await ensurePdfDefaultUsers();user=null;sessionStorage.removeItem(SESSION_KEY);addAudit('RESPALDO IMPORTADO',file.name,true);await persistState();renderAll();logout();toast('Respaldo restaurado','Los datos se sincronizarán y las cuentas del PDF permanecen activas.');
  }catch(err){toast('No se pudo importar',err.message||'Contraseña o archivo incorrecto.','error',5000)}
 }
-function loadScript(src){return new Promise((resolve,reject)=>{const old=document.querySelector(`script[data-src="${src}"]`);if(old){if(old.dataset.loaded==='1')return resolve();old.addEventListener('load',resolve,{once:true});old.addEventListener('error',()=>reject(new Error(`No se pudo cargar ${src}`)),{once:true});return}const el=document.createElement('script');el.src=src;el.async=true;el.dataset.src=src;el.onload=()=>{el.dataset.loaded='1';resolve()};el.onerror=()=>reject(new Error(`No se pudo cargar ${src}`));document.head.append(el)})}
-function setCloudUI(status,text){const b=$('#cloudBadge');if(b){b.className=`status ${status}`;b.textContent=text}updateStorageStatus()}
+function loadScript(src){return new Promise((resolve,reject)=>{const old=document.querySelector(`script[data-src="${src}"]`);if(old){if(old.dataset.loaded==='1')return resolve();old.addEventListener('load',resolve,{once:true});old.addEventListener('error',()=>reject(new Error(`No se pudo cargar ${src}`)),{once:true});return}const el=document.createElement('script');el.src=src;el.async=true;el.crossOrigin='anonymous';el.dataset.src=src;el.onload=()=>{el.dataset.loaded='1';resolve()};el.onerror=()=>reject(new Error(`No se pudo cargar ${src}`));document.head.append(el)})}
+function firebaseConfig(){try{const override=JSON.parse(localStorage.getItem('fg_firebase_config_override')||'null');if(override?.projectId&&override?.apiKey)return{...FIREBASE_CONFIG,...override}}catch(_){/* configuración predeterminada */}return{...FIREBASE_CONFIG}}
+function firebaseFriendlyError(err){const code=err?.code||'';const raw=err?.message||String(err||'Error desconocido');const messages={
+ 'auth/operation-not-allowed':'Authentication anónima está desactivada. Actívala en Firebase Console → Authentication → Sign-in method → Anonymous.',
+ 'auth/unauthorized-domain':`El dominio ${location.hostname||'(archivo local)'} no está autorizado. Agrégalo en Authentication → Settings → Authorized domains.`,
+ 'auth/invalid-api-key':'La apiKey de Firebase no coincide. Copia de nuevo la configuración de la aplicación web desde Firebase Console.',
+ 'permission-denied':'Firestore rechazó el acceso. Publica las reglas indicadas en Copia de seguridad y confirma que Authentication anónima esté activa.',
+ 'unauthenticated':'Firestore requiere autenticación. Activa el proveedor Anonymous en Firebase Authentication.',
+ 'failed-precondition':'Cloud Firestore todavía no está creado o requiere una configuración pendiente. Crea la base (default) en Firebase Console.',
+ 'not-found':'No se encontró el recurso de Firebase solicitado.',
+ 'unavailable':'Firebase no está disponible temporalmente o el dispositivo no tiene conexión a Internet.',
+ 'resource-exhausted':'Se alcanzó una cuota de Firebase. Revisa Usage and billing en Firebase Console.',
+ 'state-too-large':'La base ya está cerca del límite de un documento de Firestore. Es necesario migrar pacientes, atenciones e inventario a colecciones separadas.'
+ };return messages[code]||messages[code.replace(/^firestore\//,'')]||`${raw}${code?` (${code})`:''}`}
+function setCloudUI(status,text){const b=$('#cloudBadge');if(b){b.className=`status ${status}`;b.textContent=text}updateStorageStatus();renderConnectionDiagnostics()}
+function renderConnectionDiagnostics(){
+ const box=$('#connectionDiagnostics');if(!box)return;const cfg=firebaseConfig(),host=location.hostname||'Archivo local';
+ const protocolOk=location.protocol==='https:'||['localhost','127.0.0.1'].includes(location.hostname);
+ const size=estimatedCloudBytes();const items=[['Origen actual',`${location.protocol}//${host}`],['Proyecto Firebase',cfg.projectId||'Sin projectId'],['Configuración SDK',cloud.sdkReady?'Cargada':'Pendiente'],['Authentication',cloud.authReady?'Anónima activa':cloud.authWarning||'Pendiente'],['Firestore',cloud.connected?'Conectado y escuchando':cloud.lastError||'Pendiente'],['Tamaño del estado',`${formatBytes(size)}${size>750000?' · migración recomendada':''}`],['Último cambio remoto',cloud.lastSnapshotAt?dt(cloud.lastSnapshotAt,true):'Aún no recibido']];
+ box.innerHTML=items.map(([a,b])=>`<div class="connectionItem"><span>${esc(a)}</span><strong>${esc(b)}</strong></div>`).join('');
+ if($('#currentHostText'))$('#currentHostText').textContent=host;if($('#rulesPreview'))$('#rulesPreview').textContent=FIREBASE_RULES;
+ const advice=$('#connectionAdvice');if(advice){let msg='La conexión está lista y los cambios se reciben sin recargar.';if(!protocolOk)msg='Abre la página publicada mediante HTTPS. Los archivos abiertos con file:// no son un entorno confiable para Firebase Authentication.';else if(cloud.lastError)msg=cloud.lastError;else if(cloud.authWarning)msg=cloud.authWarning;else if(size>750000)msg='La conexión funciona, pero el documento central está creciendo. Antes de llegar a 1 MiB debes migrar pacientes, atenciones e inventario a colecciones separadas.';else if(!cloud.connected)msg='Comprobando Firebase. Si tarda más de 15 segundos, revisa los cuatro pasos de configuración.';advice.textContent=msg}
+}
 async function loadFirebaseSdk(){
  if(cloud.sdkReady&&window.firebase)return;
- await loadScript('https://www.gstatic.com/firebasejs/12.6.0/firebase-app-compat.js');
- await loadScript('https://www.gstatic.com/firebasejs/12.6.0/firebase-auth-compat.js');
- await loadScript('https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore-compat.js');
- if(!firebase.apps.length){let loaded=false,lastError=null;for(const url of FIREBASE_INIT_URLS){try{await loadScript(url);loaded=!!firebase.apps.length;if(loaded)break}catch(err){lastError=err}}if(!loaded)throw lastError||new Error('No se pudo obtener la configuración Firebase del proyecto.')}
- cloud.sdkReady=true;
+ await loadScript(`https://www.gstatic.com/firebasejs/${FIREBASE_SDK_VERSION}/firebase-app-compat.js`);
+ await loadScript(`https://www.gstatic.com/firebasejs/${FIREBASE_SDK_VERSION}/firebase-auth-compat.js`);
+ await loadScript(`https://www.gstatic.com/firebasejs/${FIREBASE_SDK_VERSION}/firebase-firestore-compat.js`);
+ if(!firebase.apps.length)firebase.initializeApp(firebaseConfig());
+ cloud.sdkReady=true;renderConnectionDiagnostics();
 }
-async function getCloudDocument(){
- try{return await cloud.docRef.get()}catch(first){
-  if(first?.code==='permission-denied'||first?.code==='unauthenticated'){
-   try{if(!firebase.auth().currentUser)await firebase.auth().signInAnonymously();return await cloud.docRef.get()}catch(second){throw second}
-  }
-  throw first;
- }
+async function prepareFirebaseAuth(){
+ cloud.authReady=false;cloud.authWarning='';
+ try{
+  const auth=firebase.auth();await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+  if(!auth.currentUser)await auth.signInAnonymously();
+  cloud.authReady=!!auth.currentUser;return cloud.authReady;
+ }catch(err){cloud.authWarning=firebaseFriendlyError(err);cloud.lastCode=err?.code||'';console.warn('Firebase Auth',err);return false}
 }
+async function getCloudDocument(){return cloud.docRef.get()}
 async function applyCloudSnapshot(snapshot){
  if(!snapshot.exists)return;
  try{
   const data=snapshot.data()||{},remote=normalizeState(data.state||data),needsPush=syncDifferent(mergeStates(state,remote),remote);
   const merged=mergeStates(state,remote),remoteRevision=Number(data.revision??remote.meta.revision)||0;
-  cloud.remoteRevision=Math.max(cloud.remoteRevision,remoteRevision);cloud.suppress=true;state=merged;await ensurePdfDefaultUsers();await persistState({broadcast:true,pushCloud:false,bump:false});cloud.suppress=false;
+  cloud.remoteRevision=Math.max(cloud.remoteRevision,remoteRevision);cloud.lastSnapshotAt=iso();cloud.suppress=true;state=merged;await ensurePdfDefaultUsers();await persistState({broadcast:true,pushCloud:false,bump:false});cloud.suppress=false;
   if(user){const renewed=state.users.find(x=>x.id===user.id||norm(x.username)===norm(user.username));if(renewed){user=renewed;renderAll()}else logout(true)}else renderAll();
   sync('ok','Actualizado en tiempo real');setCloudUI('in_service','Conectado');
   if(needsPush){state.meta.revision=Math.max(Number(state.meta.revision)||0,remoteRevision)+1;queueCloudPush()}
- }catch(err){cloud.suppress=false;console.error('Snapshot inválido',err);cloud.lastError='Los datos recibidos no pudieron procesarse';setCloudUI('cancelled','Error de datos')}
+ }catch(err){cloud.suppress=false;console.error('Snapshot inválido',err);cloud.lastError='Los datos recibidos no pudieron procesarse';cloud.lastCode='invalid-data';setCloudUI('cancelled','Error de datos')}
 }
 async function connectCloudAutomatic(force=false){
- if(cloud.connecting||cloud.connected&&!force)return;cloud.connecting=true;cloud.lastError='';setCloudUI('waiting','Conectando');sync('','Conectando a Firebase...');
+ if(cloud.connecting||cloud.connected&&!force)return;cloud.connecting=true;cloud.lastError='';cloud.lastCode='';setCloudUI('waiting','Conectando');sync('','Conectando a Firebase...');
  try{
+  if(location.protocol==='file:')throw Object.assign(new Error('La página está abierta como archivo local. Publícala por HTTPS para usar Firebase correctamente.'),{code:'file-protocol'});
   if(force&&cloud.unsubscribe){cloud.unsubscribe();cloud.unsubscribe=null;cloud.connected=false}
-  await loadFirebaseSdk();
-  const fs=firebase.firestore();try{fs.settings({ignoreUndefinedProperties:true})}catch(_){/* ya inicializado */}cloud.docRef=fs.doc(FIREBASE_DOC_PATH);
-  const first=await Promise.race([getCloudDocument(),new Promise((_,reject)=>setTimeout(()=>reject(new Error('La conexión tardó demasiado.')),12000))]);
+  await loadFirebaseSdk();await prepareFirebaseAuth();
+  const fs=firebase.firestore();try{fs.settings({ignoreUndefinedProperties:true})}catch(_){/* ya inicializado */}
+  cloud.docRef=fs.doc(FIREBASE_DOC_PATH);
+  const first=await Promise.race([getCloudDocument(),new Promise((_,reject)=>setTimeout(()=>reject(Object.assign(new Error('La conexión con Firestore tardó más de 15 segundos.'),{code:'timeout'})),15000))]);
   cloud.connected=true;cloud.connecting=false;setCloudUI('in_service','Conectado');
   if(first.exists)await applyCloudSnapshot(first);else await pushCloudNow(true);
-  if(cloud.unsubscribe)cloud.unsubscribe();cloud.unsubscribe=cloud.docRef.onSnapshot({includeMetadataChanges:false},applyCloudSnapshot,err=>{console.error(err);cloud.connected=false;cloud.lastError=err.message||'Sin conexión con Firebase';setCloudUI('cancelled','Sin conexión');sync('bad','Base central no disponible')});
+  if(cloud.unsubscribe)cloud.unsubscribe();cloud.unsubscribe=cloud.docRef.onSnapshot({includeMetadataChanges:false},applyCloudSnapshot,err=>{console.error(err);cloud.connected=false;cloud.connecting=false;cloud.lastCode=err?.code||'';cloud.lastError=firebaseFriendlyError(err);setCloudUI('cancelled','Sin conexión');sync('bad','Base central no disponible')});
   if((Number(state.meta.revision)||0)>cloud.remoteRevision)queueCloudPush();
- }catch(err){console.error('Firebase',err);cloud.connected=false;cloud.connecting=false;cloud.lastError=err?.message||'No fue posible conectar con Firebase';setCloudUI('cancelled','Sin conexión');sync('bad','Sin conexión a la base central');}
+ }catch(err){console.error('Firebase',err);cloud.connected=false;cloud.connecting=false;cloud.lastCode=err?.code||'';cloud.lastError=firebaseFriendlyError(err);setCloudUI('cancelled','Sin conexión');sync('bad','Sin conexión a la base central')}
 }
-function queueCloudPush(){clearTimeout(cloudTimer);cloudTimer=setTimeout(()=>pushCloudNow(false),550)}
+function queueCloudPush(){clearTimeout(cloudTimer);cloudTimer=setTimeout(()=>pushCloudNow(false),650)}
 async function pushCloudNow(initial=false){
  if(!cloud.connected||!cloud.docRef||cloud.suppress)return false;
  try{
   const fs=firebase.firestore(),local=publicCloudState();
+  if(estimatedCloudBytes(local)>950000)throw Object.assign(new Error('El documento central superaría el límite permitido.'),{code:'state-too-large'});
   const result=await fs.runTransaction(async tx=>{
    const snap=await tx.get(cloud.docRef),data=snap.exists?(snap.data()||{}):{},remote=normalizeState(data.state||data);
    const merged=snap.exists?mergeStates(local,remote):normalizeState(local);
    const accountNow=iso();merged.users=PDF_DEFAULT_USERS.map(entry=>{const old=(merged.users||[]).find(x=>norm(x.username)===norm(entry.username));return{id:entry.id,username:entry.username,name:entry.name,role:entry.role,staffId:old?.staffId||null,active:true,protected:true,mustChange:false,password:{...entry.password},createdAt:old?.createdAt||accountNow,updatedAt:old?.updatedAt||accountNow,lastLogin:old?.lastLogin||null}});merged.meta.initialAccess='pdf-permanent-v3';
    const revision=Math.max(Number(local.meta.revision)||0,Number(data.revision)||0,Number(remote.meta.revision)||0)+1;
    merged.meta.revision=revision;merged.meta.updatedAt=iso();merged.meta.lastSavedAt=iso();
-   tx.set(cloud.docRef,{format:'FG-BRIGADAS-STATE',version:3,revision,updatedAt:firebase.firestore.FieldValue.serverTimestamp(),state:merged});
+   tx.set(cloud.docRef,{format:'FG-BRIGADAS-STATE',version:4,revision,updatedAt:firebase.firestore.FieldValue.serverTimestamp(),state:merged});
    return{merged,revision};
   });
-  cloud.remoteRevision=Math.max(cloud.remoteRevision,result.revision);cloud.suppress=true;state=normalizeState(result.merged);await ensurePdfDefaultUsers();await persistState({broadcast:true,pushCloud:false,bump:false});cloud.suppress=false;
+  cloud.remoteRevision=Math.max(cloud.remoteRevision,result.revision);cloud.lastSnapshotAt=iso();cloud.suppress=true;state=normalizeState(result.merged);await ensurePdfDefaultUsers();await persistState({broadcast:true,pushCloud:false,bump:false});cloud.suppress=false;
   sync('ok','Guardado y sincronizado');setCloudUI('in_service','Conectado');return true;
- }catch(err){cloud.suppress=false;console.error(err);cloud.lastError=err.message||'Error al sincronizar';setCloudUI('cancelled','Error al guardar');sync('bad','Error de sincronización');if(initial)throw err;return false}
+ }catch(err){cloud.suppress=false;console.error(err);cloud.lastCode=err?.code||'';cloud.lastError=firebaseFriendlyError(err);setCloudUI('cancelled','Error al guardar');sync('bad','Error de sincronización');if(initial)throw err;return false}
 }
+async function copyFirebaseRules(){try{await navigator.clipboard.writeText(FIREBASE_RULES);toast('Reglas copiadas','Pégalas en Firestore Database → Rules y presiona Publicar.')}catch(_){openModal('Reglas de Firestore',`<pre class="codeBox">${esc(FIREBASE_RULES)}</pre>`,'<button class="btn btn-ghost" data-close>Cerrar</button>')}}
+
 async function deleteEverything(){
  const first=await ask('Borrar datos clínicos','Esta acción eliminará de Firebase beneficiarios, expedientes, personal, inventario y auditoría. Las cuentas permanentes del PDF se conservarán.','Continuar',true);if(!first)return;
  const phrase=await requestSecret('Confirmación final','Escribe BORRAR TODO y confirma con la contraseña del superadministrador.');if(!phrase)return;
@@ -868,7 +970,7 @@ async function deleteEverything(){
  const admin=state.users.find(x=>x.username==='SUPADMINFGVM');if(!pass||!await verifyPassword(pass,admin.password))return toast('Contraseña incorrecta','Usa el formato BORRAR TODO|contraseña','error');
  state=defaultState();await ensurePdfDefaultUsers();addAudit('BORRADO TOTAL DE DATOS','Se conservaron las cuentas permanentes',true);await persistState({broadcast:true,pushCloud:false});if(cloud.connected)await pushCloudNow(true);user=state.users.find(x=>x.username==='SUPADMINFGVM')||null;renderAll();toast('Datos eliminados','Firebase y la caché quedaron reiniciados.','info',5000);
 }
-function renderCloudConfig(){updateStorageStatus();setCloudUI(cloud.connected?'in_service':cloud.lastError?'cancelled':'waiting',cloud.connected?'Conectado':cloud.lastError?'Sin conexión':'Conectando')}
+function renderCloudConfig(){updateStorageStatus();setCloudUI(cloud.connected?'in_service':cloud.lastError?'cancelled':'waiting',cloud.connected?'Conectado':cloud.lastError?'Sin conexión':'Conectando');renderConnectionDiagnostics()}
 function loadVitals(pid){
  const v=latestVisit(pid);if(!v)return;const staff=$('#vitalsForm [name="staffId"]').value;$('#vitalsForm').reset();populateSelectors();$('#vitalsPatient').value=pid;fillForm($('#vitalsForm'),v.vitals||{});$('#vitalsPatient').value=pid;if(staff&&!v.vitals?.staffId)$('#vitalsForm [name="staffId"]').value=staff;$('#hivResult').disabled=!$('#hivTest').checked;
 }
@@ -920,7 +1022,9 @@ function initializeEvents(){
   const open=e.target.closest('[data-open-visit]');if(open)return openVisit(open.dataset.openVisit);
   const cancel=e.target.closest('[data-cancel]');if(cancel)return cancelVisit(cancel.dataset.cancel);
   const hist=e.target.closest('[data-history]');if(hist)return showPatientHistory(hist.dataset.history);
+  const ppdf=e.target.closest('[data-preview-pdf-patient]');if(ppdf)return exportPatientPDF(ppdf.dataset.previewPdfPatient,null,true);
   const pdf=e.target.closest('[data-pdf-patient]');if(pdf)return exportPatientPDF(pdf.dataset.pdfPatient);
+  const mprev=e.target.closest('[data-modal-preview-pdf]');if(mprev){closeModal();return exportPatientPDF(mprev.dataset.modalPreviewPdf,null,true)}
   const mpdf=e.target.closest('[data-modal-pdf]');if(mpdf){closeModal();return exportPatientPDF(mpdf.dataset.modalPdf)}
   const es=e.target.closest('[data-edit-staff]');if(es)return editStaff(es.dataset.editStaff);
   const ts=e.target.closest('[data-toggle-staff]');if(ts)return toggleStaff(ts.dataset.toggleStaff);
@@ -951,12 +1055,14 @@ function initializeEvents(){
  });
  $('#staffForm').addEventListener('submit',handleStaff);$('#cancelStaff').addEventListener('click',resetStaffForm);
  $('#pharmForm').addEventListener('submit',handlePharmacy);$('#cancelMed').addEventListener('click',resetPharmForm);$('#pharmSearch').addEventListener('input',renderPharmacy);
+ $('#inventoryFile').addEventListener('change',async e=>{try{await readInventoryFile(e.target.files?.[0])}catch(err){inventoryImportMessage('Archivo no válido',err.message,'error');$('#importInventory').disabled=true}});
+ $('#previewInventoryImport').addEventListener('click',previewInventoryImport);$('#importInventory').addEventListener('click',importInventoryRows);$('#downloadInventoryTemplate').addEventListener('click',downloadInventoryTemplate);$('#exportInventoryXlsx').addEventListener('click',exportInventoryXlsx);$('#previewInventoryPdf').addEventListener('click',()=>exportInventoryPDF(true));$('#exportInventoryPdf').addEventListener('click',()=>exportInventoryPDF(false));setupInventoryDrop();
  ['dbSearch','dbService','dbDate'].forEach(id=>$('#'+id).addEventListener('input',renderDatabase));
  ['histSearch','histService'].forEach(id=>$('#'+id).addEventListener('input',renderHistory));
- $('#exportDb').addEventListener('click',exportDatabasePDF);$('#saveDb').addEventListener('click',async()=>{await persistState();toast('Base guardada')});
- $('#exportAudit').addEventListener('click',exportAuditPDF);
+ $('#previewDbPdf').addEventListener('click',()=>exportDatabasePDF(true));$('#exportDb').addEventListener('click',()=>exportDatabasePDF(false));$('#saveDb').addEventListener('click',async()=>{await persistState();toast('Base guardada')});
+ $('#previewAudit').addEventListener('click',()=>exportAuditPDF(true));$('#exportAudit').addEventListener('click',()=>exportAuditPDF(false));
  $('#exportBackup').addEventListener('click',exportEncryptedBackup);$('#importBackup').addEventListener('click',importEncryptedBackup);
- $('#retryCloud').addEventListener('click',()=>connectCloudAutomatic(true));$('#deleteAll').addEventListener('click',deleteEverything);
+ $('#retryCloud').addEventListener('click',()=>connectCloudAutomatic(true));$('#copyRules').addEventListener('click',copyFirebaseRules);$('#deleteAll').addEventListener('click',deleteEverything);
  document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();closeSidebar()}});
 }
 async function initialize(){
