@@ -1,0 +1,986 @@
+<!doctype html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#6c2038">
+<title>Brigadas de Salud · Fuerza Generacional</title>
+<style>
+:root{
+  --bg:#f2f0ec;--surface:#fff;--surface2:#f8f6f3;--surface3:#ece8e2;
+  --text:#262326;--muted:#716b68;--line:#d9d3cc;--brand:#6c2038;--brand2:#9a3d5a;
+  --brandSoft:#f2e3e8;--ok:#2f7b59;--warn:#aa7114;--bad:#a33b3b;--info:#356d8a;
+  --shadow:0 18px 54px rgba(45,31,36,.12);--r:18px;--sidebar:280px
+}
+*{box-sizing:border-box}html{color-scheme:light;scroll-behavior:smooth}body{margin:0;min-height:100vh;color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;background:radial-gradient(circle at 0 0,rgba(108,32,56,.09),transparent 31rem),radial-gradient(circle at 100% 0,rgba(184,154,98,.11),transparent 34rem),var(--bg);line-height:1.45}
+button,input,select,textarea{font:inherit}button{cursor:pointer}[hidden]{display:none!important}
+.logo{display:flex;align-items:center;gap:12px;min-width:0}.logo svg{width:52px;height:52px;flex:0 0 auto}.logo strong{display:block;font-size:15px}.logo small{display:block;color:var(--muted)}
+.btn{min-height:42px;border:1px solid transparent;border-radius:12px;padding:9px 15px;background:var(--surface3);color:var(--text);font-weight:800;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:.18s;text-decoration:none}.btn:hover{transform:translateY(-1px);box-shadow:0 8px 18px rgba(30,20,24,.1)}.btn:focus-visible{outline:none;box-shadow:0 0 0 3px rgba(108,32,56,.2)}.btn-primary{background:var(--brand);color:#fff}.btn-secondary{background:var(--brandSoft);color:var(--brand);border-color:#dfc2cd}.btn-ok{background:var(--ok);color:#fff}.btn-danger{background:var(--bad);color:#fff}.btn-ghost{background:transparent;border-color:var(--line)}.btn-sm{min-height:34px;padding:6px 10px;font-size:12px;border-radius:10px}.btn-icon{width:42px;padding:0}.btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.field{display:grid;gap:7px;min-width:0}.field label,.field>span:first-child{font-size:13px;font-weight:800;color:#504a47}.field small{color:var(--muted)}input,select,textarea{width:100%;border:1px solid var(--line);border-radius:11px;background:#fff;color:var(--text);padding:10px 12px;min-height:42px;transition:.18s}textarea{min-height:105px;resize:vertical}input:focus,select:focus,textarea:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3px rgba(108,32,56,.15)}input:disabled,input[readonly],select:disabled{background:#efede9;color:#777}input[type=checkbox]{width:18px;min-height:18px;accent-color:var(--brand)}
+.grid{display:grid;gap:15px}.g2{grid-template-columns:repeat(2,minmax(0,1fr))}.g3{grid-template-columns:repeat(3,minmax(0,1fr))}.g4{grid-template-columns:repeat(4,minmax(0,1fr))}.span2{grid-column:span 2}.all{grid-column:1/-1}
+.card{background:rgba(255,255,255,.94);border:1px solid rgba(214,207,200,.92);border-radius:var(--r);box-shadow:0 8px 25px rgba(40,29,33,.055);padding:20px;min-width:0}.cardHead,.viewHead{display:flex;align-items:flex-start;justify-content:space-between;gap:15px}.cardHead{margin-bottom:17px}.cardHead h2,.cardHead h3,.viewHead h1{margin:0;line-height:1.15}.cardHead p,.viewHead p{margin:5px 0 0;color:var(--muted)}.actions{display:flex;flex-wrap:wrap;gap:8px}.eyebrow{color:var(--brand);font-size:11px;letter-spacing:.15em;text-transform:uppercase;font-weight:950;margin-bottom:7px}
+.checkGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:9px}.check{display:flex;gap:9px;align-items:flex-start;border:1px solid var(--line);background:var(--surface2);padding:9px 10px;border-radius:10px;font-size:13px}.check input{margin-top:1px}
+.login{min-height:100vh;display:grid;place-items:center;padding:26px}.loginShell{width:min(1050px,100%);display:grid;grid-template-columns:1.1fr .9fr;background:#fff;border:1px solid var(--line);border-radius:28px;overflow:hidden;box-shadow:var(--shadow)}.hero{min-height:650px;padding:50px;color:#fff;background:linear-gradient(135deg,#4c1428,#7a2743);display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden}.hero:before,.hero:after{content:"";position:absolute;border:1px solid rgba(255,255,255,.14);border-radius:50%}.hero:before{width:430px;height:430px;right:-170px;top:-150px}.hero:after{width:290px;height:290px;left:-120px;bottom:-100px}.hero .logo,.heroContent,.heroClock{position:relative;z-index:1}.hero .logo small{color:rgba(255,255,255,.7)}.hero h1{font-size:clamp(38px,6vw,68px);line-height:.98;letter-spacing:-.045em;margin:0 0 15px}.hero p{font-size:17px;color:rgba(255,255,255,.78);max-width:550px}.heroFeatures{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:28px}.heroFeature{padding:12px;border:1px solid rgba(255,255,255,.13);background:rgba(255,255,255,.08);border-radius:12px;font-size:13px}.loginPanel{padding:50px 42px;display:flex;flex-direction:column;justify-content:center}.loginPanel h2{font-size:31px;margin:0}.loginPanel>p{color:var(--muted);margin:8px 0 25px}.loginPanel form{display:grid;gap:15px}.passwordWrap{position:relative}.passwordWrap input{padding-right:50px}.passwordToggle{position:absolute;right:6px;top:50%;transform:translateY(-50%);border:0;background:transparent;width:38px;height:38px}.loginNote{margin-top:24px;color:var(--muted);font-size:12px}
+.app{min-height:100vh;display:grid;grid-template-columns:var(--sidebar) minmax(0,1fr)}.sidebar{position:sticky;top:0;height:100vh;overflow:auto;padding:18px 14px;background:#241d20;color:#fff;z-index:40}.sidebar .logo{padding:7px 7px 21px}.sidebar .logo small{color:rgba(255,255,255,.55)}.navGroup{margin-bottom:17px}.navLabel{padding:0 11px 7px;color:rgba(255,255,255,.4);font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:900}.nav{display:grid;gap:4px}.nav button{width:100%;border:0;background:transparent;color:rgba(255,255,255,.72);border-radius:11px;min-height:43px;padding:9px 11px;display:grid;grid-template-columns:26px 1fr auto;gap:8px;align-items:center;text-align:left;font-weight:750}.nav button:hover{background:rgba(255,255,255,.07);color:#fff}.nav button.active{background:linear-gradient(135deg,var(--brand2),var(--brand));color:#fff}.badge{min-width:22px;padding:2px 7px;border-radius:999px;background:rgba(255,255,255,.13);font-size:11px;text-align:center}.sideUser{border-top:1px solid rgba(255,255,255,.1);padding:15px 8px 4px}.sideUser strong{display:block;font-size:13px}.sideUser small{color:rgba(255,255,255,.55)}
+.main{min-width:0}.topbar{height:76px;position:sticky;top:0;z-index:30;background:rgba(242,240,236,.88);backdrop-filter:blur(18px);border-bottom:1px solid rgba(211,204,197,.75);display:flex;align-items:center;justify-content:space-between;padding:0 25px;gap:15px}.topLeft,.topRight{display:flex;align-items:center;gap:10px}.menu{display:none}.pill{min-height:40px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.78);display:flex;align-items:center;gap:8px;padding:8px 12px;font-size:12px;font-weight:800;white-space:nowrap}.dot{width:9px;height:9px;border-radius:50%;background:var(--warn);box-shadow:0 0 0 4px rgba(170,113,20,.1)}.dot.ok{background:var(--ok);box-shadow:0 0 0 4px rgba(47,123,89,.1)}.dot.bad{background:var(--bad);box-shadow:0 0 0 4px rgba(163,59,59,.1)}.userBtn{border:0;background:transparent;display:flex;align-items:center;gap:9px}.avatar{width:36px;height:36px;border-radius:50%;background:var(--brandSoft);color:var(--brand);display:grid;place-items:center;font-weight:900}.userCopy{text-align:left}.userCopy strong{display:block;font-size:12px}.userCopy small{display:block;color:var(--muted)}
+.content{padding:26px;max-width:1700px;margin:auto}.view{display:none;animation:fade .2s}.view.active{display:block}@keyframes fade{from{opacity:0;transform:translateY(4px)}}.viewHead{margin-bottom:20px}.viewHead h1{font-size:clamp(28px,4vw,40px);letter-spacing:-.035em}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:18px}.stat{background:#fff;border:1px solid var(--line);border-radius:16px;padding:17px}.stat span{color:var(--muted);font-size:12px;font-weight:800}.stat strong{display:block;font-size:30px;line-height:1.1;margin-top:6px}.dashboard{display:grid;grid-template-columns:1.35fr .65fr;gap:18px}.bars{display:grid;gap:12px}.bar{display:grid;grid-template-columns:130px 1fr 42px;gap:10px;align-items:center;font-size:13px}.track{height:10px;border-radius:999px;background:var(--surface3);overflow:hidden}.track i{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--brand),var(--brand2));min-width:2px}.fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--brand),var(--brand2));min-width:2px}
+.tableWrap{overflow:auto;border:1px solid var(--line);border-radius:13px;background:#fff}table{width:100%;border-collapse:collapse;min-width:760px}th,td{padding:12px 13px;border-bottom:1px solid #e8e4df;text-align:left;vertical-align:top;font-size:13px}th{background:#f2efeb;color:#514b48;text-transform:uppercase;letter-spacing:.06em;font-size:11px;position:sticky;top:0;z-index:1}tr:last-child td{border-bottom:0}.empty{padding:34px;text-align:center;color:var(--muted)}
+.status{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:5px 9px;font-size:11px;font-weight:900;white-space:nowrap}.status:before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}.waiting{color:#865a09;background:#f8e9bd}.in_service{color:#28667d;background:#dbeef5}.completed{color:#27684d;background:#dff0e8}.cancelled{color:#963d3d;background:#f4dcdc}
+.section{border-top:1px solid var(--line);padding-top:18px;margin-top:18px}.section h3{margin:0 0 13px}.note{border-left:4px solid var(--brand);background:var(--brandSoft);padding:11px 13px;border-radius:0 10px 10px 0;color:#5e2a3c;font-size:13px}.queue{display:grid;gap:9px;max-height:630px;overflow:auto}.queueItem{border:1px solid var(--line);border-radius:13px;padding:12px;display:grid;gap:8px;background:#fff}.queueHead{display:flex;justify-content:space-between;gap:12px}.queueHead strong,.queueHead small{display:block}.queueHead small{margin-top:3px;color:var(--muted)}.queueItem small{color:var(--muted)}.chip{display:inline-flex;border:1px solid var(--line);background:var(--surface2);border-radius:999px;padding:4px 8px;font-size:11px;font-weight:750}
+.vitals{display:grid;grid-template-columns:repeat(4,minmax(140px,1fr));gap:12px}.vital{background:var(--surface2);border:1px solid var(--line);border-radius:12px;padding:12px}.vital span{color:var(--muted);font-size:11px;text-transform:uppercase;font-weight:800}.vital strong{display:block;font-size:18px;margin-top:5px}.medPanel{background:#fbf5f7;border:1px solid #e7cad4;border-radius:14px;padding:14px}.medLine{display:grid;grid-template-columns:minmax(150px,.8fr) minmax(180px,1fr) minmax(190px,1.15fr) 105px auto;gap:9px;align-items:end;margin-top:9px}.stock{width:13px;height:13px;border-radius:50%;display:inline-block}.green{background:var(--ok)}.yellow{background:#d69a2a}.red{background:var(--bad)}
+.historyGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(285px,1fr));gap:14px}.historyCard{border:1px solid var(--line);border-radius:15px;padding:16px;background:#fff;display:grid;gap:11px}.historyCard h3{margin:0}.historyCard p{margin:0;color:var(--muted);font-size:13px}.special{display:grid;grid-template-columns:1fr .58fr;gap:18px}.autosave{border:1px dashed #c8b9bf;border-radius:13px;padding:14px;background:#fbf8f9;color:#624654;font-size:13px}
+.backupGrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.statusPanel{border:1px solid var(--line);border-radius:15px;padding:17px;text-align:center;background:var(--surface2)}.orb{width:70px;height:70px;margin:0 auto 12px;border-radius:50%;background:var(--warn);box-shadow:0 0 0 12px rgba(170,113,20,.08)}.orb.ok{background:var(--ok);box-shadow:0 0 0 12px rgba(47,123,89,.09)}.orb.bad{background:var(--bad)}.dangerZone{border:1px solid #e0b6b6;background:#fff6f6;border-radius:15px;padding:16px}.privacy{font-size:12px;color:var(--muted);border-top:1px solid var(--line);margin-top:16px;padding-top:12px}
+.modalBack{position:fixed;inset:0;background:rgba(20,15,17,.56);backdrop-filter:blur(5px);display:grid;place-items:center;padding:18px;z-index:100}.modal{width:min(920px,100%);max-height:calc(100vh - 36px);overflow:auto;background:#fff;border-radius:20px;border:1px solid var(--line);box-shadow:var(--shadow)}.modalHead{display:flex;justify-content:space-between;gap:12px;padding:18px 20px;border-bottom:1px solid var(--line);position:sticky;top:0;background:#fff;z-index:2}.modalHead h2{margin:0}.modalBody{padding:20px}.modalFoot{display:flex;justify-content:flex-end;gap:9px;padding:15px 20px;border-top:1px solid var(--line);position:sticky;bottom:0;background:#fff}.setup{width:min(720px,100%)}.toasts{position:fixed;right:18px;bottom:18px;z-index:140;display:grid;gap:9px;width:min(390px,calc(100vw - 36px))}.toast{background:#252023;color:#fff;border-radius:13px;padding:13px 15px;box-shadow:var(--shadow);display:flex;gap:11px}.toast.success{border-left:5px solid #5bb68e}.toast.error{border-left:5px solid #dc6c6c}.toast.warning{border-left:5px solid #e4b24a}.toast strong{display:block;font-size:13px}.toast p{margin:2px 0 0;color:rgba(255,255,255,.72);font-size:12px}.overlay{display:none}
+@media(max-width:1180px){.g4{grid-template-columns:repeat(2,minmax(0,1fr))}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.dashboard,.special{grid-template-columns:1fr}.vitals{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:920px){.loginShell{grid-template-columns:1fr}.hero{min-height:390px;padding:35px}.loginPanel{padding:35px}.app{grid-template-columns:1fr}.sidebar{position:fixed;left:0;top:0;width:min(86vw,310px);transform:translateX(-105%);transition:.22s;box-shadow:var(--shadow)}body.menuOpen .sidebar{transform:none}.overlay{position:fixed;inset:0;background:rgba(0,0,0,.42);z-index:35}body.menuOpen .overlay{display:block}.menu{display:inline-flex}.clockPill{display:none}}
+@media(max-width:700px){.content{padding:18px 13px 28px}.topbar{height:68px;padding:0 13px}.syncText,.userCopy{display:none}.g2,.g3,.g4{grid-template-columns:1fr}.span2{grid-column:auto}.stats{grid-template-columns:1fr 1fr}.card{padding:16px}.viewHead,.cardHead{flex-direction:column}.login{padding:0}.loginShell{border-radius:0;min-height:100vh}.hero{min-height:330px;padding:27px}.loginPanel{padding:27px}.heroFeatures{grid-template-columns:1fr}.medLine{grid-template-columns:1fr;border:1px solid var(--line);padding:11px;border-radius:12px}.backupGrid{grid-template-columns:1fr}}
+@media(max-width:430px){.stats,.vitals{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<section id="loginView" class="login">
+  <div class="loginShell">
+    <div class="hero">
+      <div class="logo">
+        <svg viewBox="0 0 96 96" aria-hidden="true"><defs><linearGradient id="lg" x1="0" x2="1"><stop stop-color="#d8a2b4"/><stop offset=".55" stop-color="#9a3d5a"/><stop offset="1" stop-color="#6c2038"/></linearGradient></defs><path d="M8 27h48l-8 14H3zM3 45h43l-8 14H0zM0 63h36l-8 14H0z" fill="url(#lg)"/><g transform="translate(48 14)" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 24l8-8 9 9-8 8zM28 40l8-8 9 9-8 8zM12 56l8-8 9 9-8 8zM-4 40l8-8 9 9-8 8z"/><path d="M20 16l4-4c4-4 10-4 14 0l8 8c4 4 4 10 0 14l-3 3M36 48l-9 9c-4 4-10 4-14 0l-8-8c-4-4-4-10 0-14l3-3"/></g></svg>
+        <div><strong>Fuerza Generacional</strong><small>Brigadas de Salud</small></div>
+      </div>
+      <div class="heroContent">
+        <div class="eyebrow" style="color:#e9cbd5">Sistema clínico integral</div>
+        <h1>Atención ordenada, segura y en tiempo real.</h1>
+        <p>Registro, signos vitales, historia clínica, medicina, farmacia, áreas especializadas, historial, personal, respaldos y control de acceso en un solo archivo.</p>
+        <div class="heroFeatures">
+          <div class="heroFeature">🔒 Datos locales cifrados con Web Crypto</div>
+          <div class="heroFeature">⚡ Actualización instantánea entre pestañas</div>
+          <div class="heroFeature">📄 Expedientes y reportes PDF</div>
+          <div class="heroFeature">🩺 Acceso por perfiles y áreas</div>
+        </div>
+      </div>
+      <small class="heroClock">Hora del dispositivo: <span id="loginClock">—</span></small>
+    </div>
+    <div class="loginPanel">
+      <div class="eyebrow">Acceso protegido</div><h2>Iniciar sesión</h2><p>Usa el usuario creado por la administración.</p>
+      <form id="loginForm">
+        <div class="field"><label>Usuario</label><input id="loginUser" autocomplete="username" required placeholder="Ej. MEDICOSFG"></div>
+        <div class="field"><label>Contraseña</label><div class="passwordWrap"><input id="loginPass" type="password" autocomplete="current-password" required><button type="button" class="passwordToggle" data-pass="loginPass">◉</button></div></div>
+        <button class="btn btn-primary" type="submit">Ingresar al sistema</button>
+        <button id="setupOpen" class="btn btn-ghost" type="button" hidden>Crear instalación segura</button>
+      </form>
+      <div class="loginNote"><strong>Privacidad:</strong> el modo local cifra los datos en el dispositivo. La sincronización real entre distintos equipos requiere conectar un proyecto Firebase propio con reglas de seguridad.</div>
+    </div>
+  </div>
+</section>
+
+<div id="app" class="app" hidden>
+  <aside class="sidebar">
+    <div class="logo">
+      <svg viewBox="0 0 96 96" aria-hidden="true"><defs><linearGradient id="lg2" x1="0" x2="1"><stop stop-color="#d8a2b4"/><stop offset=".55" stop-color="#9a3d5a"/><stop offset="1" stop-color="#6c2038"/></linearGradient></defs><path d="M8 27h48l-8 14H3zM3 45h43l-8 14H0zM0 63h36l-8 14H0z" fill="url(#lg2)"/><g transform="translate(48 14)" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 24l8-8 9 9-8 8zM28 40l8-8 9 9-8 8zM12 56l8-8 9 9-8 8zM-4 40l8-8 9 9-8 8z"/><path d="M20 16l4-4c4-4 10-4 14 0l8 8c4 4 4 10 0 14l-3 3M36 48l-9 9c-4 4-10 4-14 0l-8-8c-4-4-4-10 0-14l3-3"/></g></svg>
+      <div><strong>Fuerza Generacional</strong><small>Brigadas de Salud</small></div>
+    </div>
+    <div id="navRoot"></div>
+    <div class="sideUser"><strong id="sideName">—</strong><small id="sideRole">—</small></div>
+  </aside>
+  <div class="overlay" id="overlay"></div>
+  <div class="main">
+    <header class="topbar">
+      <div class="topLeft"><button id="menuBtn" class="btn btn-icon btn-ghost menu">☰</button><div class="pill"><span id="syncDot" class="dot"></span><span id="syncText" class="syncText">Preparando almacenamiento</span></div></div>
+      <div class="topRight"><div class="pill clockPill">🕒 <span id="deviceClock">—</span></div><button id="profileBtn" class="userBtn"><span id="avatar" class="avatar">FG</span><span class="userCopy"><strong id="topName">—</strong><small id="topRole">—</small></span></button><button id="logoutBtn" class="btn btn-icon btn-ghost">↪</button></div>
+    </header>
+    <main id="views" class="content"></main>
+  </div>
+</div>
+
+<div id="modalBack" class="modalBack" hidden><div class="modal"><div class="modalHead"><h2 id="modalTitle">Detalle</h2><button id="modalX" class="btn btn-icon btn-ghost">×</button></div><div id="modalBody" class="modalBody"></div><div id="modalFoot" class="modalFoot"><button class="btn btn-ghost" data-close>cerrar</button></div></div></div>
+
+<div id="setupBack" class="modalBack" hidden><div class="modal setup"><div class="modalHead"><h2>Configurar instalación segura</h2></div><div class="modalBody"><p>Primera apertura detectada. Crea la organización y la cuenta de superadministración. No hay contraseña predeterminada.</p><form id="setupForm" class="grid g2"><div class="field all"><label>Organización</label><input id="setupOrg" value="Brigadas de Salud Fuerza Generacional" required></div><div class="field"><label>Usuario superadmin</label><input id="setupUser" value="SUPADMINFGVM" required></div><div class="field"><label>Nombre de la persona</label><input id="setupName" required></div><div class="field all"><label>Contraseña segura</label><div class="passwordWrap"><input id="setupPass" type="password" minlength="12" required><button type="button" class="passwordToggle" data-pass="setupPass">◉</button></div><small>Mínimo 12 caracteres: mayúscula, minúscula, número y símbolo.</small></div><div class="field all"><label>Confirmar contraseña</label><input id="setupPass2" type="password" minlength="12" required></div><label class="check all"><input id="setupAccept" type="checkbox" required><span>Entiendo que esta cuenta tendrá acceso total.</span></label><button class="btn btn-primary all" type="submit">Crear instalación</button></form></div></div></div>
+<div id="toasts" class="toasts" aria-live="polite"></div>
+
+<script>
+'use strict';
+
+const APP_VERSION='1.0.0';
+const DB_NAME='fg_brigadas_secure_v1',DB_VERSION=1,STATE_KEY='state',SESSION_KEY='fg_session';
+const FALLBACK_KEY='fg_fallback_key',FALLBACK_STATE='fg_fallback_state';
+const PASS_ITER=210000,IDLE_MS=30*60*1000;
+const SERVICES=['Medicina','Psicología','Fisioterapia','Cosmetología','Asesoría Jurídica','Vacunas'];
+const STAFF_AREAS=['Medicina','Signos vitales','Fisioterapia','Cosmetología','Asesoría Jurídica','Vacunas','Psicología','Farmacia','Admisión'];
+const ROLES={
+  superadmin:{label:'Superadministración',area:'*',p:['*']},
+  admin:{label:'Administración',area:'*',p:['dashboard','registro','signos','farmacia','base','personal','usuarios','respaldo','auditoria']},
+  admission:{label:'Admisión',area:'Admisión',p:['registro']},
+  student:{label:'Estudiantes / Internos',area:'Medicina',p:['dashboard','registro','signos','clinica','medicina','farmacia']},
+  medicine:{label:'Medicina',area:'Medicina',p:['dashboard','registro','signos','clinica','medicina','farmacia','base','historial','personal']},
+  legal:{label:'Asesoría Jurídica',area:'Asesoría Jurídica',p:['dashboard','registro','juridico','base','historial']},
+  psychology:{label:'Psicología',area:'Psicología',p:['dashboard','registro','signos','psicologia','base','historial']},
+  physiotherapy:{label:'Fisioterapia',area:'Fisioterapia',p:['dashboard','registro','signos','fisioterapia','farmacia','base','historial']},
+  cosmetology:{label:'Cosmetología',area:'Cosmetología',p:['dashboard','registro','signos','cosmetologia','farmacia','base','historial']},
+  vaccines:{label:'Vacunas',area:'Vacunas',p:['dashboard','registro','signos','vacunas','base','historial']}
+};
+const STATUS={waiting:'En espera',in_service:'En atención',completed:'Finalizado',cancelled:'Cancelado'};
+const NAV=[
+ ['Operación',[['dashboard','⌂','Panel general'],['registro','✚','Registro'],['signos','♥','Signos vitales'],['clinica','☷','Historia clínica'],['medicina','⚕','Medicina']]],
+ ['Áreas',[['juridico','⚖','Asesoría jurídica'],['fisioterapia','♿','Fisioterapia'],['psicologia','◌','Psicología'],['vacunas','⟐','Vacunas'],['cosmetologia','✦','Cosmetología']]],
+ ['Administración',[['farmacia','▣','Farmacia'],['base','▤','Base de datos'],['historial','◷','Historial'],['personal','♙','Personal'],['usuarios','⛨','Usuarios y perfiles'],['respaldo','⇅','Copia de seguridad'],['auditoria','≣','Auditoría']]]
+];
+let state=defaultState(),user=null,currentView='dashboard',db=null,key=null,storageMode='pending',channel=null,saveTimer=null,cloudTimer=null,idleTimer=null,lastActivity=Date.now();
+let cloud={connected:false,unsubscribe:null,setDoc:null,docRef:null,suppress:false};
+let modalObjectUrl=null;
+
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+const iso=()=>new Date().toISOString();
+const id=(p='id')=>`${p}_${Date.now().toString(36)}_${crypto.getRandomValues(new Uint32Array(1))[0].toString(36)}`;
+const esc=v=>String(v??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#39;');
+const norm=v=>String(v??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
+const safe=v=>(v===undefined||v===null||v==='')?'—':String(v);
+const dt=(v,sec=false)=>{if(!v)return'—';const d=new Date(v);return Number.isNaN(d.getTime())?'—':new Intl.DateTimeFormat('es-MX',{dateStyle:'medium',timeStyle:sec?'medium':'short'}).format(d)};
+const tm=v=>v?new Date(v).toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'}):'—';
+const initials=n=>String(n||'FG').split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join('').toUpperCase()||'FG';
+const strongPass=p=>p.length>=12&&/[a-z]/.test(p)&&/[A-Z]/.test(p)&&/\d/.test(p)&&/[^A-Za-z0-9]/.test(p);
+const patient=id=>state.patients.find(x=>x.id===id),visit=id=>state.visits.find(x=>x.id===id),person=id=>state.personnel.find(x=>x.id===id),med=id=>state.medicines.find(x=>x.id===id),usr=id=>state.users.find(x=>x.id===id);
+function defaultState(){const n=new Date().toISOString();return{meta:{appVersion:APP_VERSION,organization:'Brigadas de Salud Fuerza Generacional',createdAt:n,updatedAt:n,revision:0,lastSavedAt:null,cloud:{enabled:false,config:'',email:'',path:'brigadas_salud/estado_principal'}},users:[],personnel:[],patients:[],visits:[],medicines:[],audit:[],drafts:{}}}
+function normalizeState(v){const b=defaultState();return{...b,...v,meta:{...b.meta,...(v.meta||{}),cloud:{...b.meta.cloud,...(v.meta?.cloud||{})}},users:Array.isArray(v.users)?v.users:[],personnel:Array.isArray(v.personnel)?v.personnel:[],patients:Array.isArray(v.patients)?v.patients:[],visits:Array.isArray(v.visits)?v.visits:[],medicines:Array.isArray(v.medicines)?v.medicines:[],audit:Array.isArray(v.audit)?v.audit:[],drafts:v.drafts&&typeof v.drafts==='object'?v.drafts:{}}}
+function can(p){const r=ROLES[user?.role];return !!r&&(r.p.includes('*')||r.p.includes(p))}
+function canManageInventory(){return user?.role==='superadmin'||user?.role==='admin'}
+function scope(){return ROLES[user?.role]?.area}
+function canHistory(v){if(!user)return false;if(user.role==='superadmin')return true;if(user.role==='admin')return false;return scope()==='*'||scope()===v.service}
+function latestVisit(pid,service=null){return state.visits.filter(v=>v.patientId===pid&&(!service||v.service===service)).sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt))[0]||null}
+function serviceView(s){return{'Medicina':'medicina','Psicología':'psicologia','Fisioterapia':'fisioterapia','Cosmetología':'cosmetologia','Asesoría Jurídica':'juridico','Vacunas':'vacunas'}[s]||'dashboard'}
+function toast(title,msg='',type='success',ms=3500){const e=document.createElement('div');e.className=`toast ${type}`;e.innerHTML=`<div>${type==='success'?'✓':type==='error'?'!':'•'}</div><div><strong>${esc(title)}</strong><p>${esc(msg)}</p></div>`;$('#toasts').append(e);setTimeout(()=>e.remove(),ms)}
+function sync(kind,text){$('#syncDot').className='dot'+(kind==='ok'?' ok':kind==='bad'?' bad':'');$('#syncText').textContent=text}
+function openModal(title,body,foot='<button class="btn btn-ghost" data-close>Cerrar</button>'){$('#modalTitle').textContent=title;$('#modalBody').innerHTML=body;$('#modalFoot').innerHTML=foot;$('#modalBack').hidden=false;document.body.style.overflow='hidden'}
+function closeModal(){$('#modalBack').hidden=true;document.body.style.overflow='';if(modalObjectUrl){URL.revokeObjectURL(modalObjectUrl);modalObjectUrl=null}}
+function ask(title,message,confirm='Confirmar',danger=false){return new Promise(resolve=>{openModal(title,`<p>${esc(message)}</p>`,`<button class="btn btn-ghost" data-answer="no">Cancelar</button><button class="btn ${danger?'btn-danger':'btn-primary'}" data-answer="yes">${esc(confirm)}</button>`);const h=e=>{const a=e.target.closest('[data-answer]')?.dataset.answer;if(!a)return;$('#modalFoot').removeEventListener('click',h);closeModal();resolve(a==='yes')};$('#modalFoot').addEventListener('click',h)})}
+function badge(s){return `<span class="status ${s}">${esc(STATUS[s]||s)}</span>`}
+function age(date){if(!date)return'';const b=new Date(date+'T12:00:00'),t=new Date();let a=t.getFullYear()-b.getFullYear();const m=t.getMonth()-b.getMonth();if(m<0||(m===0&&t.getDate()<b.getDate()))a--;return a>=0?a:''}
+function addAudit(action,detail,system=false){state.audit.unshift({id:id('aud'),createdAt:iso(),userId:system?null:user?.id||null,username:system?'Sistema':user?.username||'Sin sesión',action,detail:String(detail||'')});if(state.audit.length>1500)state.audit.length=1500}
+
+function navMarkup(){return NAV.map(([label,items])=>`<div class="navGroup"><div class="navLabel">${label}</div><div class="nav">${items.map(([v,icon,text])=>`<button data-nav="${v}" data-perm="${v}"><span>${icon}</span><span>${text}</span>${v==='registro'?'<span id="navWait" class="badge">0</span>':''}</button>`).join('')}</div></div>`).join('')}
+
+function specialtyView(view,title,service,secondLabel='Notas',secondName='notes'){
+ return `<section class="view" data-view="${view}"><div class="viewHead"><div><div class="eyebrow">Área especializada</div><h1>${title}</h1><p>Selección de personal y beneficiario, autoguardado y cierre de atención.</p></div></div><div class="special"><div class="card"><form id="${view}Form" data-specialty="${service}"><div class="grid g2"><div class="field"><label>Selecciona quién está atendiendo *</label><select name="staffId" data-staff="${service}" required></select></div><div class="field"><label>Selecciona el beneficiario *</label><select name="patientId" class="patientSel" data-service="${service}" required></select></div></div><div class="section field"><label>Punto a tratar</label><textarea name="topic" required></textarea></div><div class="field"><label>${secondLabel}</label><textarea name="${secondName}"></textarea></div>${service==='Cosmetología'?'<div class="section medPanel"><div class="cardHead"><div><h3>Tratamiento</h3><p>Medicamentos e indicaciones.</p></div><button id="addCosMed" class="btn btn-sm btn-secondary" type="button">+ Agregar</button></div><div id="cosMedLines"></div></div>':''}<div class="actions section"><button class="btn btn-primary" type="submit">Guardar datos</button></div></form></div><div class="autosave"><strong>Autoguardado cifrado activo</strong><p>El borrador se conserva mientras escribes para reducir la pérdida de información.</p><span class="draftStatus">Sin cambios pendientes</span></div></div></section>`
+}
+
+function viewsMarkup(){return `
+<section class="view" data-view="dashboard"><div class="viewHead"><div><div class="eyebrow">Brigada en curso</div><h1>Panel general</h1><p>Resumen operativo actualizado al instante.</p></div><button class="btn btn-primary" data-go="registro">+ Registrar beneficiario</button></div><div class="stats"><div class="stat"><span>Beneficiarios</span><strong id="stPatients">0</strong><small>Total registrado</small></div><div class="stat"><span>En espera</span><strong id="stWait">0</strong><small>Pendientes</small></div><div class="stat"><span>En atención</span><strong id="stActive">0</strong><small>Procesos activos</small></div><div class="stat"><span>Finalizados</span><strong id="stDone">0</strong><small>Expedientes cerrados</small></div></div><div class="dashboard"><div class="card"><div class="cardHead"><div><h2>Flujo de atención</h2><p>Ordenado por prioridad y hora de llegada.</p></div></div><div class="tableWrap"><table><thead><tr><th>Hora</th><th>Beneficiario</th><th>Servicio</th><th>Estado</th><th>Acción</th></tr></thead><tbody id="dashQueue"></tbody></table></div></div><div class="card"><div class="cardHead"><div><h2>Solicitudes por área</h2><p>Distribución de la jornada.</p></div></div><div id="serviceBars" class="bars"></div></div></div></section>
+
+<section class="view" data-view="registro"><div class="viewHead"><div><div class="eyebrow">Admisión</div><h1>Registro de beneficiarios</h1><p>Alta, asignación de servicio y lista de espera.</p></div></div><div class="special"><div class="card"><div class="cardHead"><div><h2>Ingresar beneficiario</h2><p>El teléfono debe tener exactamente 10 dígitos.</p></div></div><form id="regForm" class="grid g2"><div class="field all"><label>Nombre completo *</label><input name="name" required maxlength="120"></div><div class="field"><label>Teléfono *</label><input id="regPhone" name="phone" inputmode="numeric" maxlength="10" pattern="[0-9]{10}" required></div><div class="field"><label>Localidad *</label><input name="locality" required></div><div class="field all"><label>Domicilio *</label><input name="address" required></div><div class="field"><label>¿Qué servicio solicita? *</label><select name="service" id="regService" required></select></div><div class="field"><label>Prioridad</label><select name="priority"><option value="normal">Normal</option><option value="preferente">Preferente</option><option value="urgente">Urgente</option></select></div><label class="check all"><input name="consent" type="checkbox" required><span>La persona autoriza el registro y uso de sus datos para esta jornada.</span></label><div class="actions all"><button class="btn btn-primary" type="submit">Registrar y enviar a espera</button><button class="btn btn-ghost" type="reset">Limpiar</button></div></form></div><div class="card"><div class="cardHead"><div><h2>Lista de espera</h2><p>Amarillo: espera, azul: atención, verde: finalizado.</p></div><span id="queueCount" class="chip">0</span></div><div id="regQueue" class="queue"></div></div></div></section>
+
+<section class="view" data-view="signos"><div class="viewHead"><div><div class="eyebrow">Triage</div><h1>Signos vitales</h1><p>Captura y envío directo a historia clínica.</p></div></div><div class="card"><form id="vitalsForm"><div class="grid g2"><div class="field"><label>Selecciona quién está atendiendo *</label><select name="staffId" data-staff="Signos vitales" required></select></div><div class="field"><label>Selecciona el beneficiario *</label><select id="vitalsPatient" name="patientId" class="patientSel" data-service="*" required></select></div></div><div class="section grid g4"><div class="field"><label>Tensión arterial</label><input name="bloodPressure" placeholder="120/80 mmHg"></div><div class="field"><label>Frecuencia cardiaca</label><input name="heartRate" inputmode="decimal" placeholder="lpm"></div><div class="field"><label>Frecuencia respiratoria</label><input name="respiratoryRate" inputmode="decimal" placeholder="rpm"></div><div class="field"><label>Temperatura</label><input name="temperature" inputmode="decimal" placeholder="°C"></div><div class="field"><label>Glucosa</label><input name="glucose" inputmode="decimal" placeholder="mg/dL"></div><div class="field"><label>SpO₂</label><input name="spo2" inputmode="decimal" placeholder="%"></div><div class="field"><label>Peso</label><input name="weight" inputmode="decimal" placeholder="kg"></div><div class="field"><label>Talla</label><input name="height" inputmode="decimal" placeholder="cm"></div></div><div class="section grid g2"><label class="check"><input id="hivTest" name="hivTest" type="checkbox"><span>Se realizó prueba de VIH</span></label><div class="field"><label>Resultado</label><input id="hivResult" name="hivResult" disabled></div></div><div class="actions section"><button class="btn btn-primary" type="submit">Guardar y continuar a historia clínica</button><button id="saveVitals" class="btn btn-secondary" type="button">Guardar sin cambiar</button></div><div class="privacy">El sistema registra valores; no emite diagnósticos ni sustituye el criterio clínico.</div></form></div></section>
+
+<section class="view" data-view="clinica"><div class="viewHead"><div><div class="eyebrow">Expediente</div><h1>Historia clínica</h1><p>Datos personales, antecedentes, hábitos y gineco-obstetricia.</p></div></div><div class="card"><form id="clinicalForm"><div class="grid g2"><div class="field"><label>Beneficiario *</label><select id="clinicalPatient" name="patientId" class="patientSel" data-service="*" required></select></div><div class="field"><label>Responsable</label><select name="staffId" data-staff="Medicina"></select></div></div><div class="section"><h3>Datos personales</h3><div class="grid g4"><div class="field span2"><label>Nombre</label><input name="name" readonly></div><div class="field"><label>Estado civil</label><select name="civilStatus"><option value="">Seleccionar</option><option>Soltero/a</option><option>Casado/a</option><option>Unión libre</option><option>Divorciado/a</option><option>Viudo/a</option><option>Otro</option></select></div><div class="field"><label>Religión</label><input name="religion"></div><div class="field"><label>Fecha de nacimiento</label><input id="birthDate" name="birthDate" type="date"></div><div class="field"><label>Edad</label><input id="clinicalAge" name="age" readonly></div><div class="field"><label>Ocupación</label><input name="occupation"></div><div class="field all"><label>Motivo de consulta</label><textarea name="consultReason"></textarea></div></div></div><div class="section"><h3>Antecedentes personales patológicos</h3><div class="checkGrid">${[['diabetes','Diabetes'],['hypertension','Hipertensión'],['nephropathy','Nefropatías'],['lungDisease','Enfermedades pulmonares'],['tuberculosis','Tuberculosis'],['allergies','Alergias'],['cancer','Cáncer'],['copd','EPOC'],['heartDisease','Enfermedad cardiaca'],['asthma','Asma'],['takesMedication','Toma medicamentos'],['previousSurgeries','Cirugías previas']].map(([n,l])=>`<label class="check"><input type="checkbox" name="${n}"><span>${l}</span></label>`).join('')}</div><div class="grid g2" style="margin-top:12px"><div class="field"><label>Medicamentos actuales</label><input name="medicationWhich"></div><div class="field"><label>Otros antecedentes</label><input name="pathologicalOther"></div></div></div><div class="section"><h3>Antecedentes heredofamiliares</h3><div class="checkGrid">${[['fhDiabetes','Diabetes'],['fhCopd','EPOC'],['fhHypertension','Hipertensión'],['fhNephropathy','Nefropatías'],['fhTuberculosis','Tuberculosis'],['fhCancer','Cáncer'],['fhHeartDisease','Cardiopatías'],['fhOther','Otros']].map(([n,l])=>`<label class="check"><input type="checkbox" name="${n}"><span>${l}</span></label>`).join('')}</div><div class="field" style="margin-top:12px"><label>Detalles familiares</label><input name="familyDetails"></div></div><div class="section"><h3>Hábitos y exposiciones</h3><div class="checkGrid">${[['smoking','Tabaquismo'],['alcohol','Alcohol'],['physicalActivity','Actividad física'],['animalContact','Convivencia con animales'],['biomass','Biomasa / humo de leña'],['dustExposure','Exposición a polvo']].map(([n,l])=>`<label class="check"><input type="checkbox" name="${n}"><span>${l}</span></label>`).join('')}</div><div class="grid g3" style="margin-top:12px"><div class="field"><label>Animales, ¿cuáles?</label><input name="animalsWhich"></div><div class="field"><label>Alimentación</label><input name="diet"></div><div class="field"><label>Detalles de exposición</label><input name="exposureDetails"></div></div></div><div class="section"><h3>Gineco-obstetricia (cuando aplique)</h3><div class="grid g4"><div class="field"><label>Menarca</label><input name="menarche"></div><div class="field"><label>Ciclo menstrual</label><select name="regularCycle"><option value="">No registrado</option><option>Regular</option><option>Irregular</option><option>No aplica</option></select></div><div class="field"><label>Dismenorrea</label><select name="dysmenorrhea"><option value="">No registrado</option><option>Sí</option><option>No</option><option>No aplica</option></select></div><div class="field"><label>IVSA</label><input name="sexualLifeStart"></div><div class="field"><label>Gestas</label><input name="pregnancies"></div><div class="field"><label>Partos</label><input name="births"></div><div class="field"><label>Abortos</label><input name="abortions"></div><div class="field"><label>Cesáreas</label><input name="cSections"></div><div class="field"><label>FUM</label><input name="lastMenstrualPeriod" type="date"></div><div class="field"><label>Método anticonceptivo</label><input name="contraceptiveMethod"></div><div class="field span2"><label>Menopausia</label><input name="menopause"></div></div></div><div class="actions section"><button class="btn btn-primary" type="submit">Guardar y enviar a medicina</button><button id="saveClinical" class="btn btn-secondary" type="button">Guardar borrador</button></div></form></div></section>
+
+<section class="view" data-view="medicina"><div class="viewHead"><div><div class="eyebrow">Consulta médica</div><h1>Medicina</h1><p>Expediente integrado, diagnóstico, tratamiento e impresión.</p></div><div class="pill">Hora con segundos: <span id="medClock">—</span></div></div><div class="card"><form id="medicineForm"><div class="grid g2"><div class="field"><label>Selecciona quién está atendiendo *</label><select id="medStaff" name="staffId" data-staff="Medicina" required></select></div><div class="field"><label>Selecciona el beneficiario *</label><select id="medPatient" name="patientId" class="patientSel" data-service="Medicina" required></select></div></div><div id="doctorInfo" class="note" style="margin-top:15px">Selecciona al personal médico.</div><div class="section"><h3>Signos vitales</h3><div id="medVitals" class="vitals"></div></div><div class="section"><h3>Historia clínica</h3><div id="medClinical" class="note">Selecciona un beneficiario.</div></div><div class="section grid g2"><div class="field all"><label>Diagnóstico</label><textarea id="diagnosis"></textarea></div><div class="field all"><label>Recomendaciones del tratamiento</label><textarea id="treatment"></textarea></div></div><div class="section medPanel"><div class="cardHead"><div><h3>Medicamentos</h3><p>Selección del inventario, dosis y cantidad.</p></div><button id="addMedLine" class="btn btn-sm btn-secondary" type="button">+ Agregar</button></div><div id="medLines"></div></div><div class="section field"><label>Recomendaciones generales</label><textarea id="generalRec"></textarea></div><div class="actions section"><button class="btn btn-primary" type="submit">Guardar y visualizar PDF</button><button id="saveMedicine" class="btn btn-secondary" type="button">Guardar sin PDF</button></div></form></div></section>
+
+<section class="view" data-view="personal"><div class="viewHead"><div><div class="eyebrow">Equipo</div><h1>Personal de la brigada</h1><p>Registro y asignación a una o varias áreas.</p></div></div><div class="grid g2"><div class="card"><div class="cardHead"><div><h2>Agregar personal</h2><p>La información se reutiliza en cada módulo.</p></div></div><form id="staffForm" class="grid"><input id="staffEdit" type="hidden"><div class="field"><label>Nombre completo *</label><input id="staffName" required></div><div class="field"><label>Cédula profesional</label><input id="staffLicense"></div><div class="field"><label>Escuela o universidad de procedencia</label><input id="staffSchool"></div><div class="field"><span>Áreas *</span><div id="areaChecks" class="checkGrid"></div></div><div class="actions"><button class="btn btn-primary" type="submit">Guardar personal</button><button id="cancelStaff" class="btn btn-ghost" type="button" hidden>Cancelar edición</button></div></form></div><div class="card"><div class="cardHead"><div><h2>Personal agregado</h2><p>Actualización inmediata.</p></div><span id="staffCount" class="chip">0</span></div><div id="staffList" class="queue"></div></div></div></section>
+
+<section class="view" data-view="farmacia"><div class="viewHead"><div><div class="eyebrow">Inventario</div><h1>Farmacia</h1><p>Ingreso, búsqueda, edición y descuento automático.</p></div></div><div id="pharmEntryCard" class="card"><form id="pharmForm" class="grid g3"><input id="medEdit" type="hidden"><div class="field"><label>Nombre comercial *</label><input id="commercial" required></div><div class="field"><label>Nombre genérico *</label><input id="generic" required></div><div class="field"><label>Dosis / concentración *</label><input id="concentration" required></div><div class="field"><label>Vía de administración</label><input id="route"></div><div class="field"><label>Grupo terapéutico</label><input id="group"></div><div class="field"><label>Cantidad *</label><input id="quantity" type="number" min="0" step="1" required></div><div class="actions all"><button class="btn btn-primary" type="submit">Guardar y almacenar</button><button id="cancelMed" class="btn btn-ghost" type="button" hidden>Cancelar edición</button></div></form></div><div class="card" style="margin-top:18px"><div class="cardHead"><div><h2>Inventario existente</h2><p><span class="stock green"></span> 6 o más · <span class="stock yellow"></span> 1 a 5 · <span class="stock red"></span> 0</p></div><input id="pharmSearch" placeholder="Buscar medicamento..." style="max-width:260px"></div><div class="tableWrap"><table><thead><tr><th>Estado</th><th>Comercial</th><th>Genérico</th><th>Dosis</th><th>Vía</th><th>Grupo</th><th>Cantidad</th><th>Acciones</th></tr></thead><tbody id="pharmBody"></tbody></table></div></div></section>
+
+<section class="view" data-view="base"><div class="viewHead"><div><div class="eyebrow">Control central</div><h1>Base de datos</h1><p>Filtros, historial autorizado y exportación.</p></div><div class="actions"><button id="exportDb" class="btn btn-primary">Exportar PDF horizontal</button><button id="saveDb" class="btn btn-secondary">Guardar datos</button></div></div><div class="card"><div class="grid g3" style="margin-bottom:16px"><div class="field"><label>Buscar</label><input id="dbSearch" placeholder="Nombre, teléfono, localidad..."></div><div class="field"><label>Área</label><select id="dbService"></select></div><div class="field"><label>Fecha</label><input id="dbDate" type="date"></div></div><div class="tableWrap"><table><thead><tr><th>Fecha y hora</th><th>Beneficiario</th><th>Teléfono</th><th>Localidad</th><th>Domicilio</th><th>Área</th><th id="histHead">Ver historial</th></tr></thead><tbody id="dbBody"></tbody></table></div></div></section>
+
+<section class="view" data-view="historial"><div class="viewHead"><div><div class="eyebrow">Expedientes</div><h1>Historial</h1><p>Búsqueda, visualización y PDF individual.</p></div></div><div class="card" style="margin-bottom:18px"><div class="grid g3"><div class="field span2"><label>Buscar persona</label><input id="histSearch"></div><div class="field"><label>Área</label><select id="histService"></select></div></div></div><div id="histCards" class="historyGrid"></div></section>
+
+${specialtyView('juridico','Asesoría jurídica','Asesoría Jurídica')}
+${specialtyView('fisioterapia','Fisioterapia','Fisioterapia')}
+${specialtyView('psicologia','Psicología','Psicología')}
+${specialtyView('vacunas','Vacunas','Vacunas','Vacunas colocadas','vaccinesGiven')}
+${specialtyView('cosmetologia','Cosmetología','Cosmetología','Notas y recomendaciones','notes')}
+
+<section class="view" data-view="usuarios"><div class="viewHead"><div><div class="eyebrow">Seguridad</div><h1>Usuarios y perfiles</h1><p>Contraseñas PBKDF2, roles y activación.</p></div></div><div class="grid g2"><div class="card"><div class="cardHead"><div><h2>Crear usuario</h2><p>No se almacenan contraseñas en texto plano.</p></div></div><form id="userForm" class="grid"><div class="field"><label>Usuario *</label><input id="newUser" required></div><div class="field"><label>Perfil *</label><select id="newRole" required></select></div><div class="field"><label>Vincular con personal</label><select id="linkedStaff"></select></div><div class="field"><label>Contraseña temporal *</label><div class="passwordWrap"><input id="newPass" type="password" minlength="12" required><button type="button" class="passwordToggle" data-pass="newPass">◉</button></div><small>12 caracteres, mayúscula, minúscula, número y símbolo.</small></div><label class="check"><input id="mustChange" type="checkbox" checked><span>Solicitar cambio al siguiente acceso</span></label><button class="btn btn-primary" type="submit">Crear usuario cifrado</button></form></div><div class="card"><div class="cardHead"><div><h2>Usuarios existentes</h2><p>Acciones registradas en auditoría.</p></div><span id="userCount" class="chip">0</span></div><div id="userList" class="queue"></div></div></div><div class="card" style="margin-top:18px"><div class="cardHead"><div><h2>Matriz de acceso</h2><p>Módulos disponibles para cada perfil.</p></div></div><div id="roleMatrix" class="tableWrap"></div></div></section>
+
+<section class="view" data-view="respaldo"><div class="viewHead"><div><div class="eyebrow">Continuidad operativa</div><h1>Copia de seguridad</h1><p>Estado, respaldo cifrado, importación y nube.</p></div></div><div class="backupGrid"><div class="statusPanel"><div id="localOrb" class="orb"></div><h3>Base local</h3><p id="localText">Verificando...</p></div><div class="statusPanel"><div id="saveOrb" class="orb"></div><h3>Datos guardados</h3><p id="saveText">Esperando guardado...</p></div></div><div class="grid g2" style="margin-top:18px"><div class="card"><div class="cardHead"><div><h2>Exportar respaldo cifrado</h2><p>Archivo JSON protegido con contraseña.</p></div></div><button id="exportBackup" class="btn btn-primary">Exportar todo</button></div><div class="card"><div class="cardHead"><div><h2>Importar respaldo</h2><p>Restaura un archivo del sistema.</p></div></div><input id="backupFile" type="file" accept=".json,application/json"><button id="importBackup" class="btn btn-secondary" style="margin-top:10px">Subir archivo</button></div></div><div class="card" style="margin-top:18px"><div class="cardHead"><div><h2>Sincronización Firebase opcional</h2><p>Actualización real entre distintos dispositivos.</p></div><span id="cloudBadge" class="status waiting">Sin configurar</span></div><form id="cloudForm" class="grid g2"><div class="field all"><label>Configuración Firebase (JSON)</label><textarea id="firebaseConfig" placeholder='{"apiKey":"...","authDomain":"...","projectId":"..."}'></textarea></div><div class="field"><label>Correo de Firebase Auth</label><input id="cloudEmail" type="email"></div><div class="field"><label>Contraseña de Firebase Auth</label><input id="cloudPass" type="password"></div><div class="field all"><label>Ruta colección/documento</label><input id="cloudPath" value="brigadas_salud/estado_principal"></div><div class="actions all"><button class="btn btn-primary" type="submit">Conectar y sincronizar</button><button id="disconnectCloud" class="btn btn-ghost" type="button">Desconectar</button></div></form><div class="privacy">Para datos reales activa Authentication, configura reglas de Firestore y revisa las obligaciones de privacidad aplicables.</div></div><div class="dangerZone" style="margin-top:18px"><h3>Borrar todo definitivamente</h3><p>Elimina beneficiarios, expedientes, personal, inventario, usuarios y auditoría del dispositivo.</p><button id="deleteAll" class="btn btn-danger">Estoy seguro: borrar todo</button></div></section>
+
+<section class="view" data-view="auditoria"><div class="viewHead"><div><div class="eyebrow">Trazabilidad</div><h1>Auditoría</h1><p>Accesos y modificaciones importantes.</p></div><button id="exportAudit" class="btn btn-secondary">Exportar PDF</button></div><div class="card"><div class="tableWrap"><table><thead><tr><th>Fecha y hora</th><th>Usuario</th><th>Acción</th><th>Detalle</th></tr></thead><tbody id="auditBody"></tbody></table></div></div></section>
+`}
+
+function buildInterface(){
+ $('#navRoot').innerHTML=navMarkup();
+ $('#views').innerHTML=viewsMarkup();
+ const serviceOpts=`<option value="">Seleccionar servicio</option>${SERVICES.map(s=>`<option>${esc(s)}</option>`).join('')}`;
+ $('#regService').innerHTML=serviceOpts;
+ ['dbService','histService'].forEach(id=>$('#'+id).innerHTML=`<option value="">Todas las áreas</option>${SERVICES.map(s=>`<option>${esc(s)}</option>`).join('')}`);
+ $('#newRole').innerHTML=`<option value="">Seleccionar perfil</option>${Object.entries(ROLES).map(([k,r])=>`<option value="${k}">${esc(r.label)}</option>`).join('')}`;
+ $('#areaChecks').innerHTML=STAFF_AREAS.map(a=>`<label class="check"><input type="checkbox" name="staffArea" value="${esc(a)}"><span>${esc(a)}</span></label>`).join('');
+ resetMedLines();
+ resetCosLines();
+}
+
+/* ===== Persistencia cifrada, autenticación y sincronización ===== */
+function bytesToB64(bytes){let s='';for(const b of bytes)s+=String.fromCharCode(b);return btoa(s)}
+function b64ToBytes(value){const s=atob(value);const out=new Uint8Array(s.length);for(let i=0;i<s.length;i++)out[i]=s.charCodeAt(i);return out}
+function textBytes(value){return new TextEncoder().encode(value)}
+function bytesText(value){return new TextDecoder().decode(value)}
+
+function openLocalDatabase(){
+ return new Promise((resolve,reject)=>{
+  const req=indexedDB.open(DB_NAME,DB_VERSION);
+  req.onupgradeneeded=()=>{const d=req.result;if(!d.objectStoreNames.contains('secure'))d.createObjectStore('secure');if(!d.objectStoreNames.contains('keys'))d.createObjectStore('keys')};
+  req.onsuccess=()=>resolve(req.result);
+  req.onerror=()=>reject(req.error);
+ });
+}
+function idbGet(store,k){return new Promise((resolve,reject)=>{const r=db.transaction(store,'readonly').objectStore(store).get(k);r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)})}
+function idbPut(store,k,v){return new Promise((resolve,reject)=>{const r=db.transaction(store,'readwrite').objectStore(store).put(v,k);r.onsuccess=()=>resolve(true);r.onerror=()=>reject(r.error)})}
+function idbDelete(store,k){return new Promise((resolve,reject)=>{const r=db.transaction(store,'readwrite').objectStore(store).delete(k);r.onsuccess=()=>resolve(true);r.onerror=()=>reject(r.error)})}
+function idbClear(store){return new Promise((resolve,reject)=>{const r=db.transaction(store,'readwrite').objectStore(store).clear();r.onsuccess=()=>resolve(true);r.onerror=()=>reject(r.error)})}
+
+async function initializeStorage(){
+ try{
+  db=await openLocalDatabase();
+  let stored=await idbGet('keys','main-aes');
+  if(stored instanceof CryptoKey){key=stored}
+  else{
+   key=await crypto.subtle.generateKey({name:'AES-GCM',length:256},false,['encrypt','decrypt']);
+   await idbPut('keys','main-aes',key);
+  }
+  storageMode='indexeddb';
+  const packed=await idbGet('secure',STATE_KEY);
+  if(packed)state=normalizeState(JSON.parse(await decryptObject(packed,key)));
+ }catch(err){
+  console.warn('IndexedDB seguro no disponible; se usa almacenamiento local cifrado.',err);
+  storageMode='localstorage';
+  let raw=localStorage.getItem('fg_key_v1');
+  if(!raw){const bytes=crypto.getRandomValues(new Uint8Array(32));raw=bytesToB64(bytes);localStorage.setItem('fg_key_v1',raw)}
+  key=await crypto.subtle.importKey('raw',b64ToBytes(raw),{name:'AES-GCM'},false,['encrypt','decrypt']);
+  const packed=localStorage.getItem(FALLBACK_KEY);
+  if(packed){try{state=normalizeState(JSON.parse(await decryptObject(JSON.parse(packed),key)))}catch(err){console.error(err);state=defaultState()}}
+ }
+ state=normalizeState(state);
+ updateStorageStatus();
+}
+async function encryptObject(text,cryptoKey){
+ const iv=crypto.getRandomValues(new Uint8Array(12));
+ const data=await crypto.subtle.encrypt({name:'AES-GCM',iv},cryptoKey,textBytes(text));
+ return{v:1,alg:'AES-GCM',iv:bytesToB64(iv),data:bytesToB64(new Uint8Array(data))};
+}
+async function decryptObject(packed,cryptoKey){
+ const out=await crypto.subtle.decrypt({name:'AES-GCM',iv:b64ToBytes(packed.iv)},cryptoKey,b64ToBytes(packed.data));
+ return bytesText(new Uint8Array(out));
+}
+async function derivePasswordKey(password,salt,iterations=PASS_ITER){
+ const material=await crypto.subtle.importKey('raw',textBytes(password),'PBKDF2',false,['deriveKey']);
+ return crypto.subtle.deriveKey({name:'PBKDF2',hash:'SHA-256',salt,iterations},material,{name:'AES-GCM',length:256},false,['encrypt','decrypt']);
+}
+async function hashPassword(password,saltB64=null){
+ const salt=saltB64?b64ToBytes(saltB64):crypto.getRandomValues(new Uint8Array(16));
+ const material=await crypto.subtle.importKey('raw',textBytes(password),'PBKDF2',false,['deriveBits']);
+ const bits=await crypto.subtle.deriveBits({name:'PBKDF2',hash:'SHA-256',salt,iterations:PASS_ITER},material,256);
+ return{salt:bytesToB64(salt),hash:bytesToB64(new Uint8Array(bits)),iterations:PASS_ITER};
+}
+async function verifyPassword(password,record){
+ const v=await hashPassword(password,record.salt);
+ const a=b64ToBytes(v.hash),b=b64ToBytes(record.hash);
+ if(a.length!==b.length)return false;
+ let diff=0;for(let i=0;i<a.length;i++)diff|=a[i]^b[i];
+ return diff===0;
+}
+function publicCloudState(){
+ const copy=structuredClone(state);
+ copy.meta.cloud={...copy.meta.cloud,config:'',email:'',password:''};
+ return copy;
+}
+async function persistState({broadcast=true,pushCloud=true,bump=true}={}){
+ try{
+  if(bump){state.meta.revision=(Number(state.meta.revision)||0)+1;state.meta.updatedAt=iso()}
+  state.meta.lastSavedAt=iso();
+  const packed=await encryptObject(JSON.stringify(state),key);
+  if(storageMode==='indexeddb')await idbPut('secure',STATE_KEY,packed);
+  else localStorage.setItem(FALLBACK_KEY,JSON.stringify(packed));
+  sync('ok',cloud.connected?'Guardado y sincronizado':'Guardado cifrado');
+  updateStorageStatus();
+  if(broadcast&&channel)channel.postMessage({type:'changed',revision:state.meta.revision,source:SESSION_KEY});
+  if(broadcast)localStorage.setItem('fg_signal',JSON.stringify({r:state.meta.revision,t:Date.now()}));
+  if(pushCloud&&cloud.connected&&!cloud.suppress)queueCloudPush();
+  return true;
+ }catch(err){
+  console.error(err);sync('bad','Error al guardar');toast('No se pudo guardar',err.message||'Error de almacenamiento','error');return false;
+ }
+}
+function scheduleSave(reason='',render=false){
+ clearTimeout(saveTimer);
+ sync('',reason?'Cambios pendientes':'Guardando...');
+ if(render)renderAll();
+ saveTimer=setTimeout(()=>persistState(),300);
+}
+async function reloadLocalState(){
+ try{
+  let packed=storageMode==='indexeddb'?await idbGet('secure',STATE_KEY):JSON.parse(localStorage.getItem(FALLBACK_KEY)||'null');
+  if(!packed)return;
+  const incoming=normalizeState(JSON.parse(await decryptObject(packed,key)));
+  if((incoming.meta.revision||0)>(state.meta.revision||0)){state=incoming;renderAll();sync('ok','Actualizado en tiempo real')}
+ }catch(err){console.warn('No se pudo leer cambio externo',err)}
+}
+function initializeRealtime(){
+ try{
+  channel=new BroadcastChannel('fg_brigadas_live_v1');
+  channel.onmessage=e=>{if(e.data?.type==='changed'&&(e.data.revision||0)>(state.meta.revision||0))reloadLocalState()};
+ }catch(err){console.warn('BroadcastChannel no disponible',err)}
+ addEventListener('storage',e=>{if(e.key==='fg_signal')reloadLocalState()});
+}
+function updateStorageStatus(){
+ const localOrb=$('#localOrb'),saveOrb=$('#saveOrb');
+ if(localOrb){localOrb.className='orb '+(key?'good':'bad');$('#localText').textContent=key?(storageMode==='indexeddb'?'Base cifrada en IndexedDB':'Base cifrada en almacenamiento local compatible'):'Sin acceso al almacenamiento'}
+ if(saveOrb){saveOrb.className='orb '+(state.meta.lastSavedAt?'good':'warn');$('#saveText').textContent=state.meta.lastSavedAt?`Último guardado: ${dt(state.meta.lastSavedAt,true)}`:'Aún no hay un guardado confirmado'}
+}
+function commit(action,detail,{render=true}={}){
+ addAudit(action,detail);
+ scheduleSave('Guardando cambios...',render);
+}
+
+async function createInitialAdmin(e){
+ e.preventDefault();
+ const org=$('#setupOrg').value.trim(),username=norm($('#setupUser').value),name=$('#setupName').value.trim(),pass=$('#setupPass').value,pass2=$('#setupPass2').value;
+ if(!org||!username||!name)return toast('Completa los datos','Organización, usuario y nombre son obligatorios.','error');
+ if(pass!==pass2)return toast('Las contraseñas no coinciden','','error');
+ if(!strongPass(pass))return toast('Contraseña insuficiente','Usa 12 caracteres, mayúscula, minúscula, número y símbolo.','error');
+ const pwd=await hashPassword(pass);
+ state.meta.organization=org;
+ state.users=[{id:id('usr'),username,name,role:'superadmin',staffId:null,active:true,mustChange:false,password:pwd,createdAt:iso(),updatedAt:iso(),lastLogin:null}];
+ addAudit('CONFIGURACIÓN INICIAL',`Creación de ${username}`,true);
+ await persistState();
+ $('#setupBack').hidden=true;
+ toast('Sistema protegido','Ahora inicia sesión con la cuenta creada.');
+}
+async function login(e){
+ e.preventDefault();
+ const username=norm($('#loginUser').value),password=$('#loginPass').value;
+ const found=state.users.find(x=>norm(x.username)===username&&x.active);
+ if(!found||!await verifyPassword(password,found.password)){toast('Acceso denegado','Usuario o contraseña incorrectos.','error');return}
+ user=found;user.lastLogin=iso();sessionStorage.setItem(SESSION_KEY,user.id);addAudit('INICIO DE SESIÓN',user.username);
+ await persistState();
+ showApp();
+ if(user.mustChange)forcePasswordChange();
+}
+function logout(auto=false){
+ if(user){addAudit(auto?'CIERRE AUTOMÁTICO':'CIERRE DE SESIÓN',auto?'Inactividad':'Salida manual');persistState({pushCloud:false})}
+ user=null;sessionStorage.removeItem(SESSION_KEY);$('#app').hidden=true;$('#loginView').hidden=false;$('#loginPass').value='';closeSidebar();sync('ok','Sistema listo');
+ if(auto)toast('Sesión cerrada','Se cerró por inactividad.','info');
+}
+function restoreSession(){
+ const uid=sessionStorage.getItem(SESSION_KEY),found=uid?state.users.find(x=>x.id===uid&&x.active):null;
+ if(found){user=found;showApp()}else{$('#loginView').hidden=false;$('#app').hidden=true}
+}
+function forcePasswordChange(){
+ openModal('Actualiza tu contraseña',`<form id="forcePassForm" class="grid"><div class="field"><label>Nueva contraseña</label><input id="forcePass1" type="password" minlength="12" required></div><div class="field"><label>Confirma la contraseña</label><input id="forcePass2" type="password" minlength="12" required></div><small>Debe incluir mayúscula, minúscula, número y símbolo.</small><button class="btn btn-primary" type="submit">Actualizar contraseña</button></form>`,'');
+ $('#forcePassForm').onsubmit=async e=>{e.preventDefault();const a=$('#forcePass1').value,b=$('#forcePass2').value;if(a!==b)return toast('No coinciden','','error');if(!strongPass(a))return toast('Contraseña insuficiente','','error');user.password=await hashPassword(a);user.mustChange=false;user.updatedAt=iso();commit('CAMBIO DE CONTRASEÑA',user.username);closeModal();toast('Contraseña actualizada')};
+}
+function markActivity(){lastActivity=Date.now()}
+function initializeIdleTimer(){
+ ['click','keydown','touchstart','mousemove'].forEach(ev=>addEventListener(ev,markActivity,{passive:true}));
+ idleTimer=setInterval(()=>{if(user&&Date.now()-lastActivity>IDLE_MS)logout(true)},30000);
+}
+function showApp(){
+ $('#loginView').hidden=true;$('#app').hidden=false;
+ $('#topName').textContent=user.name||user.username;$('#topRole').textContent=ROLES[user.role]?.label||user.role;
+ $('#sideName').textContent=user.name||user.username;$('#sideRole').textContent=ROLES[user.role]?.label||user.role;$('#avatar').textContent=initials(user.name||user.username);
+ applyPermissions();renderAll();
+ const first=can(currentView)?currentView:(NAV.flatMap(x=>x[1]).find(x=>can(x[0]))?.[0]||'dashboard');
+ openView(first);
+}
+function applyPermissions(){
+ $$('[data-perm]').forEach(el=>el.hidden=!can(el.dataset.perm));
+ $$('[data-view]').forEach(el=>{if(!can(el.dataset.view))el.hidden=true});
+ if($('#pharmEntryCard'))$('#pharmEntryCard').hidden=!canManageInventory();
+}
+function openView(name){
+ if(!can(name)){toast('Acceso restringido','Tu perfil no tiene permiso para este módulo.','error');return}
+ currentView=name;
+ $$('.view').forEach(v=>v.classList.toggle('active',v.dataset.view===name));
+ $$('[data-nav]').forEach(b=>b.classList.toggle('active',b.dataset.nav===name));
+ const active=$(`[data-view="${name}"]`);if(active)active.hidden=false;
+ closeSidebar();scrollTo({top:0,behavior:'smooth'});
+ if(name==='respaldo')updateStorageStatus();
+}
+function openSidebar(){document.body.classList.add('menuOpen');$('#overlay').hidden=false}
+function closeSidebar(){document.body.classList.remove('menuOpen');$('#overlay').hidden=true}
+
+/* ===== Renderizado y utilidades de formularios ===== */
+function formObject(form){
+ const out={};
+ for(const el of form.elements){
+  if(!el.name||el.disabled||['submit','button','reset'].includes(el.type))continue;
+  if(el.type==='checkbox')out[el.name]=el.checked;
+  else if(el.type==='radio'){if(el.checked)out[el.name]=el.value}
+  else out[el.name]=el.value.trim?.()??el.value;
+ }
+ return out;
+}
+function fillForm(form,data={}){
+ for(const el of form.elements){
+  if(!el.name||!(el.name in data))continue;
+  if(el.type==='checkbox')el.checked=!!data[el.name];
+  else if(el.type==='radio')el.checked=el.value===data[el.name];
+  else el.value=data[el.name]??'';
+ }
+}
+function priorityOrder(v){return v==='urgente'?0:v==='preferente'?1:2}
+function activeVisits(service='*'){
+ return state.visits.filter(v=>['waiting','in_service'].includes(v.status)&&(service==='*'||v.service===service));
+}
+function visitPatientOption(v){
+ const p=patient(v.patientId);return p?`<option value="${p.id}">${esc(p.name)} · ${esc(v.service)} · ${STATUS[v.status]}</option>`:'';
+}
+function selectorValue(sel){return sel?.value||''}
+function populateSelectors(){
+ const old=new Map($$('select').map(s=>[s,s.value]));
+ $$('[data-staff]').forEach(sel=>{
+  const area=sel.dataset.staff;
+  const list=state.personnel.filter(x=>x.active!==false&&(area==='Signos vitales'||x.areas?.includes(area)||x.areas?.includes('Medicina')&&area==='Signos vitales'));
+  sel.innerHTML=`<option value="">Seleccionar personal</option>${list.map(x=>`<option value="${x.id}">${esc(x.name)}</option>`).join('')}`;
+  if(old.get(sel)&&list.some(x=>x.id===old.get(sel)))sel.value=old.get(sel);
+ });
+ $$('.patientSel').forEach(sel=>{
+  const service=sel.dataset.service||'*';
+  const list=activeVisits(service).sort((a,b)=>priorityOrder(a.priority)-priorityOrder(b.priority)||new Date(a.createdAt)-new Date(b.createdAt));
+  sel.innerHTML=`<option value="">Seleccionar beneficiario</option>${list.map(visitPatientOption).join('')}`;
+  if(old.get(sel)&&list.some(v=>v.patientId===old.get(sel)))sel.value=old.get(sel);
+ });
+ const linked=$('#linkedStaff');
+ if(linked){
+  const prev=linked.value;linked.innerHTML=`<option value="">Sin vínculo</option>${state.personnel.filter(x=>x.active!==false).map(x=>`<option value="${x.id}">${esc(x.name)}</option>`).join('')}`;linked.value=prev;
+ }
+}
+function renderDashboard(){
+ const visits=state.visits;
+ $('#stPatients').textContent=state.patients.length;
+ $('#stWait').textContent=visits.filter(v=>v.status==='waiting').length;
+ $('#stActive').textContent=visits.filter(v=>v.status==='in_service').length;
+ $('#stDone').textContent=visits.filter(v=>v.status==='completed').length;
+ const queue=visits.filter(v=>['waiting','in_service'].includes(v.status)).sort((a,b)=>priorityOrder(a.priority)-priorityOrder(b.priority)||new Date(a.createdAt)-new Date(b.createdAt));
+ $('#dashQueue').innerHTML=queue.length?queue.map(v=>{const p=patient(v.patientId);return `<tr><td>${tm(v.createdAt)}</td><td><strong>${esc(p?.name||'Sin nombre')}</strong><br><small>${esc(v.priority||'normal')}</small></td><td>${esc(v.service)}</td><td>${badge(v.status)}</td><td><button class="btn btn-sm btn-secondary" data-open-visit="${v.id}">${v.status==='waiting'?'Atender':'Abrir'}</button></td></tr>`}).join(''):`<tr><td colspan="5" class="empty">No hay personas pendientes.</td></tr>`;
+ const max=Math.max(1,...SERVICES.map(s=>visits.filter(v=>v.service===s).length));
+ $('#serviceBars').innerHTML=SERVICES.map(s=>{const n=visits.filter(v=>v.service===s).length;return `<div class="bar"><div><span>${esc(s)}</span><strong>${n}</strong></div><div class="track"><i style="width:${Math.round(n/max*100)}%"></i></div></div>`}).join('');
+}
+function renderQueue(){
+ const list=state.visits.filter(v=>v.status!=='cancelled').sort((a,b)=>priorityOrder(a.priority)-priorityOrder(b.priority)||new Date(a.createdAt)-new Date(b.createdAt));
+ $('#queueCount').textContent=list.filter(v=>['waiting','in_service'].includes(v.status)).length;
+ if($('#navWait'))$('#navWait').textContent=list.filter(v=>v.status==='waiting').length;
+ $('#regQueue').innerHTML=list.length?list.map(v=>{const p=patient(v.patientId),target=v.service==='Medicina'?'signos':serviceView(v.service),allowed=can(target);return `<div class="queueItem"><div><strong>${esc(p?.name||'Sin nombre')}</strong><small>${tm(v.createdAt)} · ${esc(v.service)} · ${esc(v.priority||'normal')}</small></div><div class="actions">${badge(v.status)}${v.status==='waiting'&&allowed?`<button class="btn btn-sm btn-secondary" data-start="${v.id}">Iniciar</button>`:''}${v.status==='in_service'&&can(serviceView(v.service))?`<button class="btn btn-sm btn-secondary" data-open-visit="${v.id}">Abrir área</button>`:''}${['waiting','in_service'].includes(v.status)&&can('registro')?`<button class="btn btn-sm btn-ghost" data-cancel="${v.id}">Cancelar</button>`:''}</div></div>`}).join(''):`<div class="empty">La lista está vacía.</div>`;
+}
+function renderStaff(){
+ $('#staffCount').textContent=state.personnel.filter(x=>x.active!==false).length;
+ $('#staffList').innerHTML=state.personnel.length?state.personnel.map(x=>`<div class="queueItem"><div><strong>${esc(x.name)}</strong><small>${esc((x.areas||[]).join(' · ')||'Sin área')}${x.license?` · Céd. ${esc(x.license)}`:''}</small></div><div class="actions"><span class="status ${x.active===false?'cancelled':'completed'}">${x.active===false?'Inactivo':'Activo'}</span><button class="btn btn-sm btn-secondary" data-edit-staff="${x.id}">Editar</button><button class="btn btn-sm btn-ghost" data-toggle-staff="${x.id}">${x.active===false?'Activar':'Desactivar'}</button></div></div>`).join(''):`<div class="empty">Aún no hay personal registrado.</div>`;
+}
+function stockClass(q){return Number(q)>=6?'green':Number(q)>0?'yellow':'red'}
+function renderPharmacy(){
+ const q=norm($('#pharmSearch')?.value||'');
+ const list=state.medicines.filter(m=>!q||norm([m.commercial,m.generic,m.concentration,m.group].join(' ')).includes(q)).sort((a,b)=>a.commercial.localeCompare(b.commercial,'es'));
+ $('#pharmBody').innerHTML=list.length?list.map(m=>`<tr><td><span class="stock ${stockClass(m.quantity)}"></span></td><td><strong>${esc(m.commercial)}</strong></td><td>${esc(m.generic)}</td><td>${esc(m.concentration)}</td><td>${esc(m.route||'—')}</td><td>${esc(m.group||'—')}</td><td><strong>${Number(m.quantity)||0}</strong></td><td>${canManageInventory()?`<div class="actions"><button class="btn btn-sm btn-secondary" data-edit-med="${m.id}">Editar</button><button class="btn btn-sm btn-ghost" data-delete-med="${m.id}">Eliminar</button></div>`:'<span class="muted">Solo lectura</span>'}</td></tr>`).join(''):`<tr><td colspan="8" class="empty">No hay medicamentos.</td></tr>`;
+ refreshMedicineOptions();
+}
+function filteredPatients(searchId,serviceId,dateId){
+ const q=norm($(searchId)?.value||''),service=$(serviceId)?.value||'',date=$(dateId)?.value||'';
+ return state.patients.filter(p=>{
+  const v=latestVisit(p.id);
+  return (!q||norm([p.name,p.phone,p.locality,p.address,p.service].join(' ')).includes(q))&&(!service||state.visits.some(x=>x.patientId===p.id&&x.service===service))&&(!date||String(p.createdAt).slice(0,10)===date);
+ }).sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
+}
+function renderDatabase(){
+ let list=filteredPatients('#dbSearch','#dbService','#dbDate');
+ if(user?.role!=='superadmin'&&user?.role!=='admin')list=list.filter(p=>state.visits.some(v=>v.patientId===p.id&&canHistory(v)));
+ const allowAny=user?.role==='superadmin'||(user?.role!=='admin'&&can('historial'));
+ $('#histHead').hidden=!allowAny;
+ $('#dbBody').innerHTML=list.length?list.map(p=>{const all=state.visits.filter(x=>x.patientId===p.id).sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt)),v=(user?.role==='superadmin'||user?.role==='admin'?all[0]:all.find(canHistory))||all[0],allowed=!!v&&canHistory(v);return `<tr><td>${dt(p.createdAt,true)}</td><td><strong>${esc(p.name)}</strong></td><td>${esc(p.phone)}</td><td>${esc(p.locality)}</td><td>${esc(p.address)}</td><td>${esc(v?.service||p.service)}</td><td>${allowed?`<button class="btn btn-sm btn-ok" data-history="${p.id}">Abrir</button>`:'<span class="muted">Restringido</span>'}</td></tr>`}).join(''):`<tr><td colspan="7" class="empty">Sin resultados.</td></tr>`;
+}
+function renderHistory(){
+ const q=norm($('#histSearch')?.value||''),service=$('#histService')?.value||'';
+ const list=state.patients.filter(p=>{const vs=state.visits.filter(v=>v.patientId===p.id);return (!q||norm([p.name,p.phone,p.locality].join(' ')).includes(q))&&(!service||vs.some(v=>v.service===service))&&vs.some(canHistory)}).sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
+ $('#histCards').innerHTML=list.length?list.map(p=>{const visible=state.visits.filter(v=>v.patientId===p.id&&canHistory(v));const areas=[...new Set(visible.map(v=>v.service))];return `<article class="historyCard"><div class="queueHead"><div><strong>${esc(p.name)}</strong><small>${esc(p.phone)} · ${esc(p.locality)}</small></div><span class="chip">${visible.length} atención${visible.length===1?'':'es'}</span></div><p>${esc(areas.join(' · '))}</p><div class="actions"><button class="btn btn-sm btn-secondary" data-history="${p.id}">Visualizar</button><button class="btn btn-sm btn-primary" data-pdf-patient="${p.id}">Exportar PDF</button></div></article>`}).join(''):`<div class="empty">No hay expedientes disponibles para este perfil.</div>`;
+}
+function renderRoleOptions(){
+ const sel=$('#newRole');if(!sel)return;const old=sel.value,entries=Object.entries(ROLES).filter(([k])=>user?.role==='superadmin'||k!=='superadmin');sel.innerHTML=`<option value="">Seleccionar perfil</option>${entries.map(([k,r])=>`<option value="${k}">${esc(r.label)}</option>`).join('')}`;if(entries.some(([k])=>k===old))sel.value=old;
+}
+function renderUsers(){
+ const visibleUsers=state.users.filter(x=>user?.role==='superadmin'||x.role!=='superadmin');$('#userCount').textContent=visibleUsers.length;
+ $('#userList').innerHTML=visibleUsers.length?visibleUsers.map(x=>`<div class="queueItem"><div><strong>${esc(x.name||x.username)}</strong><small>@${esc(x.username)} · ${esc(ROLES[x.role]?.label||x.role)} · Último acceso: ${dt(x.lastLogin)}</small></div><div class="actions"><span class="status ${x.active?'completed':'cancelled'}">${x.active?'Activo':'Bloqueado'}</span>${x.id!==user?.id?`<button class="btn btn-sm btn-secondary" data-reset-user="${x.id}">Clave</button><button class="btn btn-sm btn-ghost" data-toggle-user="${x.id}">${x.active?'Bloquear':'Activar'}</button>`:''}</div></div>`).join(''):`<div class="empty">Sin usuarios.</div>`;
+ $('#roleMatrix').innerHTML=`<table><thead><tr><th>Perfil</th><th>Área</th><th>Módulos</th></tr></thead><tbody>${Object.entries(ROLES).filter(([k])=>user?.role==='superadmin'||k!=='superadmin').map(([k,r])=>`<tr><td><strong>${esc(r.label)}</strong></td><td>${esc(r.area)}</td><td>${esc(r.p.includes('*')?'Acceso total':r.p.map(x=>NAV.flatMap(n=>n[1]).find(v=>v[0]===x)?.[2]||x).join(', '))}</td></tr>`).join('')}</tbody></table>`;
+}
+function renderAudit(){
+ $('#auditBody').innerHTML=state.audit.length?state.audit.map(a=>`<tr><td>${dt(a.createdAt,true)}</td><td>${esc(a.username)}</td><td><strong>${esc(a.action)}</strong></td><td>${esc(a.detail)}</td></tr>`).join(''):`<tr><td colspan="4" class="empty">Sin eventos.</td></tr>`;
+}
+function renderAll(){
+ if(!$('#views').innerHTML)return;
+ populateSelectors();renderDashboard();renderQueue();renderStaff();renderPharmacy();renderDatabase();renderHistory();renderRoleOptions();renderUsers();renderAudit();updateStorageStatus();applyPermissions();renderCloudConfig();
+ updateMedicineContext();updateDoctorInfo();
+}
+function updateLineMedicineOptions(line){
+ const sel=$('.medSelect',line),search=$('.medSearch',line),current=sel.value,q=norm(search?.value||'');
+ const list=state.medicines.filter(m=>(Number(m.quantity)>0||m.id===current)&&(!q||norm([m.commercial,m.generic,m.concentration,m.group].join(' ')).includes(q)));
+ sel.innerHTML=`<option value="">Seleccionar medicamento</option>${list.map(m=>`<option value="${m.id}">${esc(m.commercial)} · ${esc(m.concentration)} (${Number(m.quantity)||0})</option>`).join('')}`;
+ if(current&&list.some(m=>m.id===current))sel.value=current;
+}
+function refreshMedicineOptions(){$$('.medLine').forEach(updateLineMedicineOptions)}
+function medLineHtml(prefix='med'){
+ return `<div class="medLine"><div class="field"><label>Buscar en inventario</label><input class="medSearch" type="search" placeholder="🔎 Nombre o grupo"></div><div class="field"><label>Medicamento</label><select class="medSelect" name="${prefix}Id"><option value="">Seleccionar medicamento</option></select></div><div class="field"><label>Dosis e indicaciones</label><input name="${prefix}Dose" placeholder="Ej. 1 tableta cada 8 h"></div><div class="field"><label>Cantidad</label><input name="${prefix}Qty" type="number" min="1" step="1" value="1"></div><button class="btn btn-sm btn-ghost removeMedLine" type="button">Quitar</button></div>`;
+}
+function resetMedLines(){if($('#medLines')){$('#medLines').innerHTML=medLineHtml('medicine');refreshMedicineOptions()}}
+function resetCosLines(){if($('#cosMedLines')){$('#cosMedLines').innerHTML=medLineHtml('cosmedicine');refreshMedicineOptions()}}
+function medicineLines(container){
+ return $$('.medLine',container).map(line=>{const medicineId=$('.medSelect',line)?.value||'';return{medicineId,dose:$('input[name$="Dose"]',line)?.value.trim()||'',quantity:Math.max(1,Number($('input[name$="Qty"]',line)?.value)||1)}}).filter(x=>x.medicineId);
+}
+function renderVitalsSummary(v){
+ const x=v?.vitals||{};const items=[['Tensión',x.bloodPressure],['F. cardiaca',x.heartRate],['F. respiratoria',x.respiratoryRate],['Temperatura',x.temperature],['Glucosa',x.glucose],['SpO₂',x.spo2],['Peso',x.weight],['Talla',x.height]];
+ return items.map(([a,b])=>`<div class="vital"><span>${a}</span><strong>${esc(safe(b))}</strong></div>`).join('');
+}
+function clinicalSummary(c={}){
+ const flags=[['diabetes','Diabetes'],['hypertension','Hipertensión'],['nephropathy','Nefropatías'],['lungDisease','Enf. pulmonares'],['tuberculosis','Tuberculosis'],['allergies','Alergias'],['cancer','Cáncer'],['copd','EPOC'],['heartDisease','Cardiopatía'],['asthma','Asma']].filter(([k])=>c[k]).map(([,v])=>v);
+ return `<strong>Motivo:</strong> ${esc(safe(c.consultReason))}<br><strong>Antecedentes:</strong> ${esc(flags.join(', ')||'Sin antecedentes marcados')}<br><strong>Medicamentos:</strong> ${esc(safe(c.medicationWhich))}<br><strong>Hábitos/exposiciones:</strong> ${esc([c.smoking&&'Tabaquismo',c.alcohol&&'Alcohol',c.biomass&&'Biomasa',c.dustExposure&&'Polvo'].filter(Boolean).join(', ')||'Sin registro')}`;
+}
+function updateMedicineContext(){
+ const pid=$('#medPatient')?.value;if(!pid){if($('#medVitals'))$('#medVitals').innerHTML=renderVitalsSummary(null);if($('#medClinical'))$('#medClinical').innerHTML='Selecciona un beneficiario.';return}
+ const v=latestVisit(pid,'Medicina')||latestVisit(pid);
+ $('#medVitals').innerHTML=renderVitalsSummary(v);
+ $('#medClinical').innerHTML=clinicalSummary(v?.clinical||{});
+ if(v?.medical){$('#diagnosis').value=v.medical.diagnosis||'';$('#treatment').value=v.medical.treatment||'';$('#generalRec').value=v.medical.generalRecommendations||''}
+}
+function updateDoctorInfo(){
+ const s=person($('#medStaff')?.value);if(!$('#doctorInfo'))return;
+ $('#doctorInfo').innerHTML=s?`<strong>${esc(s.name)}</strong> · Céd. Prof.: ${esc(s.license||'No registrada')} · Universidad: ${esc(s.school||'No registrada')}`:'Selecciona al personal médico.';
+}
+
+/* ===== Flujos de captura ===== */
+async function handleRegistration(e){
+ e.preventDefault();const data=formObject(e.currentTarget);
+ if(!/^\d{10}$/.test(data.phone))return toast('Teléfono inválido','Escribe exactamente 10 dígitos.','error');
+ const duplicate=state.patients.find(p=>p.phone===data.phone&&norm(p.name)===norm(data.name));
+ if(duplicate&&!await ask('Posible duplicado',`Ya existe ${duplicate.name} con el mismo teléfono. ¿Registrar una nueva atención?`,'Registrar'))return;
+ const now=iso(),pid=duplicate?.id||id('pat');
+ if(!duplicate)state.patients.push({id:pid,name:data.name,phone:data.phone,locality:data.locality,address:data.address,service:data.service,consent:true,createdAt:now,updatedAt:now});
+ else{Object.assign(duplicate,{locality:data.locality,address:data.address,service:data.service,updatedAt:now})}
+ const v={id:id('vis'),patientId:pid,service:data.service,priority:data.priority||'normal',status:'waiting',createdAt:now,updatedAt:now,startedAt:null,completedAt:null,vitals:null,clinical:null,medical:null,specialty:null};
+ state.visits.push(v);patient(pid).currentVisitId=v.id;
+ commit('REGISTRO DE BENEFICIARIO',`${data.name} · ${data.service}`);
+ e.currentTarget.reset();toast('Beneficiario registrado','Se agregó a la lista de espera.');
+}
+function startVisit(visitId){
+ const v=visit(visitId);if(!v)return;v.status='in_service';v.startedAt=v.startedAt||iso();v.updatedAt=iso();commit('INICIO DE ATENCIÓN',`${patient(v.patientId)?.name||''} · ${v.service}`);const view=v.service==='Medicina'?'signos':serviceView(v.service);openView(view);
+ setTimeout(()=>{const sel=view==='medicina'?$('#medPatient'):$(`[data-view="${view}"] .patientSel`);if(sel){sel.value=v.patientId;sel.dispatchEvent(new Event('change',{bubbles:true}))}},50);
+}
+function openVisit(visitId){
+ const v=visit(visitId);if(!v)return;if(v.status==='waiting'){startVisit(visitId);return}
+ openView(serviceView(v.service));setTimeout(()=>{const view=serviceView(v.service);const sel=view==='medicina'?$('#medPatient'):$(`[data-view="${view}"] .patientSel`);if(sel){sel.value=v.patientId;sel.dispatchEvent(new Event('change',{bubbles:true}))}},50);
+}
+async function cancelVisit(visitId){
+ const v=visit(visitId);if(!v||!await ask('Cancelar atención',`¿Cancelar la atención de ${patient(v.patientId)?.name||'esta persona'}?`,'Cancelar atención',true))return;
+ v.status='cancelled';v.updatedAt=iso();commit('ATENCIÓN CANCELADA',`${patient(v.patientId)?.name||''} · ${v.service}`);toast('Atención cancelada','','info');
+}
+function saveVitals(continueNext=false){
+ const form=$('#vitalsForm');if(!form.reportValidity())return;
+ const d=formObject(form),v=latestVisit(d.patientId);if(!v)return toast('Atención no encontrada','','error');
+ v.vitals={...d,hivTest:$('#hivTest').checked,capturedAt:iso(),capturedBy:d.staffId};v.status='in_service';v.startedAt=v.startedAt||iso();v.updatedAt=iso();
+ commit('SIGNOS VITALES',`${patient(v.patientId)?.name||''} · ${v.service}`);
+ toast('Signos vitales guardados');
+ if(continueNext){openView('clinica');setTimeout(()=>{$('#clinicalPatient').value=d.patientId;$('#clinicalPatient').dispatchEvent(new Event('change',{bubbles:true}))},50)}
+}
+function loadClinical(pid){
+ const p=patient(pid),v=latestVisit(pid);if(!p||!v)return;
+ fillForm($('#clinicalForm'),v.clinical||{});$('#clinicalPatient').value=pid;$('input[name="name"]',$('#clinicalForm')).value=p.name;
+ if(v.clinical?.birthDate){$('#birthDate').value=v.clinical.birthDate;$('#clinicalAge').value=age(v.clinical.birthDate)}
+}
+function saveClinical(continueNext=false){
+ const form=$('#clinicalForm');if(!form.reportValidity())return;
+ const d=formObject(form),v=latestVisit(d.patientId);if(!v)return toast('Atención no encontrada','','error');
+ d.age=age(d.birthDate);d.savedAt=iso();v.clinical=d;v.status='in_service';v.startedAt=v.startedAt||iso();v.updatedAt=iso();
+ commit('HISTORIA CLÍNICA',`${patient(v.patientId)?.name||''}`);
+ toast('Historia clínica guardada');
+ if(continueNext&&can('medicina')){openView('medicina');setTimeout(()=>{$('#medPatient').value=d.patientId;$('#medPatient').dispatchEvent(new Event('change',{bubbles:true}))},50)}
+}
+function validateAndConsume(lines){
+ const totals={};for(const x of lines)totals[x.medicineId]=(totals[x.medicineId]||0)+x.quantity;
+ for(const [mid,n] of Object.entries(totals)){const m=med(mid);if(!m||Number(m.quantity)<n)throw new Error(`Existencia insuficiente de ${m?.commercial||'medicamento'}. Disponible: ${Number(m?.quantity)||0}.`)}
+ for(const [mid,n] of Object.entries(totals)){const m=med(mid);m.quantity=Number(m.quantity)-n;m.updatedAt=iso()}
+}
+function saveMedicine(makePdf=false){
+ const form=$('#medicineForm');if(!form.reportValidity())return;
+ const pid=$('#medPatient').value,v=latestVisit(pid,'Medicina')||latestVisit(pid);if(!v)return toast('Atención no encontrada','','error');
+ const lines=medicineLines($('#medLines'));
+ try{
+  const previous=v.medical?.medications||[];
+  if(v.medical?.inventoryApplied){for(const x of previous){const m=med(x.medicineId);if(m)m.quantity=Number(m.quantity)+Number(x.quantity||0)}}
+  validateAndConsume(lines);
+  v.medical={staffId:$('#medStaff').value,diagnosis:$('#diagnosis').value.trim(),treatment:$('#treatment').value.trim(),generalRecommendations:$('#generalRec').value.trim(),medications:lines,attendedAt:iso(),inventoryApplied:true};
+  v.status='completed';v.completedAt=iso();v.updatedAt=iso();state.drafts['medicine']='';
+  commit('CONSULTA MÉDICA FINALIZADA',`${patient(pid)?.name||''} · ${lines.length} medicamento(s)`);
+  toast('Consulta guardada','El inventario fue actualizado.');
+  if(makePdf)exportPatientPDF(pid,v.id,true);
+ }catch(err){toast('No se pudo guardar',err.message,'error')}
+}
+function specialtyDraftKey(form){return `draft:${form.dataset.specialty}:${form.querySelector('[name="patientId"]')?.value||'sin-paciente'}`}
+function loadSpecialtyDraft(form){
+ const keyName=specialtyDraftKey(form),d=state.drafts[keyName];if(!d)return;
+ fillForm(form,d);$('.draftStatus',form.closest('.special')).textContent=`Borrador recuperado · ${tm(d._savedAt)}`;
+}
+function saveSpecialty(form){
+ if(!form.reportValidity())return;
+ const d=formObject(form),service=form.dataset.specialty,v=latestVisit(d.patientId,service);if(!v)return toast('Atención no encontrada','','error');
+ let meds=[];
+ try{
+  if(service==='Cosmetología'){
+   meds=medicineLines($('#cosMedLines'));
+   const previous=v.specialty?.medications||[];
+   if(v.specialty?.inventoryApplied){for(const x of previous){const m=med(x.medicineId);if(m)m.quantity=Number(m.quantity)+Number(x.quantity||0)}}
+   validateAndConsume(meds);
+  }
+  v.specialty={...d,staffId:d.staffId,service,medications:meds,inventoryApplied:service==='Cosmetología',savedAt:iso()};
+  v.status='completed';v.completedAt=iso();v.updatedAt=iso();delete state.drafts[specialtyDraftKey(form)];
+  commit(`${service.toUpperCase()} FINALIZADO`,`${patient(d.patientId)?.name||''}`);
+  form.reset();if(service==='Cosmetología')resetCosLines();toast('Datos guardados',`La atención de ${service} fue finalizada.`);
+ }catch(err){toast('No se pudo guardar',err.message,'error')}
+}
+function autosaveSpecialty(form){
+ const d=formObject(form);d._savedAt=iso();state.drafts[specialtyDraftKey(form)]=d;
+ $('.draftStatus',form.closest('.special')).textContent=`Borrador guardado · ${tm(d._savedAt)}`;
+ scheduleSave('Autoguardando...',false);
+}
+function handleStaff(e){
+ e.preventDefault();const areas=$$('input[name="staffArea"]:checked').map(x=>x.value);if(!areas.length)return toast('Selecciona al menos un área','','error');
+ const edit=$('#staffEdit').value,record=edit?person(edit):null,data={name:$('#staffName').value.trim(),license:$('#staffLicense').value.trim(),school:$('#staffSchool').value.trim(),areas,active:record?.active!==false,updatedAt:iso()};
+ if(record)Object.assign(record,data);else state.personnel.push({id:id('per'),...data,createdAt:iso()});
+ commit(record?'PERSONAL ACTUALIZADO':'PERSONAL AGREGADO',data.name);resetStaffForm();toast('Personal guardado');
+}
+function editStaff(staffId){
+ const x=person(staffId);if(!x)return;$('#staffEdit').value=x.id;$('#staffName').value=x.name;$('#staffLicense').value=x.license||'';$('#staffSchool').value=x.school||'';
+ $$('input[name="staffArea"]').forEach(c=>c.checked=x.areas?.includes(c.value));$('#cancelStaff').hidden=false;openView('personal');$('#staffName').focus();
+}
+function resetStaffForm(){$('#staffForm').reset();$('#staffEdit').value='';$('#cancelStaff').hidden=true}
+function toggleStaff(staffId){const x=person(staffId);if(!x)return;x.active=x.active===false;commit(x.active?'PERSONAL ACTIVADO':'PERSONAL DESACTIVADO',x.name)}
+function handlePharmacy(e){
+ e.preventDefault();if(!canManageInventory())return toast('Acceso restringido','Solo administración puede modificar el inventario.','error');const edit=$('#medEdit').value,record=edit?med(edit):null,data={commercial:$('#commercial').value.trim(),generic:$('#generic').value.trim(),concentration:$('#concentration').value.trim(),route:$('#route').value.trim(),group:$('#group').value.trim(),quantity:Math.max(0,Number($('#quantity').value)||0),updatedAt:iso()};
+ if(record)Object.assign(record,data);else state.medicines.push({id:id('med'),...data,createdAt:iso()});
+ commit(record?'MEDICAMENTO ACTUALIZADO':'MEDICAMENTO INGRESADO',`${data.commercial} · ${data.quantity}`);resetPharmForm();toast('Inventario actualizado');
+}
+function editMedicine(mid){const x=med(mid);if(!x)return;$('#medEdit').value=x.id;$('#commercial').value=x.commercial;$('#generic').value=x.generic;$('#concentration').value=x.concentration;$('#route').value=x.route||'';$('#group').value=x.group||'';$('#quantity').value=x.quantity;$('#cancelMed').hidden=false;openView('farmacia');$('#commercial').focus()}
+function resetPharmForm(){$('#pharmForm').reset();$('#medEdit').value='';$('#cancelMed').hidden=true}
+async function deleteMedicine(mid){if(!canManageInventory())return toast('Acceso restringido','','error');const x=med(mid);if(!x||!await ask('Eliminar medicamento',`¿Eliminar ${x.commercial} del inventario?`,'Eliminar',true))return;state.medicines=state.medicines.filter(m=>m.id!==mid);commit('MEDICAMENTO ELIMINADO',x.commercial)}
+async function handleUser(e){
+ e.preventDefault();const username=norm($('#newUser').value),pass=$('#newPass').value,role=$('#newRole').value;
+ if(state.users.some(x=>norm(x.username)===username))return toast('El usuario ya existe','','error');
+ if(user?.role!=='superadmin'&&role==='superadmin')return toast('Acceso restringido','Solo superadministración puede crear este perfil.','error');
+ if(!strongPass(pass))return toast('Contraseña insuficiente','Usa 12 caracteres, mayúscula, minúscula, número y símbolo.','error');
+ const linked=person($('#linkedStaff').value),password=await hashPassword(pass);
+ state.users.push({id:id('usr'),username,name:linked?.name||username,role,staffId:linked?.id||null,active:true,mustChange:$('#mustChange').checked,password,createdAt:iso(),updatedAt:iso(),lastLogin:null});
+ commit('USUARIO CREADO',`${username} · ${ROLES[role]?.label||role}`);e.currentTarget.reset();$('#mustChange').checked=true;toast('Usuario creado','La contraseña quedó protegida con PBKDF2.');
+}
+async function resetUserPassword(uid){
+ const x=usr(uid);if(!x)return;if(user?.role!=='superadmin'&&x.role==='superadmin')return toast('Acceso restringido','','error');
+ const pass=await requestSecret('Nueva contraseña temporal','La persona deberá cambiarla al iniciar sesión.',true);if(!pass)return;
+ if(!strongPass(pass))return toast('Contraseña insuficiente','','error');
+ x.password=await hashPassword(pass);x.mustChange=true;x.updatedAt=iso();commit('CONTRASEÑA RESTABLECIDA',x.username);toast('Contraseña actualizada');
+}
+function toggleUser(uid){const x=usr(uid);if(!x)return;if(user?.role!=='superadmin'&&x.role==='superadmin')return toast('Acceso restringido','','error');x.active=!x.active;x.updatedAt=iso();commit(x.active?'USUARIO ACTIVADO':'USUARIO BLOQUEADO',x.username)}
+
+/* ===== Historial clínico y PDF sin dependencias ===== */
+function objectLines(obj,prefix=''){
+ const out=[];
+ if(!obj||typeof obj!=='object')return out;
+ for(const [k,v] of Object.entries(obj)){
+  if(['patientId','staffId','capturedBy','medicineId','inventoryApplied','_savedAt'].includes(k))continue;
+  const label=(prefix?prefix+' ':'')+k.replace(/([A-Z])/g,' $1').replace(/^./,c=>c.toUpperCase());
+  if(Array.isArray(v))out.push(`${label}: ${v.map(x=>typeof x==='object'?JSON.stringify(x):x).join(', ')}`);
+  else if(v&&typeof v==='object')out.push(...objectLines(v,label));
+  else if(v!==''&&v!==null&&v!==undefined)out.push(`${label}: ${typeof v==='boolean'?(v?'Sí':'No'):v}`);
+ }
+ return out;
+}
+function patientHistoryHtml(pid){
+ const p=patient(pid);if(!p)return'<p>Expediente no encontrado.</p>';
+ const visits=state.visits.filter(v=>v.patientId===pid&&canHistory(v)).sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
+ return `<div class="note"><strong>${esc(p.name)}</strong><br>${esc(p.phone)} · ${esc(p.locality)}<br>${esc(p.address)}</div>${visits.map(v=>`<div class="section"><div class="queueHead"><div><h3>${esc(v.service)}</h3><small>${dt(v.createdAt,true)} · ${esc(STATUS[v.status]||v.status)}</small></div>${badge(v.status)}</div>${v.vitals?`<h4>Signos vitales</h4><div class="vitals">${renderVitalsSummary(v)}</div>`:''}${v.clinical?`<h4>Historia clínica</h4><div class="note">${clinicalSummary(v.clinical)}</div>`:''}${v.medical?`<h4>Consulta médica</h4><p><strong>Diagnóstico:</strong> ${esc(safe(v.medical.diagnosis))}</p><p><strong>Tratamiento:</strong> ${esc(safe(v.medical.treatment))}</p><p><strong>Recomendaciones:</strong> ${esc(safe(v.medical.generalRecommendations))}</p><p><strong>Medicamentos:</strong> ${esc((v.medical.medications||[]).map(x=>`${med(x.medicineId)?.commercial||'Medicamento'} · ${x.dose} · Cant. ${x.quantity}`).join('; ')||'Ninguno')}</p>`:''}${v.specialty?`<h4>Atención especializada</h4><p><strong>Punto a tratar:</strong> ${esc(safe(v.specialty.topic))}</p><p><strong>Notas:</strong> ${esc(safe(v.specialty.notes||v.specialty.vaccinesGiven))}</p>${v.specialty.medications?.length?`<p><strong>Medicamentos:</strong> ${esc(v.specialty.medications.map(x=>`${med(x.medicineId)?.commercial||'Medicamento'} · ${x.dose} · Cant. ${x.quantity}`).join('; '))}</p>`:''}`:''}</div>`).join('')||'<div class="empty">Sin atenciones visibles.</div>'}`;
+}
+function showPatientHistory(pid){
+ const p=patient(pid);if(!p)return;
+ openModal(`Expediente · ${p.name}`,patientHistoryHtml(pid),`<button class="btn btn-ghost" data-close>Cerrar</button><button class="btn btn-primary" data-modal-pdf="${pid}">Exportar PDF</button>`);
+}
+function pdfPlain(v){return String(v??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^\x20-\x7E]/g,' ')}
+function wrapText(text,max=92){
+ const words=pdfPlain(text).replace(/\s+/g,' ').trim().split(' '),out=[];let line='';
+ for(const w of words){if(!w)continue;if((line+' '+w).trim().length>max){if(line)out.push(line);line=w}else line=(line+' '+w).trim()}
+ if(line)out.push(line);return out.length?out:[''];
+}
+function pdfEscape(s){return pdfPlain(s).replaceAll('\\','\\\\').replaceAll('(','\\(').replaceAll(')','\\)')}
+function buildPDF(title,sections,{landscape=false}={}){
+ const W=landscape?792:612,H=landscape?612:792,margin=42,maxChars=landscape?124:92,lines=[];
+ lines.push({text:title,bold:true,size:15});lines.push({text:state.meta.organization||'Brigadas de Salud Fuerza Generacional',bold:true,size:10});lines.push({text:`Generado: ${new Date().toLocaleString('es-MX')}`,size:8});lines.push({text:'',size:8});
+ for(const sec of sections){
+  if(typeof sec==='string'){for(const l of wrapText(sec,maxChars))lines.push({text:l,size:9})}
+  else{
+   if(sec.heading){lines.push({text:'',size:5});for(const l of wrapText(sec.heading,maxChars))lines.push({text:l,bold:true,size:11})}
+   for(const item of (sec.lines||[]))for(const l of wrapText(item,maxChars))lines.push({text:l,size:9});
+  }
+ }
+ const pages=[];let page=[],y=H-margin;
+ for(const line of lines){const step=(line.size||9)+4;if(y-step<margin){pages.push(page);page=[];y=H-margin}page.push({...line,y});y-=step}
+ if(page.length||!pages.length)pages.push(page);
+ const objects=[];const add=s=>{objects.push(s);return objects.length};
+ const fontRegular=add('<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>');
+ const fontBold=add('<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>');
+ const pageIds=[],contentIds=[];
+ for(const pg of pages){
+  let stream='q\n';
+  for(const l of pg){stream+=`BT /${l.bold?'F2':'F1'} ${l.size||9} Tf ${margin} ${l.y.toFixed(1)} Td (${pdfEscape(l.text)}) Tj ET\n`}
+  stream+='Q\n';
+  contentIds.push(add(`<< /Length ${stream.length} >>\nstream\n${stream}endstream`));
+  pageIds.push(add('PENDING_PAGE'));
+ }
+ const pagesId=add('PENDING_PAGES');
+ const catalogId=add(`<< /Type /Catalog /Pages ${pagesId} 0 R >>`);
+ pageIds.forEach((pid,i)=>{objects[pid-1]=`<< /Type /Page /Parent ${pagesId} 0 R /MediaBox [0 0 ${W} ${H}] /Resources << /Font << /F1 ${fontRegular} 0 R /F2 ${fontBold} 0 R >> >> /Contents ${contentIds[i]} 0 R >>`});
+ objects[pagesId-1]=`<< /Type /Pages /Kids [${pageIds.map(x=>`${x} 0 R`).join(' ')}] /Count ${pageIds.length} >>`;
+ let pdf='%PDF-1.4\n%\xE2\xE3\xCF\xD3\n',offsets=[0];
+ objects.forEach((o,i)=>{offsets[i+1]=pdf.length;pdf+=`${i+1} 0 obj\n${o}\nendobj\n`});
+ const xref=pdf.length;pdf+=`xref\n0 ${objects.length+1}\n0000000000 65535 f \n`;
+ for(let i=1;i<=objects.length;i++)pdf+=String(offsets[i]).padStart(10,'0')+' 00000 n \n';
+ pdf+=`trailer\n<< /Size ${objects.length+1} /Root ${catalogId} 0 R >>\nstartxref\n${xref}\n%%EOF`;
+ return new Blob([new Uint8Array([...pdf].map(c=>c.charCodeAt(0)&255))],{type:'application/pdf'});
+}
+function downloadBlob(blob,name){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.append(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1200)}
+function patientPDFSections(pid,visitId=null){
+ const p=patient(pid),visits=state.visits.filter(v=>v.patientId===pid&&canHistory(v)&&(visitId? v.id===visitId:true)).sort((a,b)=>new Date(a.createdAt)-new Date(b.createdAt));
+ const sections=[{heading:'Datos del beneficiario',lines:[`Nombre: ${p?.name||''}`,`Telefono: ${p?.phone||''}`,`Localidad: ${p?.locality||''}`,`Domicilio: ${p?.address||''}`,`Registro: ${dt(p?.createdAt,true)}`]}];
+ for(const v of visits){
+  const lines=[`Servicio: ${v.service}`,`Estado: ${STATUS[v.status]||v.status}`,`Inicio: ${dt(v.createdAt,true)}`];
+  if(v.vitals)lines.push('SIGNOS VITALES',...objectLines(v.vitals));
+  if(v.clinical)lines.push('HISTORIA CLINICA',...objectLines(v.clinical));
+  if(v.medical){
+   lines.push('CONSULTA MEDICA',`Diagnostico: ${v.medical.diagnosis||''}`,`Tratamiento: ${v.medical.treatment||''}`,`Recomendaciones generales: ${v.medical.generalRecommendations||''}`);
+   for(const x of v.medical.medications||[])lines.push(`Medicamento: ${med(x.medicineId)?.commercial||''}; dosis: ${x.dose}; cantidad: ${x.quantity}`);
+  }
+  if(v.specialty){lines.push('ATENCION ESPECIALIZADA',...objectLines(v.specialty))}
+  sections.push({heading:`Atencion · ${v.service} · ${dt(v.createdAt,true)}`,lines});
+ }
+ return sections;
+}
+function previewPDF(blob,name,title='Vista previa del PDF'){
+ if(modalObjectUrl)URL.revokeObjectURL(modalObjectUrl);modalObjectUrl=URL.createObjectURL(blob);openModal(title,`<iframe title="Vista previa PDF" src="${modalObjectUrl}" style="width:100%;height:min(70vh,760px);border:1px solid var(--line);border-radius:12px"></iframe>`,`<button class="btn btn-ghost" data-close>Cerrar</button><a class="btn btn-primary" href="${modalObjectUrl}" download="${esc(name)}">Descargar PDF</a>`);
+}
+function exportPatientPDF(pid,visitId=null,preview=false){
+ const p=patient(pid);if(!p)return;const name=`expediente_${norm(p.name).replace(/\s+/g,'_')||'beneficiario'}.pdf`,blob=buildPDF(`Expediente de ${p.name}`,patientPDFSections(pid,visitId));if(preview)previewPDF(blob,name,`PDF · ${p.name}`);else downloadBlob(blob,name);addAudit('PDF DE EXPEDIENTE',p.name);scheduleSave('',false);
+}
+function exportDatabasePDF(){
+ const list=filteredPatients('#dbSearch','#dbService','#dbDate');
+ const sections=[{heading:'Base de datos',lines:list.map(p=>{const v=latestVisit(p.id);return `${dt(p.createdAt,true)} | ${p.name} | ${p.phone} | ${p.locality} | ${p.address} | ${v?.service||p.service}`})}];
+ downloadBlob(buildPDF('Base de datos de beneficiarios',sections,{landscape:true}),'base_brigada_salud.pdf');addAudit('EXPORTACIÓN DE BASE DE DATOS',`${list.length} registros`);scheduleSave('',false);
+}
+function exportAuditPDF(){
+ const sections=[{heading:'Eventos',lines:state.audit.map(a=>`${dt(a.createdAt,true)} | ${a.username} | ${a.action} | ${a.detail}`)}];
+ downloadBlob(buildPDF('Auditoria del sistema',sections,{landscape:true}),'auditoria_brigada_salud.pdf');
+}
+
+/* ===== Respaldos cifrados y nube opcional ===== */
+function requestSecret(title,description='',showRules=false){
+ return new Promise(resolve=>{
+  openModal(title,`<form id="secretForm" class="grid"><p>${esc(description)}</p><div class="field"><label>Contraseña</label><input id="secretValue" type="password" autocomplete="new-password" required></div>${showRules?'<small>12 caracteres, mayúscula, minúscula, número y símbolo.</small>':''}<div class="actions"><button class="btn btn-ghost" type="button" data-secret-cancel>Cancelar</button><button class="btn btn-primary" type="submit">Continuar</button></div></form>`,'');
+  $('[data-secret-cancel]').onclick=()=>{closeModal();resolve(null)};
+  $('#secretForm').onsubmit=e=>{e.preventDefault();const v=$('#secretValue').value;closeModal();resolve(v)};
+  setTimeout(()=>$('#secretValue')?.focus(),10);
+ });
+}
+async function exportEncryptedBackup(){
+ const password=await requestSecret('Protege el respaldo','Crea una contraseña para cifrar este archivo. Guárdala en un lugar seguro.',true);if(!password)return;
+ if(!strongPass(password))return toast('Contraseña insuficiente','El respaldo requiere una contraseña fuerte.','error');
+ try{
+  const salt=crypto.getRandomValues(new Uint8Array(16)),backupKey=await derivePasswordKey(password,salt);
+  const payload=await encryptObject(JSON.stringify(state),backupKey);
+  const envelope={format:'FG-BRIGADAS-BACKUP',version:1,createdAt:iso(),kdf:{name:'PBKDF2-SHA256',iterations:PASS_ITER,salt:bytesToB64(salt)},payload};
+  downloadBlob(new Blob([JSON.stringify(envelope,null,2)],{type:'application/json'}),`respaldo_brigadas_${new Date().toISOString().slice(0,10)}.json`);
+  addAudit('RESPALDO EXPORTADO','Archivo JSON cifrado');scheduleSave('',false);toast('Respaldo creado','El archivo está cifrado.');
+ }catch(err){toast('No se pudo exportar',err.message,'error')}
+}
+async function importEncryptedBackup(){
+ const file=$('#backupFile').files?.[0];if(!file)return toast('Selecciona un archivo JSON','','error');
+ const password=await requestSecret('Descifrar respaldo','Escribe la contraseña usada al exportarlo.');if(!password)return;
+ try{
+  const envelope=JSON.parse(await file.text());
+  if(envelope.format!=='FG-BRIGADAS-BACKUP'||!envelope.kdf?.salt||!envelope.payload)throw new Error('El archivo no es un respaldo compatible.');
+  const backupKey=await derivePasswordKey(password,b64ToBytes(envelope.kdf.salt),Number(envelope.kdf.iterations)||PASS_ITER);
+  const restored=normalizeState(JSON.parse(await decryptObject(envelope.payload,backupKey)));
+  if(!restored.users.length)throw new Error('El respaldo no contiene usuarios.');
+  if(!await ask('Restaurar respaldo','Esto reemplazará los datos actuales del dispositivo.','Restaurar',true))return;
+  state=restored;user=null;sessionStorage.removeItem(SESSION_KEY);addAudit('RESPALDO IMPORTADO',file.name,true);await persistState();renderAll();logout();toast('Respaldo restaurado','Inicia sesión con una cuenta del archivo.');
+ }catch(err){toast('No se pudo importar',err.message||'Contraseña o archivo incorrecto.','error',5000)}
+}
+async function cloudEncryptionKey(password,projectId){
+ const digest=await crypto.subtle.digest('SHA-256',textBytes(`FG-BRIGADAS-CLOUD|${projectId}`));
+ return derivePasswordKey(password,new Uint8Array(digest).slice(0,16),PASS_ITER);
+}
+function setCloudUI(status,text){
+ const b=$('#cloudBadge');if(!b)return;b.className=`status ${status}`;b.textContent=text;
+}
+async function connectCloud(e){
+ e?.preventDefault();
+ const raw=$('#firebaseConfig').value.trim(),email=$('#cloudEmail').value.trim(),password=$('#cloudPass').value,path=$('#cloudPath').value.trim();
+ if(!raw||!email||!password||!path)return toast('Completa la configuración','Faltan datos de Firebase.','error');
+ try{
+  const cfg=JSON.parse(raw),segments=path.split('/').filter(Boolean);
+  if(!cfg.apiKey||!cfg.projectId)throw new Error('La configuración debe incluir apiKey y projectId.');
+  if(segments.length<2||segments.length%2!==0)throw new Error('La ruta debe alternar colección/documento, por ejemplo brigadas_salud/estado_principal.');
+  setCloudUI('waiting','Conectando...');
+  const appMod=await import('https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js');
+  const authMod=await import('https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js');
+  const fireMod=await import('https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js');
+  let app;try{app=appMod.getApp(`fg-${cfg.projectId}`)}catch{app=appMod.initializeApp(cfg,`fg-${cfg.projectId}`)}
+  const auth=authMod.getAuth(app);await authMod.signInWithEmailAndPassword(auth,email,password);
+  const fs=fireMod.getFirestore(app),docRef=fireMod.doc(fs,...segments),cKey=await cloudEncryptionKey(password,cfg.projectId);
+  if(cloud.unsubscribe)cloud.unsubscribe();
+  cloud={connected:true,unsubscribe:null,setDoc:fireMod.setDoc,docRef,key:cKey,suppress:false};
+  state.meta.cloud={enabled:true,config:raw,email,path};
+  cloud.unsubscribe=fireMod.onSnapshot(docRef,async snap=>{
+   try{
+    if(!snap.exists()){await pushCloudNow();return}
+    const data=snap.data();if(!data.payload)return;
+    const incoming=normalizeState(JSON.parse(await decryptObject(data.payload,cKey)));
+    if((incoming.meta.revision||0)>(state.meta.revision||0)){
+     const localCloud={...state.meta.cloud};cloud.suppress=true;state=incoming;state.meta.cloud=localCloud;
+     const refreshed=usr(user?.id);if(refreshed)user=refreshed;
+     await persistState({broadcast:true,pushCloud:false,bump:false});renderAll();cloud.suppress=false;sync('ok','Actualizado desde la nube');toast('Datos actualizados','Se recibió un cambio de otro dispositivo.','info');
+    }
+   }catch(err){console.error(err);setCloudUI('cancelled','Error al descifrar');sync('bad','Error de nube')}
+  },err=>{console.error(err);setCloudUI('cancelled','Conexión fallida');sync('bad','Error de nube')});
+  await persistState({pushCloud:false});await pushCloudNow();
+  setCloudUI('completed','Conectado');sync('ok','Nube conectada');$('#cloudPass').value='';toast('Sincronización activa','Los cambios se compartirán entre dispositivos autorizados.');
+ }catch(err){console.error(err);cloud.connected=false;setCloudUI('cancelled','No conectado');toast('No se pudo conectar',err.message||'Revisa Firebase Authentication y las reglas de Firestore.','error',6000)}
+}
+function queueCloudPush(){clearTimeout(cloudTimer);cloudTimer=setTimeout(pushCloudNow,500)}
+async function pushCloudNow(){
+ if(!cloud.connected||!cloud.setDoc||!cloud.docRef)return;
+ try{
+  const payload=await encryptObject(JSON.stringify(publicCloudState()),cloud.key);
+  await cloud.setDoc(cloud.docRef,{format:'FG-BRIGADAS-CLOUD',revision:state.meta.revision,updatedAt:state.meta.updatedAt,payload});
+  setCloudUI('completed','Conectado');sync('ok','Sincronizado en tiempo real');
+ }catch(err){console.error(err);setCloudUI('cancelled','Error de envío');sync('bad','Pendiente de nube')}
+}
+async function disconnectCloud(){
+ if(cloud.unsubscribe)cloud.unsubscribe();cloud={connected:false,unsubscribe:null,setDoc:null,docRef:null,suppress:false};
+ state.meta.cloud.enabled=false;await persistState({pushCloud:false});setCloudUI('waiting','Sin configurar');sync('ok','Guardado local');toast('Nube desconectada','Los datos locales permanecen cifrados.','info');
+}
+async function deleteEverything(){
+ const first=await ask('Borrar todo definitivamente','Esta acción elimina toda la información local. No se puede deshacer.','Continuar',true);if(!first)return;
+ const phrase=await requestSecret('Confirmación final','Escribe exactamente BORRAR TODO para confirmar.');if(phrase!=='BORRAR TODO')return toast('Operación cancelada','La frase no coincide.','info');
+ try{
+  if(cloud.connected){const blank=defaultState();blank.meta.revision=(state.meta.revision||0)+1;const payload=await encryptObject(JSON.stringify(blank),cloud.key);await cloud.setDoc(cloud.docRef,{format:'FG-BRIGADAS-CLOUD',revision:blank.meta.revision,updatedAt:blank.meta.updatedAt,payload})}
+  if(cloud.unsubscribe)cloud.unsubscribe();cloud.connected=false;
+  state=defaultState();
+  if(storageMode==='indexeddb')await idbDelete('secure',STATE_KEY);else localStorage.removeItem(FALLBACK_KEY);
+  sessionStorage.removeItem(SESSION_KEY);user=null;renderAll();$('#app').hidden=true;$('#loginView').hidden=false;$('#setupBack').hidden=false;$('#setupForm').reset();toast('Datos eliminados','Configura una nueva cuenta inicial.','info',5000);
+ }catch(err){toast('No se pudo borrar',err.message,'error')}
+}
+
+/* ===== Integración de interfaz ===== */
+function renderCloudConfig(){
+ if(!$('#firebaseConfig'))return;
+ if(document.activeElement!==$('#firebaseConfig')&&!$('#firebaseConfig').value)$('#firebaseConfig').value=state.meta.cloud?.config||'';
+ if(document.activeElement!==$('#cloudEmail')&&!$('#cloudEmail').value)$('#cloudEmail').value=state.meta.cloud?.email||'';
+ if(document.activeElement!==$('#cloudPath'))$('#cloudPath').value=state.meta.cloud?.path||'brigadas_salud/estado_principal';
+ setCloudUI(cloud.connected?'completed':state.meta.cloud?.enabled?'waiting':'waiting',cloud.connected?'Conectado':state.meta.cloud?.enabled?'Requiere reconexión':'Sin configurar');
+}
+function loadVitals(pid){
+ const v=latestVisit(pid);if(!v)return;const staff=$('#vitalsForm [name="staffId"]').value;$('#vitalsForm').reset();populateSelectors();$('#vitalsPatient').value=pid;fillForm($('#vitalsForm'),v.vitals||{});$('#vitalsPatient').value=pid;if(staff&&!v.vitals?.staffId)$('#vitalsForm [name="staffId"]').value=staff;$('#hivResult').disabled=!$('#hivTest').checked;
+}
+function appendMedicineLine(container,data=null,prefix='medicine'){
+ const wrap=document.createElement('div');wrap.innerHTML=medLineHtml(prefix);const line=wrap.firstElementChild;container.append(line);refreshMedicineOptions();
+ if(data){$('.medSelect',line).value=data.medicineId||'';$('input[name$="Dose"]',line).value=data.dose||'';$('input[name$="Qty"]',line).value=data.quantity||1;
+  if(data.medicineId&&!$('.medSelect',line).value){const m=med(data.medicineId),o=document.createElement('option');o.value=data.medicineId;o.textContent=`${m?.commercial||'Medicamento no disponible'} (0)`;$('.medSelect',line).append(o);$('.medSelect',line).value=data.medicineId}
+ }
+}
+function loadMedicine(pid){
+ const v=latestVisit(pid,'Medicina')||latestVisit(pid);updateMedicineContext();
+ resetMedLines();
+ if(v?.medical?.medications?.length){$('#medLines').innerHTML='';for(const x of v.medical.medications)appendMedicineLine($('#medLines'),x,'medicine')}
+}
+function loadSpecialty(form,pid){
+ const v=latestVisit(pid,form.dataset.specialty);if(!v)return;
+ const staff=form.querySelector('[name="staffId"]').value;
+ form.reset();populateSelectors();form.querySelector('[name="patientId"]').value=pid;
+ if(v.specialty){fillForm(form,v.specialty);form.querySelector('[name="patientId"]').value=pid}
+ else loadSpecialtyDraft(form);
+ if(staff&&!v.specialty?.staffId)form.querySelector('[name="staffId"]').value=staff;
+ if(form.dataset.specialty==='Cosmetología'){
+  resetCosLines();
+  if(v.specialty?.medications?.length){$('#cosMedLines').innerHTML='';for(const x of v.specialty.medications)appendMedicineLine($('#cosMedLines'),x,'cosmedicine')}
+ }
+}
+function showProfile(){
+ openModal('Mi perfil',`<div class="note"><strong>${esc(user.name||user.username)}</strong><br>@${esc(user.username)}<br>${esc(ROLES[user.role]?.label||user.role)}</div><div class="section"><button id="profilePassword" class="btn btn-primary">Cambiar contraseña</button></div>`);
+ $('#profilePassword').onclick=async()=>{const pass=await requestSecret('Cambiar contraseña','Crea una contraseña nueva.',true);if(!pass)return;if(!strongPass(pass))return toast('Contraseña insuficiente','','error');user.password=await hashPassword(pass);user.mustChange=false;user.updatedAt=iso();commit('CAMBIO DE CONTRASEÑA',user.username);closeModal();toast('Contraseña actualizada')};
+}
+function updateClock(){
+ const now=new Date(),text=now.toLocaleString('es-MX',{weekday:'short',day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit',second:'2-digit'});
+ if($('#deviceClock'))$('#deviceClock').textContent=text;if($('#medClock'))$('#medClock').textContent=now.toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+ const hc=$('#loginClock');if(hc)hc.textContent=now.toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+}
+function initializeEvents(){
+ $('#setupForm').addEventListener('submit',createInitialAdmin);
+ $('#loginForm').addEventListener('submit',login);
+ $('#setupOpen').addEventListener('click',()=>{if(state.users.length)return toast('Sistema ya configurado','Inicia sesión con una cuenta activa.','info');$('#setupBack').hidden=false});
+ $('#logoutBtn').addEventListener('click',()=>logout(false));
+ $('#menuBtn').addEventListener('click',openSidebar);$('#overlay').addEventListener('click',closeSidebar);
+ $('#profileBtn').addEventListener('click',showProfile);
+ $('#modalX').addEventListener('click',closeModal);
+ $('#modalBack').addEventListener('click',e=>{if(e.target===e.currentTarget)closeModal()});
+ $('#modalFoot').addEventListener('click',e=>{if(e.target.closest('[data-close]'))closeModal()});
+ document.addEventListener('input',e=>{const q=e.target.closest('.medSearch');if(q)updateLineMedicineOptions(q.closest('.medLine'))});
+ document.addEventListener('click',async e=>{
+  const nav=e.target.closest('[data-nav]');if(nav)return openView(nav.dataset.nav);
+  const go=e.target.closest('[data-go]');if(go)return openView(go.dataset.go);
+  const pass=e.target.closest('[data-pass]');if(pass){const input=$('#'+pass.dataset.pass);input.type=input.type==='password'?'text':'password';return}
+  const start=e.target.closest('[data-start]');if(start)return startVisit(start.dataset.start);
+  const open=e.target.closest('[data-open-visit]');if(open)return openVisit(open.dataset.openVisit);
+  const cancel=e.target.closest('[data-cancel]');if(cancel)return cancelVisit(cancel.dataset.cancel);
+  const hist=e.target.closest('[data-history]');if(hist)return showPatientHistory(hist.dataset.history);
+  const pdf=e.target.closest('[data-pdf-patient]');if(pdf)return exportPatientPDF(pdf.dataset.pdfPatient);
+  const mpdf=e.target.closest('[data-modal-pdf]');if(mpdf){closeModal();return exportPatientPDF(mpdf.dataset.modalPdf)}
+  const es=e.target.closest('[data-edit-staff]');if(es)return editStaff(es.dataset.editStaff);
+  const ts=e.target.closest('[data-toggle-staff]');if(ts)return toggleStaff(ts.dataset.toggleStaff);
+  const em=e.target.closest('[data-edit-med]');if(em)return editMedicine(em.dataset.editMed);
+  const dm=e.target.closest('[data-delete-med]');if(dm)return deleteMedicine(dm.dataset.deleteMed);
+  const ru=e.target.closest('[data-reset-user]');if(ru)return resetUserPassword(ru.dataset.resetUser);
+  const tu=e.target.closest('[data-toggle-user]');if(tu)return toggleUser(tu.dataset.toggleUser);
+  const rm=e.target.closest('.removeMedLine');if(rm){const parent=rm.closest('.medLine')?.parentElement;if(parent?.children.length>1)rm.closest('.medLine').remove();else toast('Conserva una línea','Puedes dejarla sin medicamento.','info');return}
+ });
+ $('#regForm').addEventListener('submit',handleRegistration);
+ $('#regPhone').addEventListener('input',e=>e.target.value=e.target.value.replace(/\D/g,'').slice(0,10));
+ $('#vitalsForm').addEventListener('submit',e=>{e.preventDefault();saveVitals(true)});
+ $('#saveVitals').addEventListener('click',()=>saveVitals(false));
+ $('#hivTest').addEventListener('change',()=>{$('#hivResult').disabled=!$('#hivTest').checked;if($('#hivResult').disabled)$('#hivResult').value=''});
+ $('#vitalsPatient').addEventListener('change',e=>loadVitals(e.target.value));
+ $('#clinicalForm').addEventListener('submit',e=>{e.preventDefault();saveClinical(true)});
+ $('#saveClinical').addEventListener('click',()=>saveClinical(false));
+ $('#clinicalPatient').addEventListener('change',e=>loadClinical(e.target.value));
+ $('#birthDate').addEventListener('change',()=>$('#clinicalAge').value=age($('#birthDate').value));
+ $('#medicineForm').addEventListener('submit',e=>{e.preventDefault();saveMedicine(true)});
+ $('#saveMedicine').addEventListener('click',()=>saveMedicine(false));
+ $('#medPatient').addEventListener('change',e=>loadMedicine(e.target.value));
+ $('#medStaff').addEventListener('change',updateDoctorInfo);
+ $('#addMedLine').addEventListener('click',()=>appendMedicineLine($('#medLines'),null,'medicine'));
+ $('#addCosMed').addEventListener('click',()=>appendMedicineLine($('#cosMedLines'),null,'cosmedicine'));
+ $$('form[data-specialty]').forEach(form=>{
+  form.addEventListener('submit',e=>{e.preventDefault();saveSpecialty(form)});
+  form.addEventListener('input',()=>autosaveSpecialty(form));
+  form.querySelector('[name="patientId"]').addEventListener('change',e=>loadSpecialty(form,e.target.value));
+ });
+ $('#staffForm').addEventListener('submit',handleStaff);$('#cancelStaff').addEventListener('click',resetStaffForm);
+ $('#pharmForm').addEventListener('submit',handlePharmacy);$('#cancelMed').addEventListener('click',resetPharmForm);$('#pharmSearch').addEventListener('input',renderPharmacy);
+ ['dbSearch','dbService','dbDate'].forEach(id=>$('#'+id).addEventListener('input',renderDatabase));
+ ['histSearch','histService'].forEach(id=>$('#'+id).addEventListener('input',renderHistory));
+ $('#userForm').addEventListener('submit',handleUser);
+ $('#newRole').addEventListener('change',()=>{const area=ROLES[$('#newRole').value]?.area;if(area&&area!=='*'&&area!=='Admisión'){const x=state.personnel.find(p=>p.areas?.includes(area));if(x)$('#linkedStaff').value=x.id}});
+ $('#exportDb').addEventListener('click',exportDatabasePDF);$('#saveDb').addEventListener('click',async()=>{await persistState();toast('Base guardada')});
+ $('#exportAudit').addEventListener('click',exportAuditPDF);
+ $('#exportBackup').addEventListener('click',exportEncryptedBackup);$('#importBackup').addEventListener('click',importEncryptedBackup);
+ $('#cloudForm').addEventListener('submit',connectCloud);$('#disconnectCloud').addEventListener('click',disconnectCloud);$('#deleteAll').addEventListener('click',deleteEverything);
+ document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();closeSidebar()}});
+}
+async function initialize(){
+ try{
+  buildInterface();initializeEvents();updateClock();setInterval(updateClock,1000);
+  await initializeStorage();initializeRealtime();initializeIdleTimer();
+  if(!state.users.length){$('#loginView').hidden=false;$('#setupBack').hidden=false}else restoreSession();
+  renderAll();renderCloudConfig();sync('ok',storageMode==='indexeddb'?'Base cifrada lista':'Modo compatible cifrado');
+ }catch(err){
+  console.error(err);$('#loginView').hidden=false;toast('Error de inicio',err.message||'No fue posible iniciar la aplicación.','error',8000);
+ }
+}
+initialize();
+</script>
+</body>
+</html>
