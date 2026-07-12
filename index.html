@@ -93,6 +93,65 @@ button,input,select,textarea{font:inherit}button{cursor:pointer}[hidden]{display
 
 <div id="modalBack" class="modalBack" hidden><div class="modal"><div class="modalHead"><h2 id="modalTitle">Detalle</h2><button id="modalX" class="btn btn-icon btn-ghost">×</button></div><div id="modalBody" class="modalBody"></div><div id="modalFoot" class="modalFoot"><button class="btn btn-ghost" data-close>cerrar</button></div></div></div>
 
+<div id="setupBack" class="modalBack" hidden><div class="modal setup"><div class="modalHead"><h2>Configurar instalación segura</h2></div><div class="modalBody"><p>Primera apertura detectada. Crea la organización y la cuenta de superadministración. No hay contraseña predeterminada.</p><form id="setupForm" class="grid g2"><div class="field all"><label>Organiz@media(max-width:700px){.content{padding:18px 13px 28px}.topbar{height:68px;padding:0 13px}.syncText,.userCopy{display:none}.g2,.g3,.g4{grid-template-columns:1fr}.span2{grid-column:auto}.stats{grid-template-columns:1fr 1fr}.card{padding:16px}.viewHead,.cardHead{flex-direction:column}.login{padding:0}.loginShell{border-radius:0;min-height:100vh}.hero{min-height:330px;padding:27px}.loginPanel{padding:27px}.heroFeatures{grid-template-columns:1fr}.medLine{grid-template-columns:1fr;border:1px solid var(--line);padding:11px;border-radius:12px}.backupGrid{grid-template-columns:1fr}}
+@media(max-width:430px){.stats,.vitals{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<section id="loginView" class="login">
+  <div class="loginShell">
+    <div class="hero">
+      <div class="logo">
+        <svg viewBox="0 0 96 96" aria-hidden="true"><defs><linearGradient id="lg" x1="0" x2="1"><stop stop-color="#d8a2b4"/><stop offset=".55" stop-color="#9a3d5a"/><stop offset="1" stop-color="#6c2038"/></linearGradient></defs><path d="M8 27h48l-8 14H3zM3 45h43l-8 14H0zM0 63h36l-8 14H0z" fill="url(#lg)"/><g transform="translate(48 14)" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 24l8-8 9 9-8 8zM28 40l8-8 9 9-8 8zM12 56l8-8 9 9-8 8zM-4 40l8-8 9 9-8 8z"/><path d="M20 16l4-4c4-4 10-4 14 0l8 8c4 4 4 10 0 14l-3 3M36 48l-9 9c-4 4-10 4-14 0l-8-8c-4-4-4-10 0-14l3-3"/></g></svg>
+        <div><strong>Fuerza Generacional</strong><small>Brigadas de Salud</small></div>
+      </div>
+      <div class="heroContent">
+        <div class="eyebrow" style="color:#e9cbd5">Sistema clínico integral</div>
+        <h1>Atención ordenada, segura y en tiempo real.</h1>
+        <p>Registro, signos vitales, historia clínica, medicina, farmacia, áreas especializadas, historial, personal, respaldos y control de acceso en un solo archivo.</p>
+        <div class="heroFeatures">
+          <div class="heroFeature">🔒 Datos locales cifrados con Web Crypto</div>
+          <div class="heroFeature">⚡ Actualización instantánea entre pestañas</div>
+          <div class="heroFeature">📄 Expedientes y reportes PDF</div>
+          <div class="heroFeature">🩺 Acceso por perfiles y áreas</div>
+        </div>
+      </div>
+      <small class="heroClock">Hora del dispositivo: <span id="loginClock">—</span></small>
+    </div>
+    <div class="loginPanel">
+      <div class="eyebrow">Acceso protegido</div><h2>Iniciar sesión</h2><p>Usa el usuario creado por la administración.</p>
+      <form id="loginForm">
+        <div class="field"><label>Usuario</label><input id="loginUser" autocomplete="username" required placeholder="Ej. MEDICOSFG"></div>
+        <div class="field"><label>Contraseña</label><div class="passwordWrap"><input id="loginPass" type="password" autocomplete="current-password" required><button type="button" class="passwordToggle" data-pass="loginPass">◉</button></div></div>
+        <button class="btn btn-primary" type="submit">Ingresar al sistema</button>
+        <button id="setupOpen" class="btn btn-ghost" type="button" hidden>Crear instalación segura</button>
+      </form>
+      <div class="loginNote"><strong>Privacidad:</strong> el modo local cifra los datos en el dispositivo. La sincronización real entre distintos equipos requiere conectar un proyecto Firebase propio con reglas de seguridad.</div>
+    </div>
+  </div>
+</section>
+
+<div id="app" class="app" hidden>
+  <aside class="sidebar">
+    <div class="logo">
+      <svg viewBox="0 0 96 96" aria-hidden="true"><defs><linearGradient id="lg2" x1="0" x2="1"><stop stop-color="#d8a2b4"/><stop offset=".55" stop-color="#9a3d5a"/><stop offset="1" stop-color="#6c2038"/></linearGradient></defs><path d="M8 27h48l-8 14H3zM3 45h43l-8 14H0zM0 63h36l-8 14H0z" fill="url(#lg2)"/><g transform="translate(48 14)" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 24l8-8 9 9-8 8zM28 40l8-8 9 9-8 8zM12 56l8-8 9 9-8 8zM-4 40l8-8 9 9-8 8z"/><path d="M20 16l4-4c4-4 10-4 14 0l8 8c4 4 4 10 0 14l-3 3M36 48l-9 9c-4 4-10 4-14 0l-8-8c-4-4-4-10 0-14l3-3"/></g></svg>
+      <div><strong>Fuerza Generacional</strong><small>Brigadas de Salud</small></div>
+    </div>
+    <div id="navRoot"></div>
+    <div class="sideUser"><strong id="sideName">—</strong><small id="sideRole">—</small></div>
+  </aside>
+  <div class="overlay" id="overlay"></div>
+  <div class="main">
+    <header class="topbar">
+      <div class="topLeft"><button id="menuBtn" class="btn btn-icon btn-ghost menu">☰</button><div class="pill"><span id="syncDot" class="dot"></span><span id="syncText" class="syncText">Preparando almacenamiento</span></div></div>
+      <div class="topRight"><div class="pill clockPill">🕒 <span id="deviceClock">—</span></div><button id="profileBtn" class="userBtn"><span id="avatar" class="avatar">FG</span><span class="userCopy"><strong id="topName">—</strong><small id="topRole">—</small></span></button><button id="logoutBtn" class="btn btn-icon btn-ghost">↪</button></div>
+    </header>
+    <main id="views" class="content"></main>
+  </div>
+</div>
+
+<div id="modalBack" class="modalBack" hidden><div class="modal"><div class="modalHead"><h2 id="modalTitle">Detalle</h2><button id="modalX" class="btn btn-icon btn-ghost">×</button></div><div id="modalBody" class="modalBody"></div><div id="modalFoot" class="modalFoot"><button class="btn btn-ghost" data-close>cerrar</button></div></div></div>
+
 <div id="setupBack" class="modalBack" hidden><div class="modal setup"><div class="modalHead"><h2>Configurar instalación segura</h2></div><div class="modalBody"><p>Primera apertura detectada. Crea la organización y la cuenta de superadministración. No hay contraseña predeterminada.</p><form id="setupForm" class="grid g2"><div class="field all"><label>Organiz    select.control{appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);background-position:calc(100% - 17px) calc(50% - 2px),calc(100% - 12px) calc(50% - 2px);background-size:5px 5px,5px 5px;background-repeat:no-repeat;padding-right:36px}
     .password-wrap{position:relative}.password-wrap .control{padding-right:50px}.icon-btn.inside{position:absolute;right:5px;top:5px;width:38px;height:38px;border:0;background:transparent}
     .btn{border:0;border-radius:12px;padding:11px 16px;font-weight:750;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:transform .16s,box-shadow .16s,background .16s;min-height:44px}
